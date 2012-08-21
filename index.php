@@ -3,28 +3,221 @@
 <head>
 	<title>HXL Dashboard</title>
 	<meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
-    
     <link href="css/hxlator.css" rel="stylesheet"> 
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-	<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.ico">
     
+    <STYLE type="text/css">
+        /* THIS IS THE ACTUAL DISPLAY AREA OF THE SLIDERS */
+        #container
+        {
+            width: 900px;
+            overflow: hidden;
+        }
+
+        /* SET TO THE TOTAL WIDTH OF ALL DIVS */
+        #slider-wrapper
+        {
+            width: 1800px;
+        }
+
+        /* THESE ARE THE INDIVIDUAL SLIDE PROPERTIES */
+        .slide
+        {
+            width: 900px;
+            /*height: 400px;*/
+            overflow: hidden;
+            float: left;
+        }
        
-    <link rel="shortcut icon" href="img/ochaonline_theme_favicon.ico">
+        /**/
+        .center {
+            /*width: 50%;
+            margin: 0px auto;*/
+              width: 100%;
+            text-align: center;
+
+        }
+
+    </STYLE>
     
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="js/html5.js"></script>
     <![endif]-->
         
-    <script type="text/javascript" src="slide-fade-content.js"></script>
-    <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/slide-fade-content.js"></script>
 
-    <script src="js/jquery.js"></script> 
-    <script src="js/jquery-ui-1.8.21.custom.min.js"></script>
-    <script type='text/javascript' src='http://www.google.com/jsapi'></script>
+    <!-- For popovers -->
+    <script src="js/bootstrap-tooltip.js"></script>  
+    <script src="js/bootstrap-popover.js"></script> 
 
+    <script type='text/javascript' src='js/google-jsapi.js'></script>
+    
+    <!-- Google map example -->
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+      
+    <!-- Sliding panels -->
+    <script type="text/javascript">
+        var SlideWidth = 900;
+        var SlideSpeed = 900;
+
+        $(document).ready(function () {
+            
+            $("#slideContainer1").show('slow');
+            $("#slideContainer2").hide('slow');
+            bindThem();
+            drawChart(); 
+            initializeMap();
+            
+        });
+
+        function CurrentMargin() {
+            // get current margin of slider
+            var currentMargin = $("#slider-wrapper").css("margin-left");
+
+            // first page load, margin will be auto, we need to change this to 0
+            if (currentMargin == "auto") {
+                currentMargin = 0;
+            }
+
+            // return the current margin to the function as an integer
+            return parseInt(currentMargin);
+        }
+        
+
+        function NextSlide() {
+            unBindThem();
+           
+            // get the current margin and subtract the slide width
+            var newMargin = CurrentMargin() - SlideWidth;
+
+            $("#slideContainer2").show('slow');
+            
+            // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
+            $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
+                bindThem();
+            });
+        }
+  
+        function PreviousSlide() {
+            unBindThem();
+
+            $("#slideContainer2").hide('slow');
+
+            // get the current margin and subtract the slide width
+            var newMargin = CurrentMargin() + SlideWidth;
+
+            // slide the wrapper to the right to show the previous panel at the set speed. Then set the nav display on completion of animation.
+            $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindThem() });
+            
+        }
+        
+        // Function to add event listeners to the sliders
+        function load() {
+            var el = document.getElementById("NextButton");
+            var el2 = document.getElementById("PreviousButton");
+            el.addEventListener("click", NextSlide, false);
+            el2.addEventListener("click", PreviousSlide, false);
+        } 
+
+        function bindThem() {
+            var el = document.getElementById("NextButton");
+            var el2 = document.getElementById("PreviousButton");
+            el.addEventListener("click", NextSlide, false);
+            el2.addEventListener("click", PreviousSlide, false);
+        } 
+
+        function unBindThem() {
+            var el = document.getElementById("NextButton");
+            var el2 = document.getElementById("PreviousButton");
+            el.removeEventListener("click", NextSlide, false);
+            el2.removeEventListener("click", PreviousSlide, false);
+        } 
+        
+        // Loading the sliders
+        document.addEventListener("DOMContentLoaded", load, false);
+    </script>
+    
+    <!-- Country choice -->
+<script type="text/javascript">
+function showUser(str)
+{
+if (str=="")
+  {
+  document.getElementById("txtHint").innerHTML="";
+  return;
+  }
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET","getuser.php?q="+str,true);
+xmlhttp.send();
+}
+</script>
+    
+    <!-- Simple graph -->
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages: ['corechart']});
+      
+      function drawVisualization() {
+        // Some raw data (not necessarily accurate)
+        var data = google.visualization.arrayToDataTable([
+          ['Month', 'Affected people',],
+          ['nov 2011',  115],
+          ['dec 2011',  135],
+          ['jan 2012',  157],
+          ['feb 2012',  139],
+          ['mar 2012',  135],
+          ['may 2012',  150],
+          ['jun 2012',  129],
+          ['jul 2012',  100]
+        ]);
+
+        var options = {
+          title : 'IDPs count in Burkina Faso 2011 2012',
+          vAxis: {title: "persons"},
+          vAxis: {baseline: 0},
+          hAxis: {title: "Month"},
+          seriesType: "bars",
+          series: {5: {type: "line"}}
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_div1'));
+        chart.draw(data, options);
+      }
+      google.setOnLoadCallback(drawVisualization);
+
+    </script>
+    
+    
+    <!--  Buttons over -->
+    <script type="text/javascript">
+        $(function () { 
+            $("#sourcePopover").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#methodPopover").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#reportedByPopover").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#catPopover").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
+        }); 
+    </script>
+    
+    
+    <!-- Detailed graph -->
     <script type='text/javascript'>
       google.load('visualization', '1', {'packages':['annotatedtimeline']});
-      //google.setOnLoadCallback(drawChart); not necessary because it is done on
+      
       // its timely display
       function drawChart() {
         var data = new google.visualization.DataTable();
@@ -37,20 +230,46 @@
         data.addColumn('string', 'title2');
         data.addColumn('string', 'text2');*/
         data.addRows([
-          [new Date(2012, 0 ,1), 3000, undefined, undefined], // add 3 parameters for another line on the graph
-          [new Date(2012, 1 ,1), 4045, undefined, undefined],
-          [new Date(2012, 2 ,1), 5022, undefined, undefined],
-          [new Date(2012, 3 ,1), 5284, undefined, undefined],
-          [new Date(2012, 4 ,1), 3476, undefined, undefined],       
+          [new Date(2011, 11 ,1), 3000, undefined, undefined], // add 3 column parameters for another line on the graph
+          [new Date(2011, 12 ,10), 4045, undefined, undefined],
+          [new Date(2012, 1 ,20), 5022, undefined, undefined],
+          [new Date(2012, 2 ,25), 5284, undefined, undefined],
+          [new Date(2012, 3 ,1), 4045, undefined, undefined],
+          [new Date(2012, 4 ,25), 5022, undefined, undefined],
+          [new Date(2012, 5 ,10), 5284, undefined, undefined],
+          [new Date(2012, 6 ,25), 3476, undefined, undefined],       
           /*[new Date(2012, 4 ,1), 3476, 'Conflict easing','At ceasefire a first wave of people leave the camp'],*/
 
           [new Date(2012, 5 ,1), 3322, undefined, undefined]
         ]);
 
-        var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
-        chart.draw(data, {displayAnnotations: true});
+        var options = {
+          title : 'IDPs count in Burkina Faso Deou 2011 2012',
+          vAxis: {title: "persons"},
+          hAxis: {title: "Time"}
+        };
+
+        var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div2'));
+        chart.draw(data, options);
       }
     </script>
+    
+    
+    <!-- Google map example -->
+    <script type="text/javascript">
+    var map;
+
+      function initializeMap() {
+        var mapOptions = {
+          center: new google.maps.LatLng(41.716667,44.783333),
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+      }
+
+    </script>
+    
     
     <!--
     <script type="text/javascript">
@@ -117,149 +336,10 @@
     </script>
 -->
 		
-    <STYLE type="text/css">
-        /* THIS IS THE ACTUAL DISPLAY AREA OF THE SLIDERS */
-        #container
-        {
-            width: 900px;
-            overflow: hidden;
-        }
-
-        /* SET TO THE TOTAL WIDTH OF ALL DIVS */
-        #slider-wrapper
-        {
-            width: 1800px;
-        }
-
-        /* THESE ARE THE INDIVIDUAL SLIDE PROPERTIES */
-        .slide
-        {
-            width: 900px;
-            /*height: 400px;*/
-            overflow: hidden;
-            float: left;
-        }
-       
-        /**/
-        .center {
-            /*width: 50%;
-            margin: 0px auto;*/
-              width: 100%;
-            text-align: center;
-
-        }
-
-    </STYLE>
-    <script type="text/javascript">
-        var SlideWidth = 900;
-        var SlideSpeed = 900;
-
-        $(document).ready(function () {
-            // set the prev and next buttons display
-            //SetNavigationDisplay();
-            
-            $("#slideContainer1").show('slow');
-            $("#slideContainer2").hide('slow');
-            bindThem();
-            
-            
-        });
-
-        function CurrentMargin() {
-            // get current margin of slider
-            var currentMargin = $("#slider-wrapper").css("margin-left");
-
-            // first page load, margin will be auto, we need to change this to 0
-            if (currentMargin == "auto") {
-                currentMargin = 0;
-            }
-
-            // return the current margin to the function as an integer
-            return parseInt(currentMargin);
-        }
-        
-
-        function NextSlide() {
-            unBindThem();
-           
-            // get the current margin and subtract the slide width
-            var newMargin = CurrentMargin() - SlideWidth;
-
-                $("#slideContainer2").show('slow');
-                drawChart(); 
-            // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
-            $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
-                bindThem();
-            });
-        }
-  
-        function PreviousSlide() {
-            unBindThem();
-
-            $("#slideContainer2").hide('slow');
-
-            // get the current margin and subtract the slide width
-            var newMargin = CurrentMargin() + SlideWidth;
-
-            // slide the wrapper to the right to show the previous panel at the set speed. Then set the nav display on completion of animation.
-            $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindThem() });
-            
-        }
-        
-        // Function to add event listeners to the sliders
-        function load() {
-            var el = document.getElementById("NextButton");
-            var el2 = document.getElementById("PreviousButton");
-            el.addEventListener("click", NextSlide, false);
-            el2.addEventListener("click", PreviousSlide, false);
-        } 
-
-        function bindThem() {
-            var el = document.getElementById("NextButton");
-            var el2 = document.getElementById("PreviousButton");
-            el.addEventListener("click", NextSlide, false);
-            el2.addEventListener("click", PreviousSlide, false);
-        } 
-
-        function unBindThem() {
-            var el = document.getElementById("NextButton");
-            var el2 = document.getElementById("PreviousButton");
-            el.removeEventListener("click", NextSlide, false);
-            el2.removeEventListener("click", PreviousSlide, false);
-        } 
-        
-        // Loading the sliders
-        document.addEventListener("DOMContentLoaded", load, false);
-       
     
-    </script>
-    
-    
-    <!-- Google map example -->
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=BIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false">
-
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-      
-<!-- <script type="text/javascript" src="javascripts/jquery.gmap-1.0.4-min.js"></script>-->
-
-        <script type="text/javascript">
-    var map;
-
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(41.716667,44.783333),
-          zoom: 8,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
-            mapOptions);
-      }
-
-    </script>
 </head>
 
-<body onload="initialize()" onunload="GUnload()"><!-- Google map example -->
-
+<body>
     <div class="navbar container">
         <div class="container">
             <span class="brand"><img src="img/logo.png" /></span>
@@ -302,11 +382,10 @@
                 </div>
             </div>
             </div>
-            <!--- NAVIGATION BUTTONS 
-            <a href="javascript:void(0)" onclick="PreviousSlide()" id="PreviousButton" style="margin-right: 10px;">
-                Previous Slide</a><a href="javascript:void(0)" onclick="NextSlide()" id="NextButton">Next
-                    Slide</a>
-            -->
+                <br />
+            <p id="footer" style="text-align: center;" >
+                <a href="http://hxl.humanitarianresponse.info/">Powered by HXL</a> &copy; 2012 UNOCHA
+            </p>
     
     
 <?php
@@ -314,14 +393,20 @@
 ?>
        <!----->  </div>
        <div style="clear: both;" ></div>
-       <div style="clear: both;" ></div>
-       <div style="clear: both;" ></div>
-    
-        <div class="footer" style="position: relative;">
-            <p id="footer" style="text-align: center;" >
-                <a href="http://hxl.humanitarianresponse.info/">Powered by HXL</a> &copy; 2012 UNOCHA
-            </p>
-        </div>
+       <div class="container footer">
+		<div class="row">
+		  <div class="span3"><strong>Contact</strong><br />
+		  This site is part of the HumanitarianResponse network. Write to 
+		  <a href="mailto:info@humanitarianresponse.info">info@humanitarianresponse.info</a> for more information.</div>
+		  <div class="span3"><strong>Links</strong><br />
+		  <a href="https://sites.google.com/site/hxlproject/">HXL Project</a><br />
+		  <a href="http://hxl.humanitarianresponse.info/">HXL Standard</a></div>
+		  <div class="span3"><strong>Follow HXL</strong><br />
+		  <span class="label label-warning">TBD</span></div>
+		  <div class="span3"><strong>Legal</strong><br />
+		  &copy; 2012 UNOCHA</div>
+		</div>
+	</div>
     </div>
 	
 </body>
