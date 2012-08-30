@@ -11,8 +11,9 @@
 -->
 <div id="slide2" class="slide" style="width: 900px;" style="margin: 0 auto;" >
     <div id="slideContainer2" >
-        <div id="PreviousButton" class="well" style="text-align: left; margin: 0; cursor: pointer" >
-            <button><< Simple view</button>
+        <div style="margin: 20px;" >
+            <button id="PreviousButton" ><< Simple view</button>
+                            <button id="tableView" style="float: right" >Table view >></button>
         </div>
         <div style="width: 860px; margin: 20px auto;" >
             <h3 id="detailedViewTitle" >Burkina Faso crisis - details of</h3>
@@ -45,7 +46,6 @@
                         <div id="chart_div2" style="width: 580px; height: 300px; margin: 10px 20px 20px 0px;" >
                         </div>
                         <div id="" style="margin: 10px 5px 10px 10px; text-align: center;" >
-                            <button>Table</button>
                             <button>XLS</button>
                             <button>GML</button>
                             <button>CSV</button>                        
@@ -58,7 +58,7 @@
                             <form action="" style="margin: 0px 0px 10px 0px;">Type of population:
                                 <select class="btn" name="populations" style="width: 250px; text-align: left;" >
                                     <option value="dis_pop">Displaced population</option>
-                                    <option value="idp_pop">Internationally displaced population</option>
+                                    <option value="idp_pop">Internally displaced population</option>
                                     <option value="ref_pop">Refugees and asylum seekers</option>
                                     <option value="oth_pop">Others of concern</option>
                                     <option value="nod_pop">Non-displaced population</option>
@@ -68,7 +68,7 @@
                                 <select class="btn" name="populations" style="width: 250px; text-align: left;" >
                                     <option value="dis_pop">Male</option>
                                     <option value="idp_pop">Female</option>
-                                    <option value="nod_pop">Intre sex</option>
+                                    <option value="nod_pop">Inter sex</option>
                                 </select>
                             </form>
                             <form action="" style="margin: 0px 0px 10px 0px;">Age groups:

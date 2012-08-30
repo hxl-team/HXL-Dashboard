@@ -17,7 +17,7 @@
         /* SET TO THE TOTAL WIDTH OF ALL DIVS */
         #slider-wrapper
         {
-            width: 1800px;
+            width: 2700px;
         }
 
         /* THESE ARE THE INDIVIDUAL SLIDE PROPERTIES */
@@ -48,6 +48,10 @@
     <script type="text/javascript" src="js/slide-fade-content.js"></script>
     <script type="text/javascript" src="js/jquery.sparkline.min.js"></script>
 
+    <script src="js/json2.js"></script> 
+
+    <script src="sparqlQueries.js"></script>  
+    
     <!-- For popovers -->
     <script src="js/bootstrap-tooltip.js"></script>  
     <script src="js/bootstrap-popover.js"></script> 
@@ -58,194 +62,10 @@
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false"></script>
     
     <!-- Sliding panels -->
-    <script type="text/javascript">
-        var SlideWidth = 900;
-        var SlideSpeed = 900;
-
-        $(document).ready(function () {
-            
-            $("#slideContainer1").show('slow');
-            $("#slideContainer2").hide('slow');
-            drawChart(); 
-            initializeMap();
-            
-        });
-
-        function CurrentMargin() {
-            // get current margin of slider
-            var currentMargin = $("#slider-wrapper").css("margin-left");
-
-            // first page load, margin will be auto, we need to change this to 0
-            if (currentMargin == "auto") {
-                currentMargin = 0;
-            }
-
-            // return the current margin to the function as an integer
-            return parseInt(currentMargin);
-        }
-        
-
-        function NextSlide(event) {
-            console.log("NEXT");
-            unBindThem();
-           
-            // get the current margin and subtract the slide width
-            var newMargin = CurrentMargin() - SlideWidth;
-            $("#slideContainer2").show('slow');
-            
-            //
-            var titleEnd ='';
-            switch(event.id)
-            {
-                case 'NextButton1':
-                    titleEnd = 'Displaced population';
-                    break;
-                case 'NextButton2':
-                    titleEnd = 'Refugees and asylum seekers';
-                    break;
-                case 'NextButton3':
-                    titleEnd = 'IDPs';
-                    break;
-                case 'NextButton4':
-                    titleEnd = 'Others of concern';
-                    break;
-                default:
-                    titleEnd = 'Displaced population';
-            }
-            document.getElementById('detailedViewTitle').innerHTML = 'Burkina Faso crisis - details of ' + titleEnd;
-            
-            // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
-            $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
-                bindThem();
-            });
-        }
-  
-        function PrintTime() {
-            var currentDate = new Date()
-            var minutes = currentDate.getMinutes();
-            var secondes = currentDate.getSeconds();
-            return minutes + ":" + secondes;
-        }
-        
-        function PreviousSlide() {
-            console.log("PREVIOUS");
-            unBindThem();
-
-            $("#slideContainer2").hide('slow');
-
-            // get the current margin and subtract the slide width
-            var newMargin = CurrentMargin() + SlideWidth;
-
-            // slide the wrapper to the right to show the previous panel at the set speed. Then set the nav display on completion of animation.
-            $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindThem(); });
-            
-        }
-        
-        // Function to add event listeners to the sliders
-        function load() {
-            bindThem();
-        } 
-
-        function bindThem() {
-            var elNext1 = document.getElementById("NextButton1");
-            var elNext2 = document.getElementById("NextButton2");
-            var elNext3 = document.getElementById("NextButton3");
-            var elNext4 = document.getElementById("NextButton4");
-            var elPrevious = document.getElementById("PreviousButton");
-            
-            $(elNext1).bind('click', function(){NextSlide(this);});
-            $(elNext2).bind('click', function(){NextSlide(this);});
-            $(elNext3).bind('click', function(){NextSlide(this);});
-            $(elNext4).bind('click', function(){NextSlide(this);});
-            // the other way to write it works only for Previous
-            elPrevious.addEventListener("click", PreviousSlide, false);
-        } 
-
-        function unBindThem() {
-            var elNext1 = document.getElementById("NextButton1");
-            var elNext2 = document.getElementById("NextButton2");
-            var elNext3 = document.getElementById("NextButton3");
-            var elNext4 = document.getElementById("NextButton4");
-            var elPrevious = document.getElementById("PreviousButton");
-            
-            $(elNext1).unbind('click');
-            $(elNext2).unbind('click');
-            $(elNext3).unbind('click');
-            $(elNext4).unbind('click');
-            // the other way to write it works only for Previous
-            elPrevious.removeEventListener("click", PreviousSlide, false);
-        } 
-        
-        // Loading the sliders
-        document.addEventListener("DOMContentLoaded", load, false);
-    </script>
+    <script type='text/javascript' src='js/panelsManagement.js'></script>
     
     <!-- Sparklines -->
-    <script type="text/javascript">
-        $(function() {
-            var myvalues = [4000,4200,5000,7000,6800,4000,4640];
-            $("#sparkline1").sparkline(myvalues, {
-                type: 'line',
-                width: '100',
-                height: '50',
-                lineWidth: 3,
-                spotColor: '#0000bf',
-                minSpotColor: '#0000bf',
-                maxSpotColor: '#0000bf',
-                highlightSpotColor: '#000000',
-                highlightLineColor: '#000000',
-                spotRadius: 3,
-                chartRangeMin: 0});
-        });
-        
-        $(function() {
-            var myvalues2 = [2000,2200,3000,5000,4800,2000,2315];
-            $("#sparkline2").sparkline(myvalues2, {
-                type: 'line',
-                width: '100',
-                height: '50',
-                lineWidth: 3,
-                spotColor: '#0000bf',
-                minSpotColor: '#0000bf',
-                maxSpotColor: '#0000bf',
-                highlightSpotColor: '#000000',
-                highlightLineColor: '#000000',
-                spotRadius: 3,
-                chartRangeMin: 0});
-        });
-        
-        $(function() {
-            var myvalues3 = [700,800,1100,2000,1800,2000,1515];
-            $("#sparkline3").sparkline(myvalues3, {
-                type: 'line',
-                width: '100',
-                height: '50',
-                lineWidth: 3,
-                spotColor: '#0000bf',
-                minSpotColor: '#0000bf',
-                maxSpotColor: '#0000bf',
-                highlightSpotColor: '#000000',
-                highlightLineColor: '#000000',
-                spotRadius: 3,
-                chartRangeMin: 0});
-        });
-        
-        $(function() {
-            var myvalues4 = [70,800,110,200,800,200,810];
-            $("#sparkline4").sparkline(myvalues4, {
-                type: 'line',
-                width: '100',
-                height: '50',
-                lineWidth: 3,
-                spotColor: '#0000bf',
-                minSpotColor: '#0000bf',
-                maxSpotColor: '#0000bf',
-                highlightSpotColor: '#000000',
-                highlightLineColor: '#000000',
-                spotRadius: 3,
-                chartRangeMin: 0});
-        });
-    </script>
+    <script type='text/javascript' src='js/loadSimpleView.js'></script>
     
     <!-- Country choice -->
     <script type="text/javascript">
@@ -374,19 +194,19 @@
     
 </head>
         
-<body><!-- onload="loadData()">-->
+<body><!-- onload="initSparklines()"-->
 <?php
-/*
+
     // Server side preparation of the data to be diplayed on client side.
     // Init step
-    include_once('sparqlQueries.php');
-    
+    //include_once('sparqlQueries.php');
+    /*
     $countriesArray = getCountries();
     $currentCountryUri = $countriesArray[0]['uri'];
-    
+    /*
     $populationsArray = getCountryPopulation($currentCountryUri);
     $currentPopulation = $countriesArray[0]['uri'];
-    
+    *
     //Injecting data into the HTML to retreive it with javaScript
     
     echo '<div id="currentCountryUri">'.$currentCountryUri.'</div>';
@@ -402,11 +222,11 @@
         <div class="container">
             <span class="brand"><img src="img/logo.png" /></span>
             <div class="nav-hxlator">
-            <ul class="nav" id="topnav">
+                <ul class="nav" id="topnav">
 
-            <li class="active"><a href="index.php">HXL Dashboard</a></li>
-            <li><a href="#">Other menu item</a></li>
-            </ul>
+                <li class="active"><a href="index.php">HXL Dashboard</a></li>
+                <li><a href="#">Other menu item</a></li>
+                </ul>
             </div>
         </div>
     </div>    
@@ -418,18 +238,19 @@
         
      	<br />
         <br />
-        <!--- DISPLAY CONTAINER --->
+        <!-- DISPLAY CONTAINER -->
         <div style="position: relative" >
             <div style="width: 900px; padding: 0 auto; margin: 0 auto;" >
                 <div id="container" class="hero-unit" style="width: 900px; padding: 0; margin: 0;" >
                     <div id="slider-wrapper">
-                        <!-- SLIDE 1 -->
                         <?php 
                             include('slider1.php');
                         ?>
-                        <!-- SLIDE 2 -->
                         <?php 
                             include('slider2.php');
+                        ?>
+                        <?php 
+                            include('slider3.php');
                         ?>
                     </div>
                 </div>
@@ -441,20 +262,126 @@
         </div>
         <div style="clear: both;" ></div>
         <div class="container footer">
-		<div class="row">
-		  <div class="span3"><strong>Contact</strong><br />
-		  This site is part of the HumanitarianResponse network. Write to 
-		  <a href="mailto:info@humanitarianresponse.info">info@humanitarianresponse.info</a> for more information.</div>
-		  <div class="span3"><strong>Links</strong><br />
-		  <a href="https://sites.google.com/site/hxlproject/">HXL Project</a><br />
-		  <a href="http://hxl.humanitarianresponse.info/">HXL Standard</a></div>
-		  <div class="span3"><strong>Follow HXL</strong><br />
-		  <span class="label label-warning">TBD</span></div>
-		  <div class="span3"><strong>Legal</strong><br />
-		  &copy; 2012 UNOCHA</div>
-		</div>
-	</div>
+    		<div class="row">
+                <div class="span3"><strong>Contact</strong><br />
+            		This site is part of the HumanitarianResponse network. Write to 
+         	         <a href="mailto:info@humanitarianresponse.info">info@humanitarianresponse.info</a> for more information.
+                </div>
+                <div class="span3"><strong>Links</strong><br />
+                    <a href="https://sites.google.com/site/hxlproject/">HXL Project</a><br />
+                    <a href="http://hxl.humanitarianresponse.info/">HXL Standard</a>
+                </div>
+    		    <div class="span3"><strong>Follow HXL</strong><br />
+    		        <span class="label label-warning">TBD</span>
+                </div>
+    		    <div class="span3"><strong>Legal</strong><br />
+    		      &copy; 2012 UNOCHA
+                </div>
+    		</div>
+	   </div>
     </div>
+    
+        
+        
+        
+    <script type="text/javascript">
+             /*
+             var test;
+        function init() {
+             test = 0;
+             console.log('test: ' + test);
+             var e1 = document.getElementById("1");
+             var e2 = document.getElementById("2");
+            
+             $(e1).bind('click', function(){f1(this);});
+             $(e2).bind('click', function(){f2(this);});
+        }                
+                     
+        function f1() {
+             test = test + 3;
+             console.log('test: ' + test);
+        }                
+                     
+        function f2() {
+             test = test - 1;
+             console.log('test: ' + test);
+        }                
+           */     
+	/*
+	 * Generates the autocomplete field for the emergency selection:
+	 *
+	function emergencyQuery()
+	{
+	    $emergencies = sparqlQuery('SELECT DISTINCT ?uri ?label WHERE {
+	        GRAPH <http://hxl.humanitarianresponse.info/data/reference/fts-emergencies-2012> {
+	            ?uri hxl:commonTitle ?label .
+	        }
+	    } ORDER BY ?label');
+	    
+	    $label = "label";
+	    $uri   = "uri";
+	
+		// we'll return the whole JS code here - if we only return the array of emergencies, PHP renders the array as a table instead of simply passing on the string :/
+		$elist = '
+		
+		/*
+		 * Provides the autocomplete function with an array of emergency names itself
+		 * provided by the emergency query php function.
+		 *
+		
+		var emergencies = [';
+		
+		foreach($emergencies as $emergency){
+		    $elist .= ' { value: "'.$emergency->$label.'", uri: "'.$emergency->$uri.'"}, ' ;                 
+		}
+		
+		
+		// we're customizing the jQuery UI autocomplete a bit
+		// see http://jqueryui.com/demos/autocomplete/ for the documentation
+		$elist .= ' {} ]
+		
+		
+		$("#emergencies").autocomplete({
+			source: function(request, response) {
+		       	var results = $.ui.autocomplete.filter(emergencies, request.term);
+		     	
+	    		response(results);
+            },
+            select: function(event, ui) {
+                $("#emergencyuri").html("URI for this emergency: <a href=\'"+ui.item.uri+"\' target=\'_blank\'>"+ui.item.uri+"</a>");
+                $("#emergency").val(ui.item.uri);
+            }
+        }).data("autocomplete")._renderItem = function(ul, item) {
+            return $("<li></li>")
+            .data("item.autocomplete", item)
+            .append("<a>" + item.label + "<br /></a>")
+            .appendTo(ul);
+        };
+    
+	    ';
+	    
+	    return $elist;
+	}    
+    */
+    </script>
+    
+                
+    
+    <!-- Sparklines -->
+    <script type="text/javascript">
+        initSparklinesCategories();  
+        initSparklines();  
+    </script>                    
+                            
+    <!--
+<span id="1" href="" >link1</span>
+<span id="2" hhref="" >link2</span>
+
+  <table id="result" border=1>
+  <thead/>
+     <tbody/>
+  </table>
+-->
 </body>
 </html>
 
