@@ -1,7 +1,7 @@
  <div id="slide1" class="slide" style="width: 900px;" style="margin: 0 auto;" >
 	<div id="slideContainer1" >
 		<div style="width: 860px; margin: 20px auto;" >
-			<h3>Burkina Faso crisis - overview</h3>
+			<h3>Burkina Faso crisis - overview</h3><!-- must be data driven -->
 			<br />
 			<br />
 			<!-- SPARKLINE BLOC 1 -->
