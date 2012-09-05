@@ -6,9 +6,6 @@
  */
 ?>
 
-                    <!--<a href="javascript:void(0)" onclick="PreviousSlide()" id="PreviousButton" style="margin-right: 10px;">
-          <div style="text-align: left;" >          <div style="width: 800px;" >
--->
 <div id="slide2" class="slide" style="width: 900px;" style="margin: 0 auto;" >
     <div id="slideContainer2" >
         <div style="margin: 20px;" >
@@ -19,16 +16,7 @@
             <h3 id="detailedViewTitle" >Burkina Faso crisis - details of</h3>
             <br />
             <table>
-                <tr><!--
-                    <td>
-            <form style=" margin-bottom: 25px; padding: 0;" action="" >
-                <select class="btn" name="populations" style="margin-bottom: 0; text-align: left; font-size: 18px; font-weight: bold; height: 34px;" >
-                    <option value="aff_pop"><h2>Burkina Faso</h2></option>
-                    <option value="dis_pop">Mali</option>
-                    <option value="all_pop">* All countries</option>
-                </select>    
-            </form>
-                    </td>-->
+                <tr>
                     <td>
             <form style=" margin-bottom: 25px; padding: 0;" action="" >Location (all admin level and camps):<br />
                 <select class="btn" name="populations" style="margin-bottom: 0; text-align: left;" >

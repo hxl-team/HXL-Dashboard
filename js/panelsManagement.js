@@ -27,12 +27,11 @@ function CurrentMargin() {
 
 
 function NextSlide(event) {
-    console.log("NEXT");
     unBindThem();
    
     // get the current margin and subtract the slide width
     var newMargin = CurrentMargin() - SlideWidth;
-    console.log(newMargin);
+    //console.log(newMargin);
     $("#slideContainer2").show('slow');
     
     //
@@ -63,7 +62,6 @@ function NextSlide(event) {
 }
 
 function LastSlide() {
-    console.log("LAST");
     unBindThem();
    
     // get the current margin and subtract the slide width
@@ -85,7 +83,6 @@ function PrintTime() {
 }
 
 function PreviousSlide(event) {
-    console.log("PREVIOUS");
     unBindThem();
 
     switch(event.id)
@@ -101,7 +98,7 @@ function PreviousSlide(event) {
 
     // get the current margin and subtract the slide width
     var newMargin = CurrentMargin() + SlideWidth;
-    console.log(newMargin);
+    //console.log(newMargin);
 
     // slide the wrapper to the right to show the previous panel at the set speed. Then set the nav display on completion of animation.
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindThem(); });

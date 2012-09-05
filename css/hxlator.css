@@ -1629,6 +1629,7 @@ table .span24 {
     margin-bottom: 20px;
     min-height: 20px;
     padding: 19px;
+    behavior: url(PIE.htc);
 }
 .well blockquote {
     border-color: rgba(0, 0, 0, 0.15);

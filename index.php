@@ -24,18 +24,14 @@
         .slide
         {
             width: 900px;
-            /*height: 400px;*/
             overflow: hidden;
             float: left;
         }
        
         /**/
         .center {
-            /*width: 50%;
-            margin: 0px auto;*/
-              width: 100%;
+            width: 100%;
             text-align: center;
-
         }
 
     </STYLE>
@@ -67,6 +63,17 @@
     <!-- Sparklines -->
     <script type='text/javascript' src='js/loadSimpleView.js'></script>
     
+    <script type="text/javascript">
+        var categoriesInfo = new Array();
+        categoriesInfo = getCategoriesInfo ();
+
+        var populationInfo;
+        getPopulationInfo ();
+
+        initSparklinesCategories(categoriesInfo);  
+        initSparklines();  
+    </script>                    
+
     <!-- Country choice -->
     <script type="text/javascript">
         /*******************************************
@@ -74,7 +81,6 @@
          *******************************************/
         function updateData(newCountryUri)
         {
-            //document.getElementById('loader').style.display = "block";
             if (newCountryUri != null) {
 
                 $.ajax({
@@ -91,39 +97,30 @@
                     });    
                 }
 
-                //drawVisualization();
-            
                 // cleaning
                 var div = document.getElementById("currentCountryUri");
                 div.parentNode.removeChild(div);
                 var div = document.getElementById("currentPopulation");
                 div.parentNode.removeChild(div);
-
-            //document.getElementById('loader').style.display = "none";
         }
     </script>
-    
     
     <!--  Buttons over -->
     <script type="text/javascript">
         $(function () { 
-            $("#sourcePopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-            $("#methodPopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-            $("#reportedByPopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#infoPopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
             $("#catPopover1").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
             
-            $("#sourcePopover2").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-            $("#methodPopover2").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-            $("#reportedByPopover2").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#infoPopover2").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
             $("#catPopover2").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
             
-            $("#sourcePopover3").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-            $("#methodPopover3").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-            $("#reportedByPopover3").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#infoPopover3").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
             $("#catPopover3").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
+            
+            $("#infoPopover4").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
+            $("#catPopover4").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
         }); 
     </script>
-    
     
     <!-- Detailed graph -->
     <script type='text/javascript'>
@@ -136,10 +133,6 @@
         data.addColumn('number', 'IDPs (fake)');
         data.addColumn('string', 'title1');
         data.addColumn('string', 'text1');
-        /*
-        data.addColumn('number', 'children');
-        data.addColumn('string', 'title2');
-        data.addColumn('string', 'text2');*/
         data.addRows([
           [new Date(2011, 11 ,1), 3000, undefined, undefined], // add 3 column parameters for another line on the graph
           [new Date(2011, 12 ,10), 4045, undefined, undefined],
@@ -165,7 +158,6 @@
       }
     </script>
     
-    
     <!-- Google map example -->
     <script type="text/javascript">
     var map;
@@ -181,43 +173,18 @@
 
     </script>
     
-       
     <script type="text/javascript">
       // 
       function loadData() { 
-          //alert(document.getElementById('currentCountry').innerHTML);
           updateData();
       }
-      
       
     </script>
     
 </head>
         
-<body><!-- onload="initSparklines()"-->
-<?php
+<body>
 
-    // Server side preparation of the data to be diplayed on client side.
-    // Init step
-    //include_once('sparqlQueries.php');
-    /*
-    $countriesArray = getCountries();
-    $currentCountryUri = $countriesArray[0]['uri'];
-    /*
-    $populationsArray = getCountryPopulation($currentCountryUri);
-    $currentPopulation = $countriesArray[0]['uri'];
-    *
-    //Injecting data into the HTML to retreive it with javaScript
-    
-    echo '<div id="currentCountryUri">'.$currentCountryUri.'</div>';
-    
-    echo '<div id="currentPopulation">';
-    foreach($populationsArray as $row) {
-        echo $row['date'].','.$row['personCount'].';';
-    }
-    echo '</div>';
-*/
-?>
     <div class="navbar container">
         <div class="container">
             <span class="brand"><img src="img/logo.png" /></span>
@@ -230,7 +197,6 @@
             </div>
         </div>
     </div>    
-
 
     <div class="container" style="text-align: left;">
         <a href="https://sites.google.com/site/hxlproject/"><img src="img/hxl-logo-s.png" align="right" /></a><br />
@@ -280,171 +246,5 @@
     		</div>
 	   </div>
     </div>
-    
-        
-        
-        
-    <script type="text/javascript">
-             /*
-             var test;
-        function init() {
-             test = 0;
-             console.log('test: ' + test);
-             var e1 = document.getElementById("1");
-             var e2 = document.getElementById("2");
-            
-             $(e1).bind('click', function(){f1(this);});
-             $(e2).bind('click', function(){f2(this);});
-        }                
-                     
-        function f1() {
-             test = test + 3;
-             console.log('test: ' + test);
-        }                
-                     
-        function f2() {
-             test = test - 1;
-             console.log('test: ' + test);
-        }                
-           */     
-	/*
-	 * Generates the autocomplete field for the emergency selection:
-	 *
-	function emergencyQuery()
-	{
-	    $emergencies = sparqlQuery('SELECT DISTINCT ?uri ?label WHERE {
-	        GRAPH <http://hxl.humanitarianresponse.info/data/reference/fts-emergencies-2012> {
-	            ?uri hxl:commonTitle ?label .
-	        }
-	    } ORDER BY ?label');
-	    
-	    $label = "label";
-	    $uri   = "uri";
-	
-		// we'll return the whole JS code here - if we only return the array of emergencies, PHP renders the array as a table instead of simply passing on the string :/
-		$elist = '
-		
-		/*
-		 * Provides the autocomplete function with an array of emergency names itself
-		 * provided by the emergency query php function.
-		 *
-		
-		var emergencies = [';
-		
-		foreach($emergencies as $emergency){
-		    $elist .= ' { value: "'.$emergency->$label.'", uri: "'.$emergency->$uri.'"}, ' ;                 
-		}
-		
-		
-		// we're customizing the jQuery UI autocomplete a bit
-		// see http://jqueryui.com/demos/autocomplete/ for the documentation
-		$elist .= ' {} ]
-		
-		
-		$("#emergencies").autocomplete({
-			source: function(request, response) {
-		       	var results = $.ui.autocomplete.filter(emergencies, request.term);
-		     	
-	    		response(results);
-            },
-            select: function(event, ui) {
-                $("#emergencyuri").html("URI for this emergency: <a href=\'"+ui.item.uri+"\' target=\'_blank\'>"+ui.item.uri+"</a>");
-                $("#emergency").val(ui.item.uri);
-            }
-        }).data("autocomplete")._renderItem = function(ul, item) {
-            return $("<li></li>")
-            .data("item.autocomplete", item)
-            .append("<a>" + item.label + "<br /></a>")
-            .appendTo(ul);
-        };
-    
-	    ';
-	    
-	    return $elist;
-	}    
-    */
-    </script>
-    
-                
-    
-    <!-- Sparklines -->
-    <script type="text/javascript">
-        initSparklinesCategories();  
-        initSparklines();  
-    </script>                    
-                            
-    <!--
-<span id="1" href="" >link1</span>
-<span id="2" hhref="" >link2</span>
-
-  <table id="result" border=1>
-  <thead/>
-     <tbody/>
-  </table>
--->
 </body>
 </html>
-
-    <!-- Simple graph --
-    <script type='text/javascript'>
-        google.load('visualization', '1', {packages: ['corechart']});
-      
-        /*******************************************
-         * DRAWVISULISATION
-         *******************************************/
-        function drawVisualization() {
-          
-                //alert('draw');
-            // retreiving data
-            var currentCountryUri = document.getElementById('currentCountryUri').innerHTML;
-
-            //alert('currentCountryUri: ' + currentCountryUri);
-            var currentPopulation = Array();
-            currentPopulation[0] = ['Month', 'Affected people'];
-            var currentPopulationDraft = document.getElementById('currentPopulation').innerHTML;
-            var tempArray = currentPopulationDraft.split(";");
-
-            //
-            var j = 1;
-            for (i in tempArray)
-            {
-                if (tempArray[i] == '') {
-                    break;
-                }
-                var tempArray2 = tempArray[i].split(",");
-                currentPopulation[j] = [tempArray2[0], parseInt(tempArray2[1].toString(), 10)];
-                j++;
-            }
-
-
-            var data = google.visualization.arrayToDataTable(currentPopulation);
-            
-            /*
-            // Some raw data (not necessarily accurate)
-            var data = google.visualization.arrayToDataTable([
-            ['Month', 'Affected people',],
-            ['nov 2011',  115],
-            ['dec 2011',  135],
-            ['jan 2012',  157],
-            ['feb 2012',  139],
-            ['mar 2012',  135],
-            ['may 2012',  150],
-            ['jun 2012',  129],
-            ['jul 2012',  100]
-            ]);
-    */
-            var options = {
-            title : 'IDPs count in Burkina Faso 2011 2012',
-            vAxis: {title: "persons"},
-            vAxis: {baseline: 0},
-            hAxis: {title: "Month"},
-            seriesType: "bars",
-            series: {5: {type: "line"}}
-            };
-
-            var chart = new google.visualization.ComboChart(document.getElementById('chart_div1'));
-            chart.draw(data, options);
-        }
-        //google.setOnLoadCallback(drawVisualization);
-
-    </script> -->
