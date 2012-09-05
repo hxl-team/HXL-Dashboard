@@ -171,16 +171,26 @@ function initSparklines() {
 
         // Display
         // Big count
-        $("#lastCount1").html(lastCount1);
-        $("#lastCount2").html(lastCount2);
-        $("#lastCount3").html(lastCount3);
-        $("#lastCount4").html(lastCount4);
+        $("#lastCount1").html(numberWithCommas(lastCount1));
+        $("#lastCount2").html(numberWithCommas(lastCount2));
+        $("#lastCount3").html(numberWithCommas(lastCount3));
+        $("#lastCount4").html(numberWithCommas(lastCount4));
 
         // Date
-        $("#date1").html(date1);
-        $("#date2").html(date2);
-        $("#date3").html(date3);
-        $("#date4").html(date4);
+        dsplit1 = date1.split("-");
+        dsplit2 = date2.split("-");
+        dsplit3 = date3.split("-");
+        dsplit4 = date4.split("-");
+        
+        dateOk1 = new XDate(dsplit1[0], dsplit1[1], dsplit1[2]);
+        dateOk2 = new XDate(dsplit2[0], dsplit2[1], dsplit2[2]);
+        dateOk3 = new XDate(dsplit3[0], dsplit3[1], dsplit3[2]);
+        dateOk4 = new XDate(dsplit4[0], dsplit4[1], dsplit4[2]);
+
+        $("#date1").html(dateOk1.toString("dd MMM yyyy"));
+        $("#date2").html(dateOk2.toString("dd MMM yyyy"));
+        $("#date3").html(dateOk3.toString("dd MMM yyyy"));
+        $("#date4").html(dateOk4.toString("dd MMM yyyy"));
 
         // Popups Info
         var infoPop1 = document.getElementById("infoPopover1");

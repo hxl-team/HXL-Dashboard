@@ -62,8 +62,15 @@
     
     <!-- Sparklines -->
     <script type='text/javascript' src='js/loadSimpleView.js'></script>
+
+    <script type='text/javascript' src='js/xdate.js'></script>
     
     <script type="text/javascript">
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+
         var categoriesInfo = new Array();
         categoriesInfo = getCategoriesInfo ();
 
