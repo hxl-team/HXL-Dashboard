@@ -34,7 +34,7 @@ function NextSlide(event) {
     //console.log(newMargin);
     $("#slideContainer2").show('slow');
     
-    //
+    /*
     var titleEnd ='';
     switch(event.id)
     {
@@ -54,7 +54,7 @@ function NextSlide(event) {
             titleEnd = 'Displaced population';
     }
     document.getElementById('detailedViewTitle').innerHTML = 'Burkina Faso crisis - details of ' + titleEnd;
-    
+    */
     // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
         bindThem();
@@ -119,10 +119,10 @@ function bindThem() {
     var btnPrevious = document.getElementById("PreviousButton");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
-    $(btnNext1).bind('click', function(){NextSlide(this);});
-    $(btnNext2).bind('click', function(){NextSlide(this);});
-    $(btnNext3).bind('click', function(){NextSlide(this);});
-    $(btnNext4).bind('click', function(){NextSlide(this);});
+    $(btnNext1).bind('click', function(){NextSlide(this); InitLabels(this)});
+    $(btnNext2).bind('click', function(){NextSlide(this); InitLabels(this)});
+    $(btnNext3).bind('click', function(){NextSlide(this); InitLabels(this)});
+    $(btnNext4).bind('click', function(){NextSlide(this); InitLabels(this)});
     $(btnTableView).bind('click', function(){LastSlide(this);});
     // the other way to write it works only for Previous
     btnPrevious.addEventListener("click", PreviousSlide, false);
