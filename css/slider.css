@@ -1,0 +1,29 @@
+
+/* THIS IS THE ACTUAL DISPLAY AREA OF THE SLIDERS */
+#container
+{
+    width: 900px;
+    overflow: hidden;
+}
+
+/* SET TO THE TOTAL WIDTH OF ALL DIVS */
+#slider-wrapper
+{
+    width: 2700px;
+}
+
+/* THESE ARE THE INDIVIDUAL SLIDE PROPERTIES */
+.slide
+{
+    width: 900px;
+    overflow: hidden;
+    float: left;
+}
+
+/**/
+.center {
+    width: 100%;
+    text-align: center;
+}
+
+    
