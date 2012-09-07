@@ -56,7 +56,7 @@
                 </tr>
                     <td style="vertical-align: top;" >
                         <div style="margin: 10px 10px 10px 0px;">
-                            <form style="margin: 0px 0px 10px 0px;" action="" >Location (all admin level and camps):<br />
+                            <form style="margin: 0px 0px 10px 0px;" action="" >Location (all admin levels and camps):<br />
                                 <select class="btn" name="populations" style="width: 250px; text-align: left;" >
                                     <option value="aff_pop">Deou</option>
                                     <option value="dis_pop">Dibissi</option>

@@ -123,7 +123,7 @@
 							<td colspan="2">
 								<div style="text-align: right;" >
 									as of <span id="date4" ></span> |
-									<a id="infoPopover4" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
+									<a id="infoPopover4" data-content="test" rel="popover" href="#" data-original-title="Info" >Info</a> | 
 									<button id="NextButton4" >More >></button>
 								</div> 
 							</td>

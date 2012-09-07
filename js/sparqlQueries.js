@@ -14,7 +14,7 @@ function getCategoriesInfo () {
 	$query += '?subClass <http://www.w3.org/2000/01/rdf-schema#comment> ?subClassDefinition . ';
 	$query += '}';
 
-	console.log($query);
+	//console.log($query);
 				
 	var personCount = new Array();
 	var temp;
@@ -93,7 +93,7 @@ function getPopulationInfo () {
 	$query += '} ';
 	$query += 'ORDER BY ASC(?date)';
 
-	console.log($query);
+	//console.log($query);
 
 	$.ajax({
 		url: 'http://hxl.humanitarianresponse.info/sparql',

@@ -3,13 +3,13 @@ var SlideWidth = 900;
 var SlideSpeed = 900;
 
 $(document).ready(function () {
-    
     $("#slideContainer1").show('slow');
     $("#slideContainer2").hide('slow');
     $("#slideContainer3").hide('slow');
-    drawChart(); 
-    initializeMap();
-    
+
+    initSparklinesCategories(categoriesInfo);  
+    initSparklines();  
+
 });
 
 function CurrentMargin() {
@@ -25,40 +25,21 @@ function CurrentMargin() {
     return parseInt(currentMargin);
 }
 
-
 function NextSlide(event) {
+    InitLabels(event.id);
+
     unBindThem();
    
-    // get the current margin and subtract the slide width
     var newMargin = CurrentMargin() - SlideWidth;
-    //console.log(newMargin);
     $("#slideContainer2").show('slow');
     
-    /*
-    var titleEnd ='';
-    switch(event.id)
-    {
-        case 'NextButton1':
-            titleEnd = 'Displaced population';
-            break;
-        case 'NextButton2':
-            titleEnd = 'Refugees and asylum seekers';
-            break;
-        case 'NextButton3':
-            titleEnd = 'IDPs';
-            break;
-        case 'NextButton4':
-            titleEnd = 'Others of concern';
-            break;
-        default:
-            titleEnd = 'Displaced population';
-    }
-    document.getElementById('detailedViewTitle').innerHTML = 'Burkina Faso crisis - details of ' + titleEnd;
-    */
     // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
         bindThem();
     });
+
+    drawChart(); 
+    initializeMap();
 }
 
 function LastSlide() {
@@ -66,7 +47,6 @@ function LastSlide() {
    
     // get the current margin and subtract the slide width
     var newMargin = CurrentMargin() - SlideWidth;
-    console.log(newMargin);
     $("#slideContainer3").show('slow');
     
     // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
@@ -95,14 +75,11 @@ function PreviousSlide(event) {
             break;
     }
     
-
     // get the current margin and subtract the slide width
     var newMargin = CurrentMargin() + SlideWidth;
-    //console.log(newMargin);
 
     // slide the wrapper to the right to show the previous panel at the set speed. Then set the nav display on completion of animation.
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindThem(); });
-    
 }
 
 // Function to add event listeners to the sliders
@@ -119,7 +96,7 @@ function bindThem() {
     var btnPrevious = document.getElementById("PreviousButton");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
-    $(btnNext1).bind('click', function(){NextSlide(this); InitLabels(this)});
+    $(btnNext1).bind('click', function(){NextSlide(this)});//; InitLabels(this)});
     $(btnNext2).bind('click', function(){NextSlide(this); InitLabels(this)});
     $(btnNext3).bind('click', function(){NextSlide(this); InitLabels(this)});
     $(btnNext4).bind('click', function(){NextSlide(this); InitLabels(this)});
