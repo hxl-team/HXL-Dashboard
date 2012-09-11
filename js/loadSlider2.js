@@ -279,6 +279,7 @@ function drawChart(catChoiceLocal) {
         }
         }
         }
+        }
     }
 
 
