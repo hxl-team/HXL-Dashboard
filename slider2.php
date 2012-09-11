@@ -21,13 +21,13 @@
                         <span id="detailedViewTitle" style="font-size: 18px; line-height: 27px; color: inherit; font-weight: bold; margin: 0; text-rendering: optimizelegibility;" ></span>
                     </td>
                     <td>
-                        <form name="catForm" action="" style="margin: 0px 0px 10px 0px;">
-                            <select class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                <option value="dis_pop">Displaced population</option>
+                        <form name="catForm" action="" onchange="refresh()" style="margin: 0px 0px 10px 0px;">
+                            <select id="catForm" class="btn" name="populations" style="width: 250px; text-align: left;" >
+                                <!--<option value="dis_pop">Displaced population</option>
                                 <option value="ref_pop">Refugees and asylum seekers</option>
                                 <option value="idp_pop">Internally displaced population</option>
                                 <option value="oth_pop">Others of concern</option>
-                                <!--<option value="nod_pop">Non-displaced population</option>-->
+                                <option value="nod_pop">Non-displaced population</option>-->
                             </select>
                         </form>
                     </td>
@@ -56,39 +56,29 @@
                 </tr>
                     <td style="vertical-align: top;" >
                         <div style="margin: 10px 10px 10px 0px;">
-                            <form style="margin: 0px 0px 10px 0px;" action="" >Location (all admin levels and camps):<br />
-                                <select class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                    <option value="aff_pop">Deou</option>
-                                    <option value="dis_pop">Dibissi</option>
+                            <form name="locForm" style="margin: 0px 0px 10px 0px;" action="" >Location (all admin levels and camps):<br />
+                                <select id="locForm" onchange="refresh()" class="btn" name="locations" style="width: 250px; text-align: left;" >
                                     <option value="all_pop">* All camps</option>
                                 </select>    
                             </form>
-                            <form action="" style="margin: 0px 0px 10px 0px;">Sex categories:<br />
-                                <select class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                    <option value="dis_pop">Male</option>
-                                    <option value="idp_pop">Female</option>
-                                    <option value="nod_pop">Inter sex</option>
+                            <form name="sexForm" onchange="refresh()" style="margin: 0px 0px 10px 0px;">Sex categories:<br />
+                                <select id="sexForm" class="btn" name="sex" style="width: 250px; text-align: left;" >
+                                    <option value="all_pop">* All sex categories</option>
                                 </select>
                             </form>
-                            <form action="" style="margin: 0px 0px 10px 0px;">Age groups:<br />
-                                <select class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                    <option value="dis_pop">0-4</option>
-                                    <option value="idp_pop">5-10</option>
-                                    <option value="nod_pop">10-20</option>
+                            <form name="ageForm" onchange="refresh()" style="margin: 0px 0px 10px 0px;">Age groups:<br />
+                                <select id="ageForm" class="btn" name="age" style="width: 250px; text-align: left;" >
+                                    <option value="all_pop">* All ages</option>
                                 </select>
                             </form>
-                            <form action="" style="margin: 0px 0px 10px 0px;">Country of origin:<br />
-                                <select class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                    <option value="dis_pop">Mali</option>
-                                    <option value="idp_pop">Internationally displaced population</option>
-                                    <option value="nod_pop">Non-displaced population</option>
+                            <form name="originForm" onchange="refresh()" style="margin: 0px 0px 10px 0px;">Country of origin:<br />
+                                <select id="originForm" class="btn" name="origin" style="width: 250px; text-align: left;" >
+                                    <option value="all_pop">* All countries</option>
                                 </select>
                             </form>
-                            <form action="" style="margin: 0px 0px 0px 0px;">Data source:<br />
-                                <select class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                    <option value="dis_pop">UNHCR</option>
-                                    <option value="idp_pop">Internationally displaced population</option>
-                                    <option value="nod_pop">Non-displaced population</option>
+                            <form name="sourceForm" onchange="refresh()" style="margin: 0px 0px 0px 0px;">Data source:<br />
+                                <select id="sourceForm" class="btn" name="source" style="width: 250px; text-align: left;" >
+                                    <option value="all_pop">* All sources</option>
                                 </select>
                             </form>
                             <button id="tableView" style="margin: 20px 0px 0px 80px;" >Table view >></button>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>HXL Dashboard</title>
+	<title>HXL Dashboard (prototype)</title>
 	<meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
     <link rel="shortcut icon" href="img/favicon.ico">
     <link href="css/hxlator.css" rel="stylesheet"> 
@@ -23,12 +23,14 @@
     <!-- Google map example -->
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false"></script>
     
+    <script type="text/javascript" src="DataTables-1.9.3/media/js/jquery.dataTables.js"></script>
+
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>
     
     <!-- ContentLoad -->
-    <script type='text/javascript' src='js/loadOverView.js'></script>
-    <script type='text/javascript' src='js/loadDetailedView.js'></script>
+    <script type='text/javascript' src='js/loadSlider1.js'></script>
+    <script type='text/javascript' src='js/loadSlider2.js'></script>
 </head>
         
 <body>
@@ -47,7 +49,7 @@
     </div> 
     <div class="container" style="text-align: left;">
         <a href="https://sites.google.com/site/hxlproject/"><img src="img/hxl-logo-s.png" align="right" /></a><br />
-            <h2>HXL Dashboard</h2>
+            <h2>HXL Dashboard (prototype)</h2>
         
      	<br />
         <br />

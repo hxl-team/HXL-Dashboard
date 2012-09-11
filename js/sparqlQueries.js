@@ -6,7 +6,7 @@ function getCategoriesInfo () {
 
 	var jsonObject = new Array();
 
-	$query = 'SELECT ?classLabel ?classDefinition ?subClassLabel ?subClassDefinition WHERE { ';
+	$query = 'SELECT ?classLabel ?classDefinition ?subClassLabel ?subClassDefinition WHERE {';
 	$query += '<http://hxl.humanitarianresponse.info/ns/#Displaced> <http://www.w3.org/2004/02/skos/core#prefLabel> ?classLabel .  ';
 	$query += '<http://hxl.humanitarianresponse.info/ns/#Displaced> <http://www.w3.org/2000/01/rdf-schema#comment> ?classDefinition . ';
 	$query += '?subClass <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://hxl.humanitarianresponse.info/ns/#Displaced> .';
@@ -46,29 +46,13 @@ function getCategoriesInfo () {
 }
 
 function getPopulationInfo () {
-/* old
-	$query = 'SELECT DISTINCT ?population ?graph ?date ?personCount ?method ?sourceName ?reportedBy ?type WHERE {';
-	$query += '?a <http://hxl.humanitarianresponse.info/ns/#atLocation> <http://hxl.humanitarianresponse.info/datatest/locations/apl/bfa/BFA> .';
-	$query += '?population <http://hxl.humanitarianresponse.info/ns/#atLocation> ?a .';
-	$query += 'GRAPH ?graph {';
-	$query += '?population <http://hxl.humanitarianresponse.info/ns/#personCount> ?personCount .';
-	$query += '?population <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type .';
-	$query += '?population <http://hxl.humanitarianresponse.info/ns/#method> ?method .';
-	$query += '?population <http://hxl.humanitarianresponse.info/ns/#source> ?source .';
-	$query += '?graph <http://hxl.humanitarianresponse.info/ns/#validityStart> ?date .';
-	$query += '?graph <http://hxl.humanitarianresponse.info/ns/#reportedBy> ?reporterUri .';
-	$query += '}';
-	$query += '?source <http://hxl.humanitarianresponse.info/ns/#orgDisplayName> ?sourceName .';
-	$query += '?reporterUri <http://xmlns.com/foaf/0.1/Member_of> ?reporter .';
-	$query += '?reporter <http://hxl.humanitarianresponse.info/ns/#orgDisplayName> ?reportedBy .';
-	$query += '?graph <http://hxl.humanitarianresponse.info/ns/#validityStart> ?date .';
-	$query += '} ';
-	$query += 'ORDER BY ASC(?date)';
-*/
 
     // Later on, it will be necesary the input country to be a variable (ex: bfa)
-	$query = 'SELECT DISTINCT ?population ?graph ?date ?countryDisplay ?personCount ?sexDisplay  ?ageDisplay ?methodDisplay ?sourceDisplay ?reportedByDisplay ?type WHERE {';
-	$query += '<http://hxl.humanitarianresponse.info/datatest/locations/admin/bfa/BFA> <http://hxl.humanitarianresponse.info/ns/#featureName> ?countryDisplay .';
+	$query = 'SELECT DISTINCT ?population ?graph ?date ?countryDisplay ?countryPCode ?regionDisplay ?provinceDisplay ?departementDisplay ?campDisplay ?personCount ?sexDisplay ?ageGroup ?ageDisplay ?nationalityDisplay ?nationality ?methodDisplay ?nationalityPCode ?sourceDisplay ?reportedByDisplay ?type ?typeUri WHERE {';
+	$query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> "BFA" .';
+    $query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> ?countryPCode .';
+    $query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#featureName> ?countryDisplay .';
+    $query += '?countryUri <http://www.opengis.net/ont/geosparql#hasGeometry> ?countryGeom .';
 	$query += '?region <http://hxl.humanitarianresponse.info/ns/#atLocation> <http://hxl.humanitarianresponse.info/datatest/locations/admin/bfa/BFA> .';
 	$query += '?province <http://hxl.humanitarianresponse.info/ns/#atLocation> ?region .';
 	$query += '?departement <http://hxl.humanitarianresponse.info/ns/#atLocation> ?province .';
@@ -76,7 +60,7 @@ function getPopulationInfo () {
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#atLocation> ?camp .';
 	$query += 'GRAPH ?graph {';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#personCount> ?personCount .';
-	$query += '?population <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type .';
+	$query += '?population <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?typeUri .';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#method> ?methodDisplay .';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#source> ?source .';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#SexCategory> ?sexCategory .';
@@ -85,6 +69,13 @@ function getPopulationInfo () {
 	$query += '?graph <http://hxl.humanitarianresponse.info/ns/#validityStart> ?date .';
 	$query += '?graph <http://hxl.humanitarianresponse.info/ns/#reportedBy> ?reporterUri .';
 	$query += '}';
+	$query += '?typeUri <http://www.w3.org/2004/02/skos/core#prefLabel> ?type .';
+	$query += '?camp <http://hxl.humanitarianresponse.info/ns/#featureName> ?campDisplay .';
+	$query += '?departement <http://hxl.humanitarianresponse.info/ns/#featureName> ?departementDisplay .';
+    $query += '?province <http://hxl.humanitarianresponse.info/ns/#featureName> ?provinceDisplay .';
+    $query += '?region <http://hxl.humanitarianresponse.info/ns/#featureName> ?regionDisplay .';
+    $query += '?nationality <http://hxl.humanitarianresponse.info/ns/#featureName> ?nationalityDisplay .';
+    $query += '?nationality <http://hxl.humanitarianresponse.info/ns/#pcode> ?nationalityPCode .';
 	$query += '?ageGroup <http://hxl.humanitarianresponse.info/ns/#title> ?ageDisplay .';
 	$query += '?source <http://hxl.humanitarianresponse.info/ns/#orgDisplayName> ?sourceDisplay .';
 	$query += '?sexCategory <http://hxl.humanitarianresponse.info/ns/#title> ?sexDisplay .';

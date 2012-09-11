@@ -25,8 +25,8 @@ function CurrentMargin() {
     return parseInt(currentMargin);
 }
 
-function NextSlide(event) {
-    InitLabels(event.id);
+function NextSlide(eventId) {
+    InitLabels(eventId);
 
     unBindThem();
    
@@ -38,7 +38,7 @@ function NextSlide(event) {
         bindThem();
     });
 
-    drawChart(); 
+    drawChart(catChoice); 
     initializeMap();
 }
 
@@ -53,6 +53,14 @@ function LastSlide() {
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
         bindThem();
     });
+
+
+
+
+
+
+    $('#table_id').dataTable();
+
 }
 
 function PrintTime() {
@@ -96,10 +104,10 @@ function bindThem() {
     var btnPrevious = document.getElementById("PreviousButton");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
-    $(btnNext1).bind('click', function(){NextSlide(this)});//; InitLabels(this)});
-    $(btnNext2).bind('click', function(){NextSlide(this); InitLabels(this)});
-    $(btnNext3).bind('click', function(){NextSlide(this); InitLabels(this)});
-    $(btnNext4).bind('click', function(){NextSlide(this); InitLabels(this)});
+    $(btnNext1).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
+    $(btnNext2).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
+    $(btnNext3).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
+    $(btnNext4).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
     $(btnTableView).bind('click', function(){LastSlide(this);});
     // the other way to write it works only for Previous
     btnPrevious.addEventListener("click", PreviousSlide, false);

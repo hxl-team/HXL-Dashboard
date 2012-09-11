@@ -17,17 +17,43 @@
         <div style="width: 860px; margin: 20px auto;" >
             <h3 id="detailedViewTitle" >Burkina Faso crisis - Table view</h3>
             <br />
-            <table style="width: 850px;" border="1" >
+            <!--<table style="width: 850px;" border="1" >
                 <tr>
-                    <td>
-            <p>
-                <br />
-                <br />
-                <br />
-            </p>
+                    <td>test1
+                    </td>
+                    <td>test2
+                    </td>
+                </tr>
+                <tr>
+                    <td>test3
+                    </td>
+                    <td>test4
                     </td>
                 </tr>
             </table>
+        -->
+            <table id="table_id">
+    <thead>
+        <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+            <th>etc</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Row 1 Data 1</td>
+            <td>Row 1 Data 2</td>
+            <td>etc</td>
+        </tr>
+        <tr>
+            <td>Row 2 Data 1</td>
+            <td>Row 2 Data 2</td>
+            <td>etc</td>
+        </tr>
+    </tbody>
+</table>
+
             <div id="" style="margin: 10px 5px 10px 10px; text-align: center;" >
                 <button>XLS</button>
                 <button>GML</button>
