@@ -1,52 +1,34 @@
-
-
-//var country = "Deou";
-var geocoder;
-
-
-
-/* Google map example */
+/*
+ * Display of the map showing the current location
+ */
 var map;
-
 function initializeMap() {
 
-var myLatlng = new google.maps.LatLng(1.757434,15.2954399);
 
+    map = new L.Map('map').setView([12.367838, -1.530247], 13);
+    var googleLayer    = new L.Google('ROADMAP');
+    map.addLayer(googleLayer);
 
-    var mapOptions = {
-      center: new google.maps.LatLng(1.557625,15.2817),
-      zoom: 6,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-    
+    //L.marker([51.5, -0.09]).addTo(map);
 
-geocoder = new google.maps.Geocoder();
+    var circle = new L.Circle([12.367838, -1.530247], 500, {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+    });//.addTo(map);
+    map.addLayer(circle);
 
-//console.log("smallestGeoZone: " + smallestGeoZone);
-    geocoder.geocode( {'address' : smallestGeoZone}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-        map.setCenter(results[0].geometry.location);
-    }
-
-var marker = new google.maps.Marker({
-    position: myLatlng,
-    title:"Hello World!"
-});
-
-// To add the marker to the map, call setMap();
-marker.setMap(map);
-
-});
+    L.polygon([
+    [12.367838, -1.530247],
+    [11.367838, -1.430247],
+    [12.367838, -1.330247]
+    ]).addTo(map);
 
 }
 
-/*  */
-function loadData() { 
-  updateData();
-}
-
-
+/*
+ * Load the content from the variables from slide 1 to the HTML depending on the chosen category.
+ */
 var catChoice;
 var locChoice;
 var sexChoice;
@@ -60,9 +42,8 @@ function InitLabels(buttonId) {
     ageChoice = 0; 
     originChoice = 0; 
     sourceChoice = 0; 
-    // Display
+
     // page title
-   // var popCategory = '';
     $("#detailedViewTitle").html('Detailed view > ' + populationInfo.results.bindings[0]['countryDisplay'].value + ' > ');
     switch(buttonId)
     {
@@ -107,7 +88,7 @@ function InitLabels(buttonId) {
         sourceChoice = document.sourceForm.source.options.selectedIndex;
     }
 
-    // Fill dd lists from the query.
+    // Load location list
     var tempArray = new Array();
     $('#locForm').empty();
     $('#locForm').append('<option value="all_locations">* All locations</option>');
@@ -129,13 +110,16 @@ function InitLabels(buttonId) {
             tempArray.push(populationInfo.results.bindings[i]['departementDisplay'].value);
         }
     }
+
+    // Current location
     $('#locForm')[0].selectedIndex = locChoice;
     if ($('#locForm')[0].selectedIndex != 0) {
-        smallestGeoZone = $('select#locForm').val();
+        currentGeoZone = $('select#locForm').val();
     } else {
-        smallestGeoZone = biggestGeoZone;
+        currentGeoZone = biggestGeoZone;
     }
 
+    // Load other lists
     var tempArray = new Array();
     $('#sexForm').empty();
     $('#sexForm').append('<option value="all_sex">* All sex categories</option>');
@@ -160,7 +144,6 @@ function InitLabels(buttonId) {
     }
     $('#ageForm')[0].selectedIndex = ageChoice;
 
-
     var tempArray = new Array();
     $('#originForm').empty();
     $('#originForm').append('<option value="all_countries">* All countries</option>');
@@ -173,8 +156,6 @@ function InitLabels(buttonId) {
     }
     $('#originForm')[0].selectedIndex = originChoice;
 
-
-
     var tempArray = new Array();
     $('#sourceForm').empty();
     $('#sourceForm').append('<option value="all_sources">* All sources</option>');
@@ -186,29 +167,27 @@ function InitLabels(buttonId) {
         }
     }
     $('#sourceForm')[0].selectedIndex = sourceChoice;
-
-
-
 }
 
-
+/* Refresh the content when a new filter is triggered */
 function refresh() { 
     InitLabels("NextButton" + ((document.catForm.populations.options.selectedIndex * 1) + 1));
     drawChart(document.catForm.populations.options.selectedIndex); 
     initializeMap();
 }
 
-
-/* Detailed graph */
+/*******************
+* Detailed graph 
+******************/
 google.load('visualization', '1', {'packages':['annotatedtimeline']});
-
-// its timely display
+var tableViewData;
 function drawChart(catChoiceLocal) {
 
     var count = new Array();
     var dateArray = new Array();
-
     var data = new google.visualization.DataTable();
+    tableViewData = new Array();
+
     data.addColumn('date', 'Date');
     data.addColumn('number', 'IDPs (fake)');
     data.addColumn('string', 'title1');
@@ -273,6 +252,9 @@ function drawChart(catChoiceLocal) {
             }
             count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
 
+            // Storing the result of the filtering for the table view.
+            tableViewData[graphIndex] = [dateArray[graphIndex], count[graphIndex] * 1];
+
         // end filters
         }
         }
@@ -290,22 +272,6 @@ function drawChart(catChoiceLocal) {
 
     }
     data.addRows(tempArray); 
-
-/*
-    // Drawing
-   // data.addRows([
-      [new Date(2011, 11 ,1), 2000, undefined, undefined], // add 3 column parameters for another line on the graph
-      [new Date(2011, 12 ,10), 4045, undefined, undefined],
-      [new Date(2012, 1 ,20), 5022, undefined, undefined],
-      [new Date(2012, 2 ,25), 5284, undefined, undefined],
-      [new Date(2012, 3 ,1), 4045, undefined, undefined],
-      [new Date(2012, 4 ,25), 5022, undefined, undefined],
-      [new Date(2012, 5 ,10), 5284, undefined, undefined],
-      [new Date(2012, 6 ,25), 3476, undefined, undefined],       
-      //new Date(2012, 4 ,1), 3476, 'Conflict easing','At ceasefire a first wave of people leave the camp'],
-
-      [new Date(2012, 5 ,1), 3322, undefined, undefined]
-    ]);*/
 
     var options = {
       title : 'IDPs count in Burkina Faso Deou 2011 2012',

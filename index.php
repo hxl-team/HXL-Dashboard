@@ -20,10 +20,26 @@
     <script src="js/bootstrap-tooltip.js"></script>  
     <script src="js/bootstrap-popover.js"></script> 
     
-    <!-- Google map example -->
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false"></script>
-    
-    <!--<script type="text/javascript" src="DataTables-1.9.3/media/js/jquery.dataTables.js"></script>-->
+    <!-- Google map example
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false"></script> -->
+
+
+    <!-- Map -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="css/leaflet.ie.css" />
+    <![endif]-->
+    <script src="js/leaflet.js"></script>
+    <script src='js/leaflet-google.js'></script>
+    <script src='http://maps.google.com/maps/api/js?sensor=false&amp;v=3.2'></script>
+
+    <!-- DataTables -->
+    <script type="text/javascript" src="datatables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="datatables/tableTools/js/TableTools.js"></script>
+    <script type="text/javascript" src="datatables/tableTools/js/ZeroClipboard.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/dataTables.bootstrap.js"></script>
+      <link href="datatables/css/demo_page.css" rel="stylesheet">
+      <link href="datatables/css/demo_table.css" rel="stylesheet">
 
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>
@@ -31,6 +47,7 @@
     <!-- ContentLoad -->
     <script type='text/javascript' src='js/loadSlider1.js'></script>
     <script type='text/javascript' src='js/loadSlider2.js'></script>
+    <script type='text/javascript' src='js/loadSlider3.js'></script>
 </head>
         
 <body>

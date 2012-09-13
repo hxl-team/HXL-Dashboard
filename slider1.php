@@ -1,7 +1,12 @@
- <div id="slide1" class="slide" style="width: 900px;" style="margin: 0 auto;" >
+ <?php
+/*
+ * Content of the first slide.
+ */
+?>
+<div id="slide1" class="slide" style="width: 900px;" style="margin: 0 auto;" >
 	<div id="slideContainer1" >
 		<div style="width: 860px; margin: 20px auto;" >
-			<h3 id="overViewTitle" >Overview > </h3><!-- must be data driven -->
+			<h3 id="overViewTitle" ></h3>
 			<br />
 			<br />
 			<!-- SPARKLINE BLOC 1 -->

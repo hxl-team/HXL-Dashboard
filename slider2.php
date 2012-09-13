@@ -1,11 +1,8 @@
 <?php
-
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Content of the second slide.
  */
 ?>
-
 <div id="slide2" class="slide" style="width: 900px;" style="margin: 0 auto;" >
     <div id="slideContainer2" >
         <div style="margin: 20px;" >
@@ -23,11 +20,6 @@
                     <td>
                         <form name="catForm" action="" onchange="refresh()" style="margin: 0px 0px 10px 0px;">
                             <select id="catForm" class="btn" name="populations" style="width: 250px; text-align: left;" >
-                                <!--<option value="dis_pop">Displaced population</option>
-                                <option value="ref_pop">Refugees and asylum seekers</option>
-                                <option value="idp_pop">Internally displaced population</option>
-                                <option value="oth_pop">Others of concern</option>
-                                <option value="nod_pop">Non-displaced population</option>-->
                             </select>
                         </form>
                     </td>
@@ -45,9 +37,9 @@
             <table style="width: 860px;" >
                 <tr>
                     <td colspan="2" width="620" style="vertical-align: top;" >
-                        <div id="chart_div2" style="width: 850px; height: 350px; margin: 10px 20px 20px 0px;" >
+                        <div id="chart_div2" style="width: 850px; height: 350px; margin: 10px 20px 10px 0px;" >
                         </div>
-                        <div id="" style="margin: 10px 5px 10px 10px; text-align: center;" >
+                        <div id="" style="margin: 0px; text-align: center;" >
                             <button>XLS</button>
                             <button>GML</button>
                             <button>CSV</button>                        
@@ -55,8 +47,8 @@
                     </td>
                 </tr>
                     <td style="vertical-align: top;" >
-                        <div style="margin: 10px 10px 10px 0px;">
-                            <form name="locForm" style="margin: 0px 0px 10px 0px;" action="" >Location (all admin levels and camps):<br />
+                        <div style="margin: 0px 10px 10px 0px;">
+                            <form name="locForm" style="margin: 20px 0px 10px 0px;" action="" >Location (all admin levels and camps):<br />
                                 <select id="locForm" onchange="refresh()" class="btn" name="locations" style="width: 250px; text-align: left;" >
                                     <option value="all_pop">* All camps</option>
                                 </select>    
@@ -81,11 +73,11 @@
                                     <option value="all_pop">* All sources</option>
                                 </select>
                             </form>
-                            <button id="tableView" style="margin: 20px 0px 0px 80px;" >Table view >></button>
+                            <button id="goToTableView" style="margin: 20px 0px 0px 80px;" >Table view >></button>
                         </div>
                     </td>  
                     <td>
-                        <div id="map_canvas" style="width: 560px; height: 300px; margin: 20px; border: 1px solid black;">
+                        <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 1px solid black;">
                         </div>
                     </td>
                 </tr>

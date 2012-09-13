@@ -1,17 +1,30 @@
 
+var categoriesInfo;
+var categoriesLabels;
+categoriesInfo = getCategoriesInfo ();
+var populationInfo;
+getPopulationInfo ();
+
+/*
+ * Tool for adding a comma for thousands on the row figures.
+ */
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-var categoriesInfo;
-var categoriesLabels;
-categoriesInfo = getCategoriesInfo ();
+/*
+ * Displays the title.
+ */
+function initTitle() {
+    $("#overViewTitle").html('Overview > ' + populationInfo.results.bindings[0]['countryDisplay'].value);
+}
 
-var populationInfo;
-getPopulationInfo ();
+/*
+ * Displays the general or metadata information related to the sparklines.
+ */
+function initSparklinesCategories(categoriesData) {
 
-/*  Buttons over */
-$(function () { 
+    //  Buttons over
     $("#infoPopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
     $("#catPopover1").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
     
@@ -23,65 +36,65 @@ $(function () {
     
     $("#infoPopover4").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
     $("#catPopover4").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
-}); 
-    
-function initSparklinesCategories(categoriesData) {
-    $(function() {        
-        // Display
-        // Category and its popover
-        categoriesLabels = new Array();
-        categoriesLabels.push(categoriesData.results.bindings[0]['classLabel'].value);
-        categoriesLabels.push(categoriesData.results.bindings[0]['subClassLabel'].value);
-        categoriesLabels.push(categoriesData.results.bindings[2]['subClassLabel'].value);
-        categoriesLabels.push(categoriesData.results.bindings[1]['subClassLabel'].value);
 
-        $("#catPopover1").html(categoriesLabels[0]);
-        $("#catPopover2").html(categoriesLabels[1]);
-        $("#catPopover3").html(categoriesLabels[2]);
-        $("#catPopover4").html(categoriesLabels[3]);
+       
+    // Display
+    // Category and its popover
+    categoriesLabels = new Array();
+    categoriesLabels.push(categoriesData.results.bindings[0]['classLabel'].value);
+    categoriesLabels.push(categoriesData.results.bindings[0]['subClassLabel'].value);
+    categoriesLabels.push(categoriesData.results.bindings[2]['subClassLabel'].value);
+    categoriesLabels.push(categoriesData.results.bindings[1]['subClassLabel'].value);
 
-        var el = document.getElementById("catPopover1");
-        for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
-            if (attrs.item(i).nodeName == 'data-content') {
-                attrs.item(i).value = categoriesData.results.bindings[0]['classDefinition'].value
-            }
-            if (attrs.item(i).nodeName == 'data-original-title') {
-                attrs.item(i).value = categoriesData.results.bindings[0]['classLabel'].value
-            }
+    $("#catPopover1").html(categoriesLabels[0]);
+    $("#catPopover2").html(categoriesLabels[1]);
+    $("#catPopover3").html(categoriesLabels[2]);
+    $("#catPopover4").html(categoriesLabels[3]);
+
+    var el = document.getElementById("catPopover1");
+    for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
+        if (attrs.item(i).nodeName == 'data-content') {
+            attrs.item(i).value = categoriesData.results.bindings[0]['classDefinition'].value
         }
-
-        var el = document.getElementById("catPopover2");
-        for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
-            if (attrs.item(i).nodeName == 'data-content') {
-                attrs.item(i).value = categoriesData.results.bindings[0]['subClassDefinition'].value
-            }
-            if (attrs.item(i).nodeName == 'data-original-title') {
-                attrs.item(i).value = categoriesData.results.bindings[0]['subClassLabel'].value
-            }
+        if (attrs.item(i).nodeName == 'data-original-title') {
+            attrs.item(i).value = categoriesData.results.bindings[0]['classLabel'].value
         }
+    }
 
-        var el = document.getElementById("catPopover3");
-        for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
-            if (attrs.item(i).nodeName == 'data-content') {
-                attrs.item(i).value = categoriesData.results.bindings[2]['subClassDefinition'].value
-            }
-            if (attrs.item(i).nodeName == 'data-original-title') {
-                attrs.item(i).value = categoriesData.results.bindings[2]['subClassLabel'].value
-            }
+    var el = document.getElementById("catPopover2");
+    for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
+        if (attrs.item(i).nodeName == 'data-content') {
+            attrs.item(i).value = categoriesData.results.bindings[0]['subClassDefinition'].value
         }
+        if (attrs.item(i).nodeName == 'data-original-title') {
+            attrs.item(i).value = categoriesData.results.bindings[0]['subClassLabel'].value
+        }
+    }
 
-        var el = document.getElementById("catPopover4");
-        for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
-            if (attrs.item(i).nodeName == 'data-content') {
-                attrs.item(i).value = categoriesData.results.bindings[1]['subClassDefinition'].value
-            }
-            if (attrs.item(i).nodeName == 'data-original-title') {
-                attrs.item(i).value = categoriesData.results.bindings[1]['subClassLabel'].value
-            }
+    var el = document.getElementById("catPopover3");
+    for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
+        if (attrs.item(i).nodeName == 'data-content') {
+            attrs.item(i).value = categoriesData.results.bindings[2]['subClassDefinition'].value
         }
-    });
+        if (attrs.item(i).nodeName == 'data-original-title') {
+            attrs.item(i).value = categoriesData.results.bindings[2]['subClassLabel'].value
+        }
+    }
+
+    var el = document.getElementById("catPopover4");
+    for (var i=0, attrs=el.attributes, l=attrs.length; i<l; i++) {
+        if (attrs.item(i).nodeName == 'data-content') {
+            attrs.item(i).value = categoriesData.results.bindings[1]['subClassDefinition'].value
+        }
+        if (attrs.item(i).nodeName == 'data-original-title') {
+            attrs.item(i).value = categoriesData.results.bindings[1]['subClassLabel'].value
+        }
+    }
 }
 
+/*
+ * Load the content from the query to variables and use values to instanciate the sparklines.
+ */
 var count1;
 var count2;
 var count3;
@@ -90,11 +103,10 @@ var dateArray1;
 var dateArray2;
 var dateArray3;
 var dateArray4;
-var smallestGeoZone;
+var currentGeoZone;
 var biggestGeoZone;
 function initSparklines() {
         
-    // Fabricating the data
     var source1 = new Array();
     var source2 = new Array();
     var source3 = new Array();
@@ -129,16 +141,13 @@ function initSparklines() {
     dateArrayFull3 = new Array();
     dateArrayFull4 = new Array();
 
-    // page title
-    //$("#overViewTitle").html($("#overViewTitle").html() + populationInfo.results.bindings[0]['countryDisplay'].value);
-
-smallestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+//
 biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
 
     var currentDate = '';
     var graphIndex = -1;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-
 
         // parsing by date
         if (currentDate != populationInfo.results.bindings[i]['date'].value) {
@@ -150,7 +159,7 @@ biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
             count4[graphIndex] = 0;
         }
 
-        switch(populationInfo.results.bindings[i]['type'].value) 
+        switch(populationInfo.results.bindings[i]['typeUri'].value) 
         {
             case "http://hxl.humanitarianresponse.info/ns/#RefugeesAsylumSeekers":
                 date2 = populationInfo.results.bindings[i]['date'].value;
@@ -162,10 +171,7 @@ biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
                 date4 = populationInfo.results.bindings[i]['date'].value;
                 break;
         }
-/*
-if (populationInfo.results.bindings[i]['ageDisplay'].value == "Ages 5 to 11")
-console.log("---" + populationInfo.results.bindings[i]['population'].value);
-  */          
+
         // Getting the main graph count and date, the main source, method and reported by
         count1[graphIndex] = parseInt(count1[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
         dateArray1[graphIndex] = new Date(populationInfo.results.bindings[i]['date'].value);

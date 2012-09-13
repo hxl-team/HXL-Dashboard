@@ -7,6 +7,7 @@ $(document).ready(function () {
     $("#slideContainer2").hide('slow');
     $("#slideContainer3").hide('slow');
 
+    initTitle();  
     initSparklinesCategories(categoriesInfo);  
     initSparklines();  
 
@@ -28,14 +29,14 @@ function CurrentMargin() {
 function NextSlide(eventId) {
     InitLabels(eventId);
 
-    unBindThem();
+    unBindButtonsEvents();
    
     var newMargin = CurrentMargin() - SlideWidth;
     $("#slideContainer2").show('slow');
     
     // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
-        bindThem();
+        bindButtonsEvents();
     });
 
     drawChart(catChoice); 
@@ -43,7 +44,7 @@ function NextSlide(eventId) {
 }
 
 function LastSlide() {
-    unBindThem();
+    unBindButtonsEvents();
    
     // get the current margin and subtract the slide width
     var newMargin = CurrentMargin() - SlideWidth;
@@ -51,16 +52,10 @@ function LastSlide() {
     
     // slide the wrapper to the left to show the next panel at the set speed. Then set the nav display on completion of animation.
     $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () {
-        bindThem();
+        bindButtonsEvents();
     });
 
-
-
-
-
-
-    $('#table_id').dataTable();
-
+    LoadTableView();
 }
 
 function PrintTime() {
@@ -71,7 +66,7 @@ function PrintTime() {
 }
 
 function PreviousSlide(event) {
-    unBindThem();
+    unBindButtonsEvents();
 
     switch(event.id)
     {
@@ -87,20 +82,15 @@ function PreviousSlide(event) {
     var newMargin = CurrentMargin() + SlideWidth;
 
     // slide the wrapper to the right to show the previous panel at the set speed. Then set the nav display on completion of animation.
-    $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindThem(); });
+    $("#slider-wrapper").animate({ marginLeft: newMargin }, SlideSpeed, function () { bindButtonsEvents(); });
 }
 
-// Function to add event listeners to the sliders
-function load() {
-    bindThem();
-} 
-
-function bindThem() {
+function bindButtonsEvents() {
     var btnNext1 = document.getElementById("NextButton1");
     var btnNext2 = document.getElementById("NextButton2");
     var btnNext3 = document.getElementById("NextButton3");
     var btnNext4 = document.getElementById("NextButton4");
-    var btnTableView = document.getElementById("tableView");
+    var btnTableView = document.getElementById("goToTableView");
     var btnPrevious = document.getElementById("PreviousButton");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
@@ -114,12 +104,12 @@ function bindThem() {
     btnPrevious2.addEventListener("click", PreviousSlide, false);
 } 
 
-function unBindThem() {
+function unBindButtonsEvents() {
     var btnNext1 = document.getElementById("NextButton1");
     var btnNext2 = document.getElementById("NextButton2");
     var btnNext3 = document.getElementById("NextButton3");
     var btnNext4 = document.getElementById("NextButton4");
-    var btnTableView = document.getElementById("tableView");
+    var btnTableView = document.getElementById("goToTableView");
     var btnPrevious = document.getElementById("PreviousButton");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
@@ -134,4 +124,4 @@ function unBindThem() {
 } 
 
 // Loading the sliders
-document.addEventListener("DOMContentLoaded", load, false);
+document.addEventListener("DOMContentLoaded", bindButtonsEvents, false);
