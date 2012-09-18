@@ -3,7 +3,9 @@
  */
 
 function getCategoriesInfo () {
+
 jQuery.support.cors = true;
+
 	var jsonObject = new Array();
 
 	$query = 'SELECT ?classLabel ?classDefinition ?subClassLabel ?subClassDefinition WHERE {';
@@ -30,7 +32,7 @@ jQuery.support.cors = true;
 		datatype: "json",
 		success: displayData, 
 		error: displayError,
-	    async: false
+	    async: false,
 	});
 
 	function displayError(xhr, textStatus, errorThrown) {
@@ -39,17 +41,25 @@ jQuery.support.cors = true;
 
 	function displayData(data) {
 		if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){
-			jsonObject = jQuery.parseJSON(data);
-		} else {
-			jsonObject = data;//jQuery.parseJSON(data);
-		}
+		jsonObject = jQuery.parseJSON(data);
+	} else {
+		jsonObject = data;//jQuery.parseJSON(data);
+	}
+	/*
+		//console.log("data: " + data);
+		jsonObject = data;//jQuery.parseJSON(data);
+		if (data == null) alert('data is null!');
+		//if (jsonObject == null) alert('sparql query returns null');
+		*/
 	}
 
 	return jsonObject;
 }
 
 function getPopulationInfo () {
+
 jQuery.support.cors = true;
+
     // Later on, it will be necesary the input country to be a variable (ex: bfa)
 	$query = 'SELECT DISTINCT ?population ?graph ?date ?countryDisplay ?countryPCode ?countryUriGeom ?regionDisplay ?provinceDisplay ?departementDisplay ?campDisplay ?personCount ?sexDisplay ?ageGroup ?ageDisplay ?nationalityDisplay ?nationality ?methodDisplay ?nationalityPCode ?sourceDisplay ?reportedByDisplay ?type ?typeUri WHERE {';
 	$query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> "BFA" .';
@@ -114,14 +124,18 @@ jQuery.support.cors = true;
 			populationInfo = jQuery.parseJSON(data);
 		} else {
 			populationInfo = data;//jQuery.parseJSON(data);
-		}
+		}/*
+		populationInfo = data;// jQuery.parseJSON(data);
+		if (data == null) alert('data is null!');
+		//console.log("data: " + data);
+		*/
 	}
 
 
 
 //
 getlocationGeom(populationInfo.results.bindings[0]['countryUriGeom'].value);
-
+//getlocationGeom("http://hxl.humanitarianresponse.info/data/locations/admin/bfa/BFA/geom");
 }
 
 
@@ -129,7 +143,7 @@ getlocationGeom(populationInfo.results.bindings[0]['countryUriGeom'].value);
 var locGeom;
 function getlocationGeom (geomUri) {
 
-//console.log("test");
+console.log("test" + geomUri);
     //var test = "test";
     var request = $.ajax({
       url: "script.php",
@@ -140,7 +154,7 @@ function getlocationGeom (geomUri) {
 
     request.done(function(msg) {
     	locGeom = msg;
-console.log( msg );
+      console.log( msg );
     });
 
     request.fail(function(jqXHR, textStatus) {

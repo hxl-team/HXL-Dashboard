@@ -11,7 +11,13 @@ if (tableViewData == undefined) console.log("undefined");
         "aaData": tableViewData,
         "aoColumns": [
             { "sTitle": "Date" },
-            { "sTitle": "Person/ Familly count" }
+            { "sTitle": "Type of population" },
+            { "sTitle": "Person/ Familly count" },
+            { "sTitle": "Location" },
+            { "sTitle": "Sex" },
+            { "sTitle": "Age" },
+            { "sTitle": "Nationality" },
+            { "sTitle": "Source" }
         ],
            "sDom": 'T<"clear">lfrtip',
         "oTableTools": {

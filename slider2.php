@@ -6,7 +6,17 @@
 <div id="slide2" class="slide" style="width: 900px;" style="margin: 0 auto;" >
     <div id="slideContainer2" >
         <div style="margin: 20px;" >
-            <button id="PreviousButton" ><< Overview</button>
+            <table>
+                <tr>
+                    <td>
+                        <button id="PreviousButton1" style="" ><< Overview</button>
+                    </td>
+                    <td>
+                        <button id="goToTableView1" style="margin-left:670px" >Table view >></button>
+                    </td>
+                </tr>
+            </table>            
+            <br style="clear:both" >
         </div>
         <div style="width: 850px; margin: 20px auto;" >
             <table>
@@ -73,7 +83,7 @@
                                     <option value="all_pop">* All sources</option>
                                 </select>
                             </form>
-                            <button id="goToTableView" style="margin: 20px 0px 0px 80px;" >Table view >></button>
+                            <button id="goToTableView2" style="margin: 20px 0px 0px 80px;" >Table view >></button>
                         </div>
                     </td>  
                     <td>

@@ -2,27 +2,44 @@
  * Display of the map showing the current location
  */
 var map;
+var locationBoundariesLayer;
 function initializeMap() {
 
+    if (map == null) map = L.map('map');
+    map.setView([12.367838, -1.530247], 6);
 
-    map = new L.Map('map').setView([12.367838, -1.530247], 13);
     var googleLayer    = new L.Google('ROADMAP');
     map.addLayer(googleLayer);
 
-    //L.marker([51.5, -0.09]).addTo(map);
+    // Conversion of the string into an array of array of array of lat long coordinates
+    var geomSplit = locGeom.split('],[');
+    var tempArray = new Array();
+    var coordinatesArray;
+    for (var i = geomSplit.length - 1; i >= 0; i--) {
+        coordinatesArray = geomSplit[i].split(',');
+        coordinatesArray[0] = coordinatesArray[0] * 1.0;
+        coordinatesArray[1] = coordinatesArray[1] * 1.0;
+        tempArray[i] = [coordinatesArray[0], coordinatesArray[1]];
+    };
+    var finalGeomArray =  [tempArray];
 
-    var circle = new L.Circle([12.367838, -1.530247], 500, {
-    color: 'red',
-    fillColor: '#f03',
-    fillOpacity: 0.5
-    });//.addTo(map);
-    map.addLayer(circle);
 
-    L.polygon([
-    [12.367838, -1.530247],
-    [11.367838, -1.430247],
-    [12.367838, -1.330247]
-    ]).addTo(map);
+
+
+    var geojsonFeature = {
+        "type": "Feature",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": finalGeomArray
+        }
+    };
+
+    if (locationBoundariesLayer != null){
+        map.removeLayer(locationBoundariesLayer);
+    }
+
+    locationBoundariesLayer = L.geoJson().addTo(map);
+    locationBoundariesLayer.addData(geojsonFeature);
 
 }
 
@@ -193,6 +210,9 @@ function drawChart(catChoiceLocal) {
     data.addColumn('string', 'title1');
     data.addColumn('string', 'text1');
 
+
+console.log(populationInfo.results.bindings.length);
+
     // Data preparation
     var personCountDtl = 0;
     var newDate;
@@ -251,9 +271,39 @@ function drawChart(catChoiceLocal) {
                 dateArray[graphIndex] = newDate;
             }
             count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
-
+        
             // Storing the result of the filtering for the table view.
-            tableViewData[graphIndex] = [dateArray[graphIndex], count[graphIndex] * 1];
+            var locValue = '';
+            if (locChoice == 0){
+                locValue = currentGeoZone;
+            } else {
+                locValue = currentGeoZone;
+            }
+            var sexValue = '';
+            if (sexChoice == 0){
+                sexValue ="All";
+            } else {
+                sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
+            }
+            var ageValue = '';
+            if (ageChoice == 0){
+                ageValue = "All";
+            } else {
+                ageValue = populationInfo.results.bindings[i]['ageDisplay'].value;
+            }
+            var originValue = '';
+            if (originChoice == 0){
+                originValue = "All";
+            } else {
+                originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
+            }
+            var sourceValue = '';
+            if (sourceChoice == 0){
+                sourceValue = "All";
+            } else {
+                sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
+            }
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
 
         // end filters
         }
@@ -262,8 +312,9 @@ function drawChart(catChoiceLocal) {
         }
         }
         }
-    }
+    } // end for
 
+console.log(tableViewData.length);
 
     for (var i = 0; i < count.length; i++) {
 
@@ -282,3 +333,5 @@ function drawChart(catChoiceLocal) {
     var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div2'));
     chart.draw(data, options);
 }
+
+

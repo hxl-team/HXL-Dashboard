@@ -90,17 +90,19 @@ function bindButtonsEvents() {
     var btnNext2 = document.getElementById("NextButton2");
     var btnNext3 = document.getElementById("NextButton3");
     var btnNext4 = document.getElementById("NextButton4");
-    var btnTableView = document.getElementById("goToTableView");
-    var btnPrevious = document.getElementById("PreviousButton");
+    var btnTableView1 = document.getElementById("goToTableView1");
+    var btnTableView2 = document.getElementById("goToTableView2");
+    var btnPrevious1 = document.getElementById("PreviousButton1");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
     $(btnNext1).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
     $(btnNext2).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
     $(btnNext3).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
     $(btnNext4).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
-    $(btnTableView).bind('click', function(){LastSlide(this);});
+    $(btnTableView1).bind('click', function(){LastSlide(this);});
+    $(btnTableView2).bind('click', function(){LastSlide(this);});
     // the other way to write it works only for Previous
-    btnPrevious.addEventListener("click", PreviousSlide, false);
+    btnPrevious1.addEventListener("click", PreviousSlide, false);
     btnPrevious2.addEventListener("click", PreviousSlide, false);
 } 
 
@@ -109,17 +111,19 @@ function unBindButtonsEvents() {
     var btnNext2 = document.getElementById("NextButton2");
     var btnNext3 = document.getElementById("NextButton3");
     var btnNext4 = document.getElementById("NextButton4");
-    var btnTableView = document.getElementById("goToTableView");
-    var btnPrevious = document.getElementById("PreviousButton");
+    var btnTableView1 = document.getElementById("goToTableView1");
+    var btnTableView2 = document.getElementById("goToTableView2");
+    var btnPrevious1 = document.getElementById("PreviousButton1");
     var btnPrevious2 = document.getElementById("PreviousButton2");
     
     $(btnNext1).unbind('click');
     $(btnNext2).unbind('click');
     $(btnNext3).unbind('click');
     $(btnNext4).unbind('click');
-    $(btnTableView).unbind('click');
+    $(btnTableView1).unbind('click');
+    $(btnTableView2).unbind('click');
     // the other way to write it works only for Previous
-    btnPrevious.removeEventListener("click", PreviousSlide, false);
+    btnPrevious1.removeEventListener("click", PreviousSlide, false);
     btnPrevious2.removeEventListener("click", PreviousSlide, false);
 } 
 

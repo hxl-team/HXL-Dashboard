@@ -25,12 +25,12 @@
 
 
     <!-- Map -->
-    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
     <!--[if lte IE 8]>
-        <link rel="stylesheet" href="css/leaflet.ie.css" />
+        <link rel="stylesheet" href="lib/leaflet/leaflet.ie.css" />
     <![endif]-->
-    <script src="js/leaflet.js"></script>
-    <script src='js/leaflet-google.js'></script>
+    <script src="lib/leaflet/leaflet.js"></script>
+    <script src='lib/leaflet/leaflet-google.js'></script>
     <script src='http://maps.google.com/maps/api/js?sensor=false&amp;v=3.2'></script>
 
     <!-- DataTables -->
@@ -40,16 +40,16 @@
         <script type="text/javascript" charset="utf-8" src="js/dataTables.bootstrap.js"></script>
       <link href="datatables/css/demo_page.css" rel="stylesheet">
       <link href="datatables/css/demo_table.css" rel="stylesheet">
-
-    <!-- Sliding panels -->
-    <script type='text/javascript' src='js/panelsManagement.js'></script>
-    
     <!-- ContentLoad -->
     <script type='text/javascript' src='js/loadSlider1.js'></script>
     <script type='text/javascript' src='js/loadSlider2.js'></script>
     <script type='text/javascript' src='js/loadSlider3.js'></script>
+
+    <!-- Sliding panels -->
+    <script type='text/javascript' src='js/panelsManagement.js'></script>
+    
 </head>
-        
+
 <body>
 
     <div class="navbar container">
@@ -58,15 +58,14 @@
             <div class="nav-hxlator">
                 <ul class="nav" id="topnav">
 
-                <li class="active"><a href="index.php">HXL Dashboard</a></li>
-                <li><a href="#">Other menu item</a></li>
+                <li class="active"><a href="index.php">Humanitarian Profile Data Browser</a></li>
                 </ul>
             </div>
         </div>
     </div> 
     <div class="container" style="text-align: left;">
         <a href="https://sites.google.com/site/hxlproject/"><img src="img/hxl-logo-s.png" align="right" /></a><br />
-            <h2>HXL Dashboard (prototype)</h2>
+            <h2>Humanitarian Profile Data Browser (prototype)</h2>
         
      	<br />
         <br />
