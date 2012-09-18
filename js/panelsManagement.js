@@ -1,4 +1,7 @@
 
+// Loading the sliders
+window.onload = bindButtonsEvents; 
+
 var SlideWidth = 900;
 var SlideSpeed = 900;
 
@@ -101,9 +104,8 @@ function bindButtonsEvents() {
     $(btnNext4).bind('click', function(){NextSlide(this.id); InitLabels(this.id)});
     $(btnTableView1).bind('click', function(){LastSlide(this);});
     $(btnTableView2).bind('click', function(){LastSlide(this);});
-    // the other way to write it works only for Previous
-    btnPrevious1.addEventListener("click", PreviousSlide, false);
-    btnPrevious2.addEventListener("click", PreviousSlide, false);
+    $(btnPrevious1).bind('click', function(){PreviousSlide(this);});
+    $(btnPrevious2).bind('click', function(){PreviousSlide(this);});
 } 
 
 function unBindButtonsEvents() {
@@ -122,10 +124,6 @@ function unBindButtonsEvents() {
     $(btnNext4).unbind('click');
     $(btnTableView1).unbind('click');
     $(btnTableView2).unbind('click');
-    // the other way to write it works only for Previous
-    btnPrevious1.removeEventListener("click", PreviousSlide, false);
-    btnPrevious2.removeEventListener("click", PreviousSlide, false);
+    $(btnPrevious1).unbind('click', function(){PreviousSlide(this);});
+    $(btnPrevious2).unbind('click', function(){PreviousSlide(this);});
 } 
-
-// Loading the sliders
-document.addEventListener("DOMContentLoaded", bindButtonsEvents, false);

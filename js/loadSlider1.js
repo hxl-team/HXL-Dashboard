@@ -175,7 +175,7 @@ currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         // Getting the main graph count and date, the main source, method and reported by
         count1[graphIndex] = parseInt(count1[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
         dateArray1[graphIndex] = new Date(populationInfo.results.bindings[i]['date'].value);
-        dateArrayFull1[i] = new Date(populationInfo.results.bindings[i]['date'].value);
+        dateArrayFull1[i] = new Date(populationInfo.results.bindings[i]['date'].value.replace('-', ', '));
         date1 = populationInfo.results.bindings[i]['date'].value;
         if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, source1) < 0) {
             source1.push(populationInfo.results.bindings[i]['sourceDisplay'].value);

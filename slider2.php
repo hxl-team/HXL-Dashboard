@@ -12,7 +12,7 @@
                         <button id="PreviousButton1" style="" ><< Overview</button>
                     </td>
                     <td>
-                        <button id="goToTableView1" style="margin-left:670px" >Table view >></button>
+                        <button id="goToTableView1" style="margin-left:665px" >Table view >></button>
                     </td>
                 </tr>
             </table>            

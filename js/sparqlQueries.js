@@ -3,7 +3,9 @@
  */
 
 function getCategoriesInfo () {
-jQuery.support.cors = true;
+
+	jQuery.support.cors = true; // for IE8+
+
 	var jsonObject = new Array();
 
 	$query = 'SELECT ?classLabel ?classDefinition ?subClassLabel ?subClassDefinition WHERE {';
@@ -40,8 +42,11 @@ jQuery.support.cors = true;
 	function displayData(data) {
 		if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){
 			jsonObject = jQuery.parseJSON(data);
+			if (jsonObject == null){ // Necessary for FF on blackmesh (!?)
+				jsonObject = data;
+			}
 		} else {
-			jsonObject = data;//jQuery.parseJSON(data);
+			jsonObject = data;
 		}
 	}
 
@@ -49,8 +54,10 @@ jQuery.support.cors = true;
 }
 
 function getPopulationInfo () {
-jQuery.support.cors = true;
-    // Later on, it will be necesary the input country to be a variable (ex: bfa)
+
+	jQuery.support.cors = true; // for IE8+
+
+    // temporary query
 	$query = 'SELECT DISTINCT ?population ?graph ?date ?countryDisplay ?countryPCode ?countryUriGeom ?regionDisplay ?provinceDisplay ?departementDisplay ?campDisplay ?personCount ?sexDisplay ?ageGroup ?ageDisplay ?nationalityDisplay ?nationality ?methodDisplay ?nationalityPCode ?sourceDisplay ?reportedByDisplay ?type ?typeUri WHERE {';
 	$query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> "BFA" .';
     $query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> ?countryPCode .';
@@ -112,25 +119,22 @@ jQuery.support.cors = true;
 	function displayData(data) {
 		if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){
 			populationInfo = jQuery.parseJSON(data);
+			if (populationInfo == null){ // Necessary for FF on blackmesh (!?)
+				populationInfo = data;
+			}
 		} else {
-			populationInfo = data;//jQuery.parseJSON(data);
+			populationInfo = data;
 		}
 	}
 
-
-
-//
-getlocationGeom(populationInfo.results.bindings[0]['countryUriGeom'].value);
-
+	// separate query for getting the geometry
+	getlocationGeom(populationInfo.results.bindings[0]['countryUriGeom'].value);
 }
 
 
 
 var locGeom;
 function getlocationGeom (geomUri) {
-
-//console.log("test");
-    //var test = "test";
     var request = $.ajax({
       url: "script.php",
       type: "POST",
@@ -140,7 +144,7 @@ function getlocationGeom (geomUri) {
 
     request.done(function(msg) {
     	locGeom = msg;
-console.log( msg );
+//console.log( msg );
     });
 
     request.fail(function(jqXHR, textStatus) {

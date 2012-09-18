@@ -23,9 +23,7 @@ function initializeMap() {
     };
     var finalGeomArray =  [tempArray];
 
-
-
-
+    // Layer display
     var geojsonFeature = {
         "type": "Feature",
         "geometry": {
@@ -40,7 +38,6 @@ function initializeMap() {
 
     locationBoundariesLayer = L.geoJson().addTo(map);
     locationBoundariesLayer.addData(geojsonFeature);
-
 }
 
 /*
@@ -199,7 +196,6 @@ function refresh() {
 google.load('visualization', '1', {'packages':['annotatedtimeline']});
 var tableViewData;
 function drawChart(catChoiceLocal) {
-
     var count = new Array();
     var dateArray = new Array();
     var data = new google.visualization.DataTable();
@@ -209,9 +205,6 @@ function drawChart(catChoiceLocal) {
     data.addColumn('number', 'IDPs (fake)');
     data.addColumn('string', 'title1');
     data.addColumn('string', 'text1');
-
-
-console.log(populationInfo.results.bindings.length);
 
     // Data preparation
     var personCountDtl = 0;
@@ -247,6 +240,7 @@ console.log(populationInfo.results.bindings.length);
                 switch(catChoiceLocal)
                 {
                     case 0:
+                    // Must be improved and use the largest of all, or maybe not if not tolerated by ie.
                         newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
                         newDate.setUTCMonth(dateArrayFull1[i].getMonth());
                         newDate.setUTCDate(dateArrayFull1[i].getDate());
@@ -303,8 +297,7 @@ console.log(populationInfo.results.bindings.length);
             } else {
                 sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
             }
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
-
+            tableViewData[graphIndex] = new Array(dateArray[graphIndex], $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
         // end filters
         }
         }
@@ -314,13 +307,8 @@ console.log(populationInfo.results.bindings.length);
         }
     } // end for
 
-console.log(tableViewData.length);
-
     for (var i = 0; i < count.length; i++) {
-
-
         tempArray.push(new Array(dateArray[i], count[i] * 1, undefined, undefined));
-
     }
     data.addRows(tempArray); 
 

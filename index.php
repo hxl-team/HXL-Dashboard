@@ -47,7 +47,7 @@
 
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>
-    
+
 </head>
 
 <body>
