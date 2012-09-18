@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>HXL Dashboard (prototype)</title>
+	<title>Humanitarian Profile Data Browser</title>
 	<meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
     <link rel="shortcut icon" href="img/favicon.ico">
     <link href="css/hxlator.css" rel="stylesheet"> 
@@ -20,15 +20,9 @@
     <script src="js/bootstrap-tooltip.js"></script>  
     <script src="js/bootstrap-popover.js"></script> 
     
-    <!-- Google map example
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCO1uRxzM-IsW4NKTssQHKJo8kVxP1Nw8k&sensor=false"></script> -->
-
-
     <!-- Map -->
     <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="lib/leaflet/leaflet.ie.css" />
-    <![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="lib/leaflet/leaflet.ie.css" /><![endif]-->
     <script src="lib/leaflet/leaflet.js"></script>
     <script src='lib/leaflet/leaflet-google.js'></script>
     <script src='http://maps.google.com/maps/api/js?sensor=false&amp;v=3.2'></script>
@@ -37,9 +31,10 @@
     <script type="text/javascript" src="datatables/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="datatables/tableTools/js/TableTools.js"></script>
     <script type="text/javascript" src="datatables/tableTools/js/ZeroClipboard.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/dataTables.bootstrap.js"></script>
-      <link href="datatables/css/demo_page.css" rel="stylesheet">
-      <link href="datatables/css/demo_table.css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/dataTables.bootstrap.js"></script>
+    <link href="datatables/css/demo_page.css" rel="stylesheet">
+    <link href="datatables/css/demo_table.css" rel="stylesheet">
+
     <!-- ContentLoad -->
     <script type='text/javascript' src='js/loadSlider1.js'></script>
     <script type='text/javascript' src='js/loadSlider2.js'></script>
@@ -47,7 +42,6 @@
 
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>
-
 </head>
 
 <body>

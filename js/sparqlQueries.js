@@ -144,7 +144,6 @@ function getlocationGeom (geomUri) {
 
     request.done(function(msg) {
     	locGeom = msg;
-//console.log( msg );
     });
 
     request.fail(function(jqXHR, textStatus) {

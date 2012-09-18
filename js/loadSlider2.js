@@ -297,7 +297,9 @@ function drawChart(catChoiceLocal) {
             } else {
                 sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
             }
-            tableViewData[graphIndex] = new Array(dateArray[graphIndex], $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
+            // test for ie
+            //tableViewData[graphIndex] = new Array(dateArray[graphIndex], $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
         // end filters
         }
         }
