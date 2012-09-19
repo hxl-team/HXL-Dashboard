@@ -202,7 +202,7 @@ function drawChart(catChoiceLocal) {
     tableViewData = new Array();
 
     data.addColumn('date', 'Date');
-    data.addColumn('number', 'IDPs (fake)');
+    data.addColumn('number', $('select#catForm').val() + ':');
     data.addColumn('string', 'title1');
     data.addColumn('string', 'text1');
 
@@ -280,9 +280,11 @@ function drawChart(catChoiceLocal) {
     data.addRows(tempArray); 
 
     var options = {
-      title : 'IDPs count in Burkina Faso Deou 2011 2012',
-      vAxis: {title: "persons"},
-      hAxis: {title: "Time"}
+      title : 'Evolution of the number of displaced people',
+      vAxis: {title: "Count"},
+      hAxis: {title: "Time"},
+      dateFormat: 'dd MMM yyyy',
+      displayExactValues: true
     };
 
     var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div2'));
