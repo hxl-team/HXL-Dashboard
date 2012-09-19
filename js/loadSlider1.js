@@ -242,13 +242,19 @@ currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         lastCount4 = count4[graphIndex];
 
     } // end loop
-
-    // Display
-    // Big count
-    $("#lastCount1").html(numberWithCommas(lastCount1));
-    $("#lastCount2").html(numberWithCommas(lastCount2));
-    $("#lastCount3").html(numberWithCommas(lastCount3));
-    $("#lastCount4").html(numberWithCommas(lastCount4));
+    // Display big count
+    var prettyCount1 = numberWithCommas(lastCount1);
+    var prettyCount2 = numberWithCommas(lastCount2);
+    var prettyCount3 = numberWithCommas(lastCount3);
+    var prettyCount4 = numberWithCommas(lastCount4);
+    $("#lastCount1").html(prettyCount1);
+    $("#lastCount1").attr("title", prettyCount1 + " people"); // !!! hardcode
+    $("#lastCount2").html(prettyCount2);
+    $("#lastCount2").attr("title", prettyCount2 + " people");
+    $("#lastCount3").html(prettyCount3);
+    $("#lastCount3").attr("title", prettyCount3 + " people");
+    $("#lastCount4").html(prettyCount4);
+    $("#lastCount4").attr("title", prettyCount4 + " people");
 
     // Date
     dsplit1 = date1.split("-");

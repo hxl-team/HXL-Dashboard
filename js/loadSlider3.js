@@ -49,9 +49,11 @@ function LoadTableView() {
             var ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
             var originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
             var sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
+            var methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
+            var groupValue = "persons"; // !!! hard code
 
             // This date format works on IE8 and FF.
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, count[graphIndex] * 1, groupValue, locValue, sexValue, ageValue, originValue, sourceValue, methodValue);
         // end filters
         }
         }
@@ -79,12 +81,14 @@ function LoadTableView() {
         "aoColumns": [
             { "sTitle": "Date" },
             { "sTitle": "Type of population" },
-            { "sTitle": "Person/ Familly count" },
+            { "sTitle": "Count" },
+            { "sTitle": "Person/Familly" },
             { "sTitle": "Location" },
             { "sTitle": "Sex" },
             { "sTitle": "Age" },
             { "sTitle": "Nationality" },
-            { "sTitle": "Source" }
+            { "sTitle": "Source" },
+            { "sTitle": "Method" }
         ],
         "sDom": 'T<"clear">lfrtip',
         "oTableTools": {
