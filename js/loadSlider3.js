@@ -4,10 +4,77 @@
  */
 function LoadTableView() {
 
-    $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );
-if (tableViewData == undefined) console.log("undefined");
+    var count = new Array();
+    var dateArray = new Array();
+    var data = new google.visualization.DataTable();
+    // Data preparation
+    var personCountDtl = 0;
+    var newDate;
+    var tempArray = new Array();
+    var currentDate = '';
+    var graphIndex = -1;
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        // filters        
+        if ($('select#catForm').val() == categoriesLabels[0] ||
+            populationInfo.results.bindings[i]['type'].value == $('select#catForm').val()){
+        if (locChoice == 0  ||
+            populationInfo.results.bindings[i]['countryPCode'].value == $('select#locForm').val() ||
+            populationInfo.results.bindings[i]['regionDisplay'].value == $('select#locForm').val() ||
+            populationInfo.results.bindings[i]['provinceDisplay'].value == $('select#locForm').val() ||
+            populationInfo.results.bindings[i]['departementDisplay'].value == $('select#locForm').val() ||
+            populationInfo.results.bindings[i]['campDisplay'].value == $('select#locForm').val()){
+        if (sexChoice == 0  ||
+            populationInfo.results.bindings[i]['sexDisplay'].value == $('select#sexForm').val()){
+        if (ageChoice == 0  ||
+            populationInfo.results.bindings[i]['ageDisplay'].value == $('select#ageForm').val()){
+        if (originChoice == 0  ||
+            populationInfo.results.bindings[i]['nationalityPCode'].value == $('select#originForm').val()){
+        if (sourceChoice == 0  ||
+            populationInfo.results.bindings[i]['sourceDisplay'].value == $('select#sourceForm').val()){
 
-    $('#tableDisplay').dataTable( { 
+            graphIndex++;
+            count[graphIndex] = 0;
+            newDate = new Date();
+            newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
+            newDate.setUTCMonth(dateArrayFull1[i].getMonth());
+            newDate.setUTCDate(dateArrayFull1[i].getDate());
+            dateArray[graphIndex] = newDate;
+
+            count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+        
+            // Storing the result of the filtering for the table view.
+            var locValue = currentGeoZone;
+            var catValue = populationInfo.results.bindings[i]['type'].value;
+            var sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
+            var ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
+            var originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
+            var sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
+
+            // This date format works on IE8 and FF.
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
+        // end filters
+        }
+        }
+        }
+        }
+        }
+        }
+    } // end for
+    $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );
+
+    var itemPerPage = 10;
+    if (graphIndex > itemPerPage){
+        itemPerPage = 25;
+    }
+    if (graphIndex > itemPerPage){
+        itemPerPage = 50;
+    }
+    if (graphIndex > itemPerPage){
+        itemPerPage = 100;
+    }
+
+    var tableV = $('#tableDisplay').dataTable( { 
+        "iDisplayLength": itemPerPage,
         "aaData": tableViewData,
         "aoColumns": [
             { "sTitle": "Date" },
@@ -19,66 +86,12 @@ if (tableViewData == undefined) console.log("undefined");
             { "sTitle": "Nationality" },
             { "sTitle": "Source" }
         ],
-           "sDom": 'T<"clear">lfrtip',
+        "sDom": 'T<"clear">lfrtip',
         "oTableTools": {
             "sSwfPath": "datatables/tableTools/swf/copy_csv_xls_pdf.swf"
-        }
+        },
+        "sScrollX": "100%",
+        "sScrollXInner": "150%",
+        "bScrollCollapse": true,
     } );  
-
-//tableViewData
-/*
-//"Tue May 01 2012 15:47:46 GMT+0200", "2734"
-    $('#tableDisplay').dataTable( { 
-        "aaData": tableViewData,
-        "aoColumns": [
-            { "sTitle": "Date" },
-            { "sTitle": "Person/ Familly count" },
-        ],
-           "sDom": 'T<"clear">lfrtip',
-        "oTableTools": {
-            "sSwfPath": "datatables/tableTools/swf/copy_csv_xls_pdf.swf"
-        }
-    } );  
-
-/*
-    $('#tableDisplay').dataTable( { 
-        "aaData": [
-            /* Reduced data set *
-            [ "Trident", "Internet Explorer 4.0", "Win 95+", 4, "X" ],
-            [ "Trident", "Internet Explorer 5.0", "Win 95+", 5, "C" ],
-            [ "Trident", "Internet Explorer 5.5", "Win 95+", 5.5, "A" ],
-            [ "Trident", "Internet Explorer 6.0", "Win 98+", 6, "A" ],
-            [ "Trident", "Internet Explorer 7.0", "Win XP SP2+", 7, "A" ],
-            [ "Gecko", "Firefox 1.5", "Win 98+ / OSX.2+", 1.8, "A" ],
-            [ "Gecko", "Firefox 2", "Win 98+ / OSX.2+", 1.8, "A" ],
-            [ "Gecko", "Firefox 3", "Win 2k+ / OSX.3+", 1.9, "A" ],
-            [ "Webkit", "Safari 1.2", "OSX.3", 125.5, "A" ],
-            [ "Webkit", "Safari 1.3", "OSX.3", 312.8, "A" ],
-            [ "Webkit", "Safari 2.0", "OSX.4+", 419.3, "A" ],
-            [ "Webkit", "Safari 3.0", "OSX.4+", 522.1, "A" ]
-        ],
-        "aoColumns": [
-            { "sTitle": "Engine" },
-            { "sTitle": "Browser" },
-            { "sTitle": "Platform" },
-            { "sTitle": "Version", "sClass": "center" },
-            {
-                "sTitle": "Grade",
-                "sClass": "center",
-                "fnRender": function(obj) {
-                    var sReturn = obj.aData[ obj.iDataColumn ];
-                    if ( sReturn == "A" ) {
-                        sReturn = "<b>A</b>";
-                    }
-                    return sReturn;
-                }
-            }
-        ],
-           "sDom": 'T<"clear">lfrtip',
-        "oTableTools": {
-            "sSwfPath": "datatables/tableTools/swf/copy_csv_xls_pdf.swf"
-        }
-    } );  
-    */ 
-//} );
 }

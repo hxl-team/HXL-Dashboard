@@ -265,41 +265,6 @@ function drawChart(catChoiceLocal) {
                 dateArray[graphIndex] = newDate;
             }
             count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
-        
-            // Storing the result of the filtering for the table view.
-            var locValue = '';
-            if (locChoice == 0){
-                locValue = currentGeoZone;
-            } else {
-                locValue = currentGeoZone;
-            }
-            var sexValue = '';
-            if (sexChoice == 0){
-                sexValue ="All";
-            } else {
-                sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
-            }
-            var ageValue = '';
-            if (ageChoice == 0){
-                ageValue = "All";
-            } else {
-                ageValue = populationInfo.results.bindings[i]['ageDisplay'].value;
-            }
-            var originValue = '';
-            if (originChoice == 0){
-                originValue = "All";
-            } else {
-                originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
-            }
-            var sourceValue = '';
-            if (sourceChoice == 0){
-                sourceValue = "All";
-            } else {
-                sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
-            }
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
-            // test for ie
-            //tableViewData[graphIndex] = new Array(dateArray[graphIndex], $('select#catForm option:selected').html(), count[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue);
         // end filters
         }
         }
