@@ -58,7 +58,7 @@ function getPopulationInfo () {
 	jQuery.support.cors = true; // for IE8+
 
     // temporary query
-	$query = 'SELECT DISTINCT ?population ?graph ?date ?countryDisplay ?countryPCode ?countryUriGeom ?regionDisplay ?provinceDisplay ?departementDisplay ?campDisplay ?personCount ?sexDisplay ?ageGroup ?ageDisplay ?nationalityDisplay ?nationality ?methodDisplay ?nationalityPCode ?sourceDisplay ?reportedByDisplay ?type ?typeUri WHERE {';
+	$query = 'SELECT DISTINCT ?population ?graph ?date ?countryDisplay ?countryPCode ?countryUriGeom ?regionDisplay ?provinceDisplay ?departementDisplay ?campDisplay ?personCount ?householdCount ?sexDisplay ?ageGroup ?ageDisplay ?nationalityDisplay ?nationality ?methodDisplay ?nationalityPCode ?sourceDisplay ?reportedByDisplay ?type ?typeUri WHERE {';
 	$query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> "BFA" .';
     $query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#pcode> ?countryPCode .';
     $query += '?countryUri <http://hxl.humanitarianresponse.info/ns/#featureName> ?countryDisplay .';
@@ -70,6 +70,7 @@ function getPopulationInfo () {
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#atLocation> ?camp .';
 	$query += 'GRAPH ?graph {';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#personCount> ?personCount .';
+	$query += 'OPTIONAL { ?population <http://hxl.humanitarianresponse.info/ns/#householdCount> ?householdCount .}';
 	$query += '?population <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?typeUri .';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#method> ?methodDisplay .';
 	$query += '?population <http://hxl.humanitarianresponse.info/ns/#source> ?source .';

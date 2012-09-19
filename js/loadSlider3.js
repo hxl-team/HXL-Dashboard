@@ -4,11 +4,12 @@
  */
 function LoadTableView() {
 
-    var count = new Array();
+    var personCount = new Array();
+    var housesholdCount = new Array();
     var dateArray = new Array();
     var data = new google.visualization.DataTable();
     // Data preparation
-    var personCountDtl = 0;
+    //var personCountDtl = 0;
     var newDate;
     var tempArray = new Array();
     var currentDate = '';
@@ -33,14 +34,25 @@ function LoadTableView() {
             populationInfo.results.bindings[i]['sourceDisplay'].value == $('select#sourceForm').val()){
 
             graphIndex++;
-            count[graphIndex] = 0;
+            personCount[graphIndex] = 0;
+            housesholdCount[graphIndex] = 0;
             newDate = new Date();
             newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
             newDate.setUTCMonth(dateArrayFull1[i].getMonth());
             newDate.setUTCDate(dateArrayFull1[i].getDate());
             dateArray[graphIndex] = newDate;
 
-            count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+            // PersonCounts and householdCounts
+            if (populationInfo.results.bindings[i]['personCount'] != null) {
+                personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+            } else {
+                personCount[graphIndex] = 0;
+            }
+            if (populationInfo.results.bindings[i]['housesholdCount'] != null) {
+                housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['housesholdCount'].value);
+            } else {
+                housesholdCount[graphIndex] = 0;
+            }
         
             // Storing the result of the filtering for the table view.
             var locValue = currentGeoZone;
@@ -53,7 +65,7 @@ function LoadTableView() {
             var groupValue = "persons"; // !!! hard code
 
             // This date format works on IE8 and FF.
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, count[graphIndex] * 1, groupValue, locValue, sexValue, ageValue, originValue, sourceValue, methodValue);
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, groupValue, locValue, sexValue, ageValue, originValue, sourceValue, methodValue);
         // end filters
         }
         }
@@ -81,8 +93,8 @@ function LoadTableView() {
         "aoColumns": [
             { "sTitle": "Date" },
             { "sTitle": "Type of population" },
-            { "sTitle": "Count" },
-            { "sTitle": "Person/Familly" },
+            { "sTitle": "Person count" },
+            { "sTitle": "Household count" },
             { "sTitle": "Location" },
             { "sTitle": "Sex" },
             { "sTitle": "Age" },
