@@ -46,12 +46,12 @@ function LoadTableView() {
             if (populationInfo.results.bindings[i]['personCount'] != null) {
                 personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
             } else {
-                personCount[graphIndex] = 0;
+                personCount[graphIndex] = "N/A";
             }
             if (populationInfo.results.bindings[i]['housesholdCount'] != null) {
                 housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['housesholdCount'].value);
             } else {
-                housesholdCount[graphIndex] = 0;
+                housesholdCount[graphIndex] = "N/A";
             }
         
             // Storing the result of the filtering for the table view.
@@ -62,10 +62,11 @@ function LoadTableView() {
             var originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
             var sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
             var methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
-            var groupValue = "persons"; // !!! hard code
+            var reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
 
             // This date format works on IE8 and FF.
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, groupValue, locValue, sexValue, ageValue, originValue, sourceValue, methodValue);
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
+console.log(reportedByValue);
         // end filters
         }
         }
@@ -100,7 +101,8 @@ function LoadTableView() {
             { "sTitle": "Age" },
             { "sTitle": "Nationality" },
             { "sTitle": "Source" },
-            { "sTitle": "Method" }
+            { "sTitle": "Method" },
+            { "sTitle": "Reported by" }
         ],
         "sDom": 'T<"clear">lfrtip',
         "oTableTools": {
