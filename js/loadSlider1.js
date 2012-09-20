@@ -1,9 +1,21 @@
 
+var emergenciesList;
+var emergenciesLabels;
+emergenciesList = getEmergenciesInfo ();
+
 var categoriesInfo;
 var categoriesLabels;
 categoriesInfo = getCategoriesInfo ();
 var populationInfo;
-getPopulationInfo ();
+
+getPopulationInfo ($('select#emeForm').val());
+
+/* Refresh the content when the emergency choice triggers. */
+function refreshSlide1() { 
+    getPopulationInfo ($('select#emeForm').val());
+    initSparklinesCategories(categoriesInfo);  
+    initSparklines();  
+}
 
 /*
  * Tool for adding a comma for thousands on the row figures.
@@ -13,10 +25,15 @@ function numberWithCommas(x) {
 }
 
 /*
- * Displays the title.
+ * Displays the title and the emergency selection.
  */
 function initTitle() {
-    $("#overViewTitle").html('Overview > ' + populationInfo.results.bindings[0]['countryDisplay'].value);
+    $("#overViewTitle").html('Emergency overview > ');
+
+    $('#emeForm').empty();
+    for (var i = emergenciesList.results.bindings.length - 1; i >= 0; i--) {
+        $('#emeForm').append('<option value="' + emergenciesList.results.bindings[i]['emergencyUri'].value + '">' + emergenciesList.results.bindings[i]['emergencyDisplay'].value + '</option>');
+    }
 }
 
 /*
@@ -107,6 +124,12 @@ var currentGeoZone;
 var biggestGeoZone;
 function initSparklines() {
         
+    if (populationInfo.results.bindings[0] == null) {
+        $('#dataBlock').hide(); 
+        return;
+    }
+    $('#dataBlock').show(); 
+
     var source1 = new Array();
     var source2 = new Array();
     var source3 = new Array();

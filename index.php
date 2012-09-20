@@ -17,8 +17,8 @@
     <script type='text/javascript' src='js/google-jsapi.js'></script>
     
     <!-- For popovers -->
-    <script src="js/bootstrap-tooltip.js"></script>  
-    <script src="js/bootstrap-popover.js"></script> 
+    <script src="js/bootstrap/bootstrap-tooltip.js"></script>  
+    <script src="js/bootstrap/bootstrap-popover.js"></script> 
     
     <!-- Map -->
     <link rel="stylesheet" href="lib/leaflet/leaflet.css" />

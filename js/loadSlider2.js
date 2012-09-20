@@ -119,10 +119,12 @@ function InitLabels(buttonId) {
             $('#locForm').append('<option value="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '">' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</option>');
             tempArray.push(populationInfo.results.bindings[i]['provinceDisplay'].value);
         }
+        /*
         if ($.inArray(populationInfo.results.bindings[i]['departementDisplay'].value, tempArray) < 0) {
             $('#locForm').append('<option value="' + populationInfo.results.bindings[i]['departementDisplay'].value + '">' + populationInfo.results.bindings[i]['departementDisplay'].value + '</option>');
             tempArray.push(populationInfo.results.bindings[i]['departementDisplay'].value);
         }
+        */
     }
 
     // Current location
@@ -184,7 +186,7 @@ function InitLabels(buttonId) {
 }
 
 /* Refresh the content when a new filter is triggered */
-function refresh() { 
+function refreshSlide2() { 
     InitLabels("NextButton" + ((document.catForm.populations.options.selectedIndex * 1) + 1));
     drawChart(document.catForm.populations.options.selectedIndex); 
     initializeMap();
@@ -220,7 +222,7 @@ function drawChart(catChoiceLocal) {
             populationInfo.results.bindings[i]['countryPCode'].value == $('select#locForm').val() ||
             populationInfo.results.bindings[i]['regionDisplay'].value == $('select#locForm').val() ||
             populationInfo.results.bindings[i]['provinceDisplay'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['departementDisplay'].value == $('select#locForm').val() ||
+            //populationInfo.results.bindings[i]['departementDisplay'].value == $('select#locForm').val() ||
             populationInfo.results.bindings[i]['campDisplay'].value == $('select#locForm').val()){
         if (sexChoice == 0  ||
             populationInfo.results.bindings[i]['sexDisplay'].value == $('select#sexForm').val()){

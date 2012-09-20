@@ -66,7 +66,6 @@ function LoadTableView() {
 
             // This date format works on IE8 and FF.
             tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
-console.log(reportedByValue);
         // end filters
         }
         }
@@ -109,7 +108,7 @@ console.log(reportedByValue);
             "sSwfPath": "datatables/tableTools/swf/copy_csv_xls_pdf.swf"
         },
         "sScrollX": "100%",
-        "sScrollXInner": "150%",
+        //"sScrollXInner": "150%",
         "bScrollCollapse": true,
     } );  
 }

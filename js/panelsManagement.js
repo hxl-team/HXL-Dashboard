@@ -1,10 +1,11 @@
 
-// Loading the sliders
+// Loading the slider
 window.onload = bindButtonsEvents; 
 
 var SlideWidth = 900;
 var SlideSpeed = 900;
 
+/* Slide 1 */
 $(document).ready(function () {
     $("#slideContainer1").show('slow');
     $("#slideContainer2").hide('slow');
@@ -13,11 +14,10 @@ $(document).ready(function () {
     initTitle();  
     initSparklinesCategories(categoriesInfo);  
     initSparklines();  
-
 });
 
+/* get current margin of slider */
 function CurrentMargin() {
-    // get current margin of slider
     var currentMargin = $("#slider-wrapper").css("margin-left");
 
     // first page load, margin will be auto, we need to change this to 0
