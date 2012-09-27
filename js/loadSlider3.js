@@ -1,37 +1,57 @@
+/*
+ *
+ */
+function InitLabelsTableView() { 
+    $("#tableViewTitle").html(populationInfo.results.bindings[0]['emergencyDisplay'].value + ' > Table view');
+}
 
 /*
  * Use the filtered data to display the flat table.
  */
+var tableView;
 function LoadTableView() {
 
     var personCount = new Array();
     var housesholdCount = new Array();
     var dateArray = new Array();
-    var data = new google.visualization.DataTable();
+    var tableViewData = new Array();
     // Data preparation
-    //var personCountDtl = 0;
     var newDate;
     var tempArray = new Array();
     var currentDate = '';
     var graphIndex = -1;
+
+    var locValue;
+    var catValue;
+    var sexValue;
+    var ageValue;
+    var originValue;
+    var sourceValue;
+    var methodValue;
+    var reportedByValue;
+
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        // filters        
-        if ($('select#catForm').val() == categoriesLabels[0] ||
-            populationInfo.results.bindings[i]['type'].value == $('select#catForm').val()){
-        if (locChoice == 0  ||
-            populationInfo.results.bindings[i]['countryPCode'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['regionDisplay'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['provinceDisplay'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['departementDisplay'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['campDisplay'].value == $('select#locForm').val()){
-        if (sexChoice == 0  ||
-            populationInfo.results.bindings[i]['sexDisplay'].value == $('select#sexForm').val()){
-        if (ageChoice == 0  ||
-            populationInfo.results.bindings[i]['ageDisplay'].value == $('select#ageForm').val()){
-        if (originChoice == 0  ||
-            populationInfo.results.bindings[i]['nationalityPCode'].value == $('select#originForm').val()){
-        if (sourceChoice == 0  ||
-            populationInfo.results.bindings[i]['sourceDisplay'].value == $('select#sourceForm').val()){
+        // filters      
+        if ($('#catListSelectedValue').html() == categoriesLabels[0] ||
+            populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
+
+        if ($('#locListSelectedValue').html() == '* All camps' ||
+            $('#locListSelectedValue').html() == '-- Countries' ||
+            $('#locListSelectedValue').html() == '-- Regions' ||
+            $('#locListSelectedValue').html() == '-- Provinces' ||
+            $('#locListSelectedValue').html() == '-- Camps' ||
+            populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
+            populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
+            populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
+            populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()){
+        if ($('#sexListSelectedValue').html() == '* All sex categories' ||
+            populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
+        if ($('#ageListSelectedValue').html() == '* All age groups' ||
+            populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
+        if ($('#originListSelectedValue').html() == '* All origins' ||
+            populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
+        if ($('#sourceListSelectedValue').html() == '* All sources' ||
+            populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){
 
             graphIndex++;
             personCount[graphIndex] = 0;
@@ -55,14 +75,14 @@ function LoadTableView() {
             }
         
             // Storing the result of the filtering for the table view.
-            var locValue = currentGeoZone;
-            var catValue = populationInfo.results.bindings[i]['type'].value;
-            var sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
-            var ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
-            var originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
-            var sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
-            var methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
-            var reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
+            locValue = currentGeoZone;
+            catValue = populationInfo.results.bindings[i]['type'].value;
+            sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
+            ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
+            originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
+            sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
+            methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
+            reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
 
             // This date format works on IE8 and FF.
             tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
@@ -76,39 +96,53 @@ function LoadTableView() {
     } // end for
     $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );
 
-    var itemPerPage = 10;
-    if (graphIndex > itemPerPage){
+    var itemPerPage = 15;
+    /*
+    if (graphIndex > 3 * itemPerPage){
         itemPerPage = 25;
     }
-    if (graphIndex > itemPerPage){
+    if (graphIndex > 3 * itemPerPage){
         itemPerPage = 50;
     }
-    if (graphIndex > itemPerPage){
+    if (graphIndex > 3 * itemPerPage){
         itemPerPage = 100;
     }
-
-    var tableV = $('#tableDisplay').dataTable( { 
-        "iDisplayLength": itemPerPage,
+*/
+    tableView = $('#tableDisplay').dataTable( {
         "aaData": tableViewData,
+        "iDisplayLength": itemPerPage,
+        "aLengthMenu": [[15, 25, 50, -1], [15, 25, 50, "All"]],
+        /*"sScrollY": "500px",
+        "sScrollX": "100%",
+        "sScrollXInner": "2000px",*/
+        "bAutoWidth": false,
+        "bPaginate": true,
         "aoColumns": [
-            { "sTitle": "Date" },
-            { "sTitle": "Type of population" },
-            { "sTitle": "Person count" },
-            { "sTitle": "Household count" },
-            { "sTitle": "Location" },
-            { "sTitle": "Sex" },
-            { "sTitle": "Age" },
-            { "sTitle": "Nationality" },
-            { "sTitle": "Source" },
-            { "sTitle": "Method" },
-            { "sTitle": "Reported by" }
+            { "sTitle": "Date", "sClass": "w30" },
+            { "sTitle": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type of population&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "sClass": "w90" },
+            { "sTitle": "Person count", "sClass": "w45" },
+            { "sTitle": "Household count", "sClass": "w65" },
+            { "sTitle": "Location", "sClass": "w50" },
+            { "sTitle": "Sex", "sClass": "w30" },
+            { "sTitle": "Age", "sClass": "w30" },
+            { "sTitle": "Nationality", "sClass": "w50" },
+            { "sTitle": "Source", "sClass": "w80" },
+            { "sTitle": "Method", "sClass": "w80" },
+            { "sTitle": "Reported by", "sClass": "w50" }
         ],
         "sDom": 'T<"clear">lfrtip',
         "oTableTools": {
-            "sSwfPath": "datatables/tableTools/swf/copy_csv_xls_pdf.swf"
-        },
-        "sScrollX": "100%",
-        //"sScrollXInner": "150%",
-        "bScrollCollapse": true,
+            "sSwfPath": "datatables/tableTools/swf/copy_cvs_xls_pdf.swf"
+            },
+"fnInitComplete": function() {
+this.fnAdjustColumnSizing(true);
+}
     } );  
+
+    tableView = null;
+    tableViewData = null;
+    personCount = null;
+    housesholdCount = null;
+    dateArray = null;
+    tempArray = null;
 }

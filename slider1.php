@@ -4,22 +4,26 @@
  */
 ?>
 <div id="slide1" class="slide" style="width: 900px;" style="margin: 0 auto;" >
-	<div id="slideContainer1" >
-		<div style="width: 860px; margin: 20px auto;" >
-			
+	<div id="slideContainer1" style="width: 860px; margin: 20px auto;">
+		<!--<div style="width: 860px; margin: 20px auto;" >-->
             <table>
                 <tr>
                     <td>
                         <span style="font-size: 18px; line-height: 27px; color: inherit; font-weight: bold; margin: 0; text-rendering: optimizelegibility;" ></span>
                     </td>
-                    <td><!--<h3 id="overViewTitle" ></h3>-->
-                        <span id="overViewTitle" style="font-size: 18px; line-height: 27px; color: inherit; font-weight: bold; margin: 0; text-rendering: optimizelegibility;" ></span>
+                    <td>
+                        <span id="overViewTitle" style="font-size: 18px; line-height: 27px; color: inherit; font-weight: bold; margin: 0; text-rendering: optimizelegibility;" >Emergency overview > </span>
                     </td>
                     <td>
-                        <form name="emeForm" action="" onchange="refreshSlide1()" style="margin: 0px 0px 10px 0px;">
-                            <select id="emeForm" class="btn" name="emergencies" style="width: 250px; text-align: left;" >
-                            </select>
-                        </form>
+						<div id="emeList" class="btn-group">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								<span id="emeListSelectedValue" ></span>
+								<span id="emeListSelectedId" style="display: none;" ></span>
+								<span class="caret"></span>
+							</a>
+							<ul id="emeListItems" class="dropdown-menu">
+							</ul>
+						</div>
                     </td>
                 </tr>
             </table>
@@ -50,7 +54,7 @@
 									<div style="text-align: right;" >
 										as of <span id="date1" ></span> |
 										<a id="infoPopover1" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
-										<button id="NextButton1" >More >></button>
+										<button id="NextButton1" class="btn" >More >></button>
 									</div> 
 								</td>
 							</tr>
@@ -82,7 +86,7 @@
 									<div style="text-align: right;" >
 										as of <span id="date2" ></span> |
 										<a id="infoPopover2" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
-										<button id="NextButton2" >More >></button>
+										<button id="NextButton2" class="btn" >More >></button>
 									</div> 
 								</td>
 							</tr>
@@ -114,7 +118,7 @@
 									<div style="text-align: right;" >
 										as of <span id="date3" ></span> |
 										<a id="infoPopover3" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
-										<button id="NextButton3" >More >></button>
+										<button id="NextButton3" class="btn" >More >></button>
 									</div> 
 								</td>
 							</tr>
@@ -145,8 +149,8 @@
 								<td colspan="2">
 									<div style="text-align: right;" >
 										as of <span id="date4" ></span> |
-										<a id="infoPopover4" data-content="test" rel="popover" href="#" data-original-title="Info" >Info</a> | 
-										<button id="NextButton4" >More >></button>
+										<a id="infoPopover4" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
+										<button id="NextButton4" class="btn" >More >></button>
 									</div> 
 								</td>
 							</tr>
@@ -155,7 +159,7 @@
 				</div>
 			</div>
 			<br />
-		</div>
+		<!--</div>-->
 	</div>
 </div>
 					

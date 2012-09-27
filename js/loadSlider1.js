@@ -8,13 +8,28 @@ var categoriesLabels;
 categoriesInfo = getCategoriesInfo ();
 var populationInfo;
 
-getPopulationInfo ($('select#emeForm').val());
+
+ 
 
 /* Refresh the content when the emergency choice triggers. */
-function refreshSlide1() { 
-    getPopulationInfo ($('select#emeForm').val());
-    initSparklinesCategories(categoriesInfo);  
+function refreshSlide1(event) { 
+    setEmergencyChoice(event);
+    getPopulationInfo(document.getElementById('emeListSelectedId').innerHTML);
+    initInfoCategory(categoriesInfo);  
     initSparklines();  
+    testHideSparklines();
+}
+
+/* Hides the sparkline blocks. */
+function testHideSparklines() {      
+    if (populationInfo == null || populationInfo == undefined || 
+        populationInfo.results.bindings.length == 0 || populationInfo.results.bindings[0] == null ||
+        emergenciesList == null || emergenciesList == undefined ||
+        categoriesInfo == null || categoriesInfo == undefined) {
+        $('#dataBlock').hide(); 
+        return;
+    }
+    $('#dataBlock').show(); 
 }
 
 /*
@@ -27,19 +42,31 @@ function numberWithCommas(x) {
 /*
  * Displays the title and the emergency selection.
  */
-function initTitle() {
-    $("#overViewTitle").html('Emergency overview > ');
+function setEmergencyChoice(event) {
 
-    $('#emeForm').empty();
+    // Filling the list
+    $('#emeListItems').empty();
+    var tempList = '';
     for (var i = emergenciesList.results.bindings.length - 1; i >= 0; i--) {
-        $('#emeForm').append('<option value="' + emergenciesList.results.bindings[i]['emergencyUri'].value + '">' + emergenciesList.results.bindings[i]['emergencyDisplay'].value + '</option>');
+        tempList += '<li><a id="' + i + '" onclick="refreshSlide1(this)" >' + emergenciesList.results.bindings[i]['emergencyDisplay'].value + '</a></li>';
     }
+    $('#emeListItems').html(tempList);
+    tempList = null;
+    // List choice
+    var tempValue = emergenciesList.results.bindings[1]['emergencyDisplay'].value;
+    var tempId = emergenciesList.results.bindings[1]['emergencyUri'].value;
+    if (event != null) {
+        tempValue = emergenciesList.results.bindings[event.id]['emergencyDisplay'].value;
+        tempId = emergenciesList.results.bindings[event.id]['emergencyUri'].value;
+    }
+    $('#emeListSelectedValue').html(tempValue);
+    $('#emeListSelectedId').html(tempId);
 }
 
 /*
  * Displays the general or metadata information related to the sparklines.
  */
-function initSparklinesCategories(categoriesData) {
+function initInfoCategory(categoriesData) {
 
     //  Buttons over
     $("#infoPopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
@@ -54,7 +81,6 @@ function initSparklinesCategories(categoriesData) {
     $("#infoPopover4").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
     $("#catPopover4").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
 
-       
     // Display
     // Category and its popover
     categoriesLabels = new Array();
@@ -122,13 +148,11 @@ var dateArray3;
 var dateArray4;
 var currentGeoZone;
 var biggestGeoZone;
+var currentGeoZoneUri;
+var biggestGeoZoneUri;
 function initSparklines() {
-        
-    if (populationInfo.results.bindings[0] == null) {
-        $('#dataBlock').hide(); 
-        return;
-    }
-    $('#dataBlock').show(); 
+      
+    if (populationInfo.results.bindings.length == 0) return;
 
     var source1 = new Array();
     var source2 = new Array();
@@ -164,9 +188,11 @@ function initSparklines() {
     dateArrayFull3 = new Array();
     dateArrayFull4 = new Array();
 
-//
-biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
-currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+    //
+    biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+    currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+    biggestGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
+    currentGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
 
     var currentDate = '';
     var graphIndex = -1;

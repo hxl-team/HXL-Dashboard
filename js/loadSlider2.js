@@ -1,27 +1,90 @@
+
+/* Refresh the content when a new filter is triggered */
+function refreshSlide2(event) { 
+    SetLabelsSlide2(event);
+    initializeMap(event);
+    drawChart(event);
+}
+
+function geometryReady() {
+    if (locGeom != '') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function waiting(timeout_step) {
+    if (geometryReady()) {
+        processGeometry();
+    } else {
+        setTimeout(waiting, timeout_step);
+    }
+}
+
+function ShowLayer()
+{
+    Popup.style.display="block";
+    $('#map').hide();
+}
+function HideLayer()
+{
+    Popup.style.display="none";
+    $('#map').show();
+}
+
 /*
  * Display of the map showing the current location
  */
 var map;
+var googleLayer;
 var locationBoundariesLayer;
-function initializeMap() {
+function initializeMap(event) {
 
-    if (map == null) map = L.map('map');
+    if (event != null && event.id.indexOf("NextButton") == -1) {
+        if (event.name.indexOf("loc") != -1) {
+            var uri = event.name.replace("loc", '')
+            getlocationGeom(uri);
+        } 
+    }
+    if (map == null) {
+        map = L.map('map');
+    }
+
+    if (googleLayer == null) {
+        googleLayer = new L.Google('ROADMAP');
+    }
+
     map.setView([12.367838, -1.530247], 6);
-
-    var googleLayer    = new L.Google('ROADMAP');
     map.addLayer(googleLayer);
+    $('#myModal').modal({
+        keyboard: false,
+        backdrop: false
+    })
+    $('#myModal').modal('show');
 
+    waiting(100);
+}
+
+function processGeometry () {
+    $('#myModal').modal('hide');
     // Conversion of the string into an array of array of array of lat long coordinates
     var geomSplit = locGeom.split('],[');
     var tempArray = new Array();
     var coordinatesArray;
+    var finalGeomArray;
+    
     for (var i = geomSplit.length - 1; i >= 0; i--) {
         coordinatesArray = geomSplit[i].split(',');
         coordinatesArray[0] = coordinatesArray[0] * 1.0;
         coordinatesArray[1] = coordinatesArray[1] * 1.0;
         tempArray[i] = [coordinatesArray[0], coordinatesArray[1]];
+        if (geomSplit.length.length < 10)console.log(coordinatesArray[0] + ", " + coordinatesArray[1]);
     };
-    var finalGeomArray =  [tempArray];
+    geomSplit = null;
+    coordinatesArray = null;
+
+    finalGeomArray =  [tempArray];
 
     // Layer display
     var geojsonFeature = {
@@ -49,164 +112,211 @@ var sexChoice;
 var ageChoice;
 var originChoice;
 var sourceChoice;
-function InitLabels(buttonId) { 
-    catChoice = 0;
-    locChoice = 1; 
-    sexChoice = 0; 
-    ageChoice = 0; 
-    originChoice = 0; 
-    sourceChoice = 0; 
+function SetLabelsSlide2(event) { 
+
+    var selectedCategoryIdFromS1 = -1;
+    if (event.id.indexOf("NextButton") != -1) {
+       selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
+    } else {
+        selectedCategoryIdFromS1 = $('#catListSelectedId').html().replace("NextButton", '') * 1 - 1; // "NextButtonX"
+    }
 
     // page title
+    // the country must be a parametre after proto
     $("#detailedViewTitle").html('Detailed view > ' + populationInfo.results.bindings[0]['countryDisplay'].value + ' > ');
-    switch(buttonId)
-    {
-        case 'NextButton1':
-            catChoice = 0;
-            break;
-        case 'NextButton2':
-            catChoice = 1;
-            break;
-        case 'NextButton3':
-            catChoice = 2;
-            break;
-        case 'NextButton4':
-            catChoice = 3;
-            break;
-    }
-    $('#catForm').empty();
+
+    // Population categorie drop down list
+    $('#catListItems').empty();
+    var tempList = '';
     for (var i = 0; i < categoriesLabels.length; i++) {
-        $('#catForm').append('<option value="' + categoriesLabels[i] + '">' + categoriesLabels[i] + '</option>');
+        tempList += '<li><a id="' + categoriesLabels[i] + ' name="catChoice" onclick="refreshSlide2(this)" >' + categoriesLabels[i] + '</a></li>';
     }
-    document.catForm.populations.options.selectedIndex = catChoice;
+    $('#catListItems').html(tempList);
+    tempList = null;
+    // Selection
+    var tempValue = categoriesLabels[0];
+    var tempId = categoriesLabels[0];
+    if (selectedCategoryIdFromS1 != -1) {
+        tempValue = categoriesLabels[selectedCategoryIdFromS1];
+        tempId = categoriesLabels[selectedCategoryIdFromS1];
+    }
+    $('#catListSelectedValue').html(tempValue);
+    $('#catListSelectedId').html(tempId);
 
-    // Memorize selections
-    if (document.locForm.locations != undefined)
-    {
-        locChoice = document.locForm.locations.options.selectedIndex;
-    }
-    if (document.sexForm.sex != undefined)
-    {
-        sexChoice = document.sexForm.sex.options.selectedIndex;
-    }
-    if (document.ageForm.age != undefined)
-    {
-        ageChoice = document.ageForm.age.options.selectedIndex;
-    }
-    if (document.originForm.origin != undefined)
-    {
-        originChoice = document.originForm.origin.options.selectedIndex;
-    }
-    if (document.sourceForm.source != undefined)
-    {
-        sourceChoice = document.sourceForm.source.options.selectedIndex;
-    }
-
-    // Load location list
-    var tempArray = new Array();
-    $('#locForm').empty();
-    $('#locForm').append('<option value="all_locations">* All locations</option>');
+    // Load location list (all levels)
+    var infoLabelAdded = false;
+    $('#locListItems').empty();
+    var tempList = '<li><a id="' + biggestGeoZone + '" name="loc" onclick="refreshSlide2(this)" href="#graph" >* All camps</a></li>';
+    var checkArray = new Array();
+    checkArray.push('* All camps');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, tempArray) < 0) {
-            $('#locForm').append('<option value="' + populationInfo.results.bindings[i]['countryPCode'].value + '">' + populationInfo.results.bindings[i]['countryDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['countryDisplay'].value);
+        if (!infoLabelAdded){
+            tempList += '<li><a>-- Countries</a></li>';
+            infoLabelAdded = true;
         }
-        if ($.inArray(populationInfo.results.bindings[i]['regionDisplay'].value, tempArray) < 0) {
-            $('#locForm').append('<option value="' + populationInfo.results.bindings[i]['regionDisplay'].value + '">' + populationInfo.results.bindings[i]['regionDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['regionDisplay'].value);
+        if ($.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['countryDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['countryUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['countryDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['countryDisplay'].value);
         }
-        if ($.inArray(populationInfo.results.bindings[i]['provinceDisplay'].value, tempArray) < 0) {
-            $('#locForm').append('<option value="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '">' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['provinceDisplay'].value);
+    }
+    infoLabelAdded = false;
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if (!infoLabelAdded){
+            tempList += '<li><a>-- Regions</a></li>';
+            infoLabelAdded = true;
         }
-        /*
-        if ($.inArray(populationInfo.results.bindings[i]['departementDisplay'].value, tempArray) < 0) {
-            $('#locForm').append('<option value="' + populationInfo.results.bindings[i]['departementDisplay'].value + '">' + populationInfo.results.bindings[i]['departementDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['departementDisplay'].value);
+        if ($.inArray(populationInfo.results.bindings[i]['regionDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['regionDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['regionUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['regionDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['regionDisplay'].value);
         }
-        */
+    }
+    infoLabelAdded = false;
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if (!infoLabelAdded){
+            tempList += '<li><a>-- Provinces</a></li>';
+            infoLabelAdded = true;
+        }
+        if ($.inArray(populationInfo.results.bindings[i]['provinceDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['provinceUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['provinceDisplay'].value);
+        }
+    }
+    infoLabelAdded = false;
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if (!infoLabelAdded){
+            tempList += '<li><a>-- Camps</a></li>';
+            infoLabelAdded = true;
+        }
+        if ($.inArray(populationInfo.results.bindings[i]['campDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['campDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['campUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['campDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['campDisplay'].value);
+        }
+    }
+    $('#locListItems').html(tempList);
+    // Selection
+    if (event.id.indexOf("NextButton") != -1) {
+        $('#locListSelectedValue').html(checkArray[0]);
+        $('#locListSelectedId').html('loc');
+    } else{
+        if (event.name.indexOf("loc") != -1) {
+            var uri = event.name.replace("loc", '')
+            $('#locListSelectedValue').html(event.id);
+        } 
     }
 
-    // Current location
-    $('#locForm')[0].selectedIndex = locChoice;
-    if ($('#locForm')[0].selectedIndex != 0) {
-        currentGeoZone = $('select#locForm').val();
+    // Load sex list
+    $('#sexListItems').empty();
+    tempList = '<li><a>* All sex categories</a></li>';
+    checkArray = new Array();
+    checkArray.push('* All sex categories');
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if ($.inArray(populationInfo.results.bindings[i]['sexDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['sexDisplay'].value + '" name="sex" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['sexDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['sexDisplay'].value);
+        }
+    }
+    $('#sexListItems').html(tempList);
+    // Selection
+    if (event.id.indexOf("NextButton") != -1) {
+        $('#sexListSelectedValue').html(checkArray[0]);
+        $('#sexListSelectedId').html('sex');
     } else {
-        currentGeoZone = biggestGeoZone;
-    }
-
-    // Load other lists
-    var tempArray = new Array();
-    $('#sexForm').empty();
-    $('#sexForm').append('<option value="all_sex">* All sex categories</option>');
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['sexDisplay'].value, tempArray) < 0) {
-
-            $('#sexForm').append('<option value="' + populationInfo.results.bindings[i]['sexDisplay'].value + '">' + populationInfo.results.bindings[i]['sexDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['sexDisplay'].value);
+        if (event.name =='sex') {
+            $('#sexListSelectedValue').html(event.id);
         }
     }
-    $('#sexForm')[0].selectedIndex = sexChoice;
 
-    var tempArray = new Array();
-    $('#ageForm').empty();
-    $('#ageForm').append('<option value="all_ages">* All age categories</option>');
+    // Load age list
+    $('#ageListItems').empty();
+    tempList = '<li><a>* All age groups</a></li>';
+    checkArray = new Array();
+    checkArray.push('* All age groups');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['ageDisplay'].value, tempArray) < 0) {
-
-            $('#ageForm').append('<option value="' + populationInfo.results.bindings[i]['ageDisplay'].value + '">' + populationInfo.results.bindings[i]['ageDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['ageDisplay'].value);
+        if ($.inArray(populationInfo.results.bindings[i]['ageDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['ageDisplay'].value + '" name="age" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['ageDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['ageDisplay'].value);
         }
     }
-    $('#ageForm')[0].selectedIndex = ageChoice;
-
-    var tempArray = new Array();
-    $('#originForm').empty();
-    $('#originForm').append('<option value="all_countries">* All countries</option>');
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['nationalityDisplay'].value, tempArray) < 0) {
-
-            $('#originForm').append('<option value="' + populationInfo.results.bindings[i]['nationalityPCode'].value + '">' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['nationalityDisplay'].value);
+    $('#ageListItems').html(tempList);
+    // Selection
+    if (event.id.indexOf("NextButton") != -1) {
+        $('#ageListSelectedValue').html(checkArray[0]);
+        $('#ageListSelectedId').html('age');
+    } else {
+        if (event.name =='age') {
+            $('#ageListSelectedValue').html(event.id);
         }
     }
-    $('#originForm')[0].selectedIndex = originChoice;
 
-    var tempArray = new Array();
-    $('#sourceForm').empty();
-    $('#sourceForm').append('<option value="all_sources">* All sources</option>');
+    // Load origin list
+    $('#originListItems').empty();
+    tempList = '<li><a>* All origins</a></li>';
+    checkArray = new Array();
+    checkArray.push('* All origins');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, tempArray) < 0) {
-
-            $('#sourceForm').append('<option value="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '">' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</option>');
-            tempArray.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
+        if ($.inArray(populationInfo.results.bindings[i]['nationalityDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '" name="origin" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['nationalityDisplay'].value);
         }
     }
-    $('#sourceForm')[0].selectedIndex = sourceChoice;
-}
+    $('#originListItems').html(tempList);
+    // Selection
+    if (event.id.indexOf("NextButton") != -1) {
+        $('#originListSelectedValue').html(checkArray[0]);
+        $('#originListSelectedId').html('origin');
+    } else {
+        if (event.name =='origin') {
+            $('#originListSelectedValue').html(event.id);
+        }
+    }
 
-/* Refresh the content when a new filter is triggered */
-function refreshSlide2() { 
-    InitLabels("NextButton" + ((document.catForm.populations.options.selectedIndex * 1) + 1));
-    drawChart(document.catForm.populations.options.selectedIndex); 
-    initializeMap();
+    // Load source list
+    $('#sourceListItems').empty();
+    tempList = '<li><a>* All sources</a></li>';
+    checkArray = new Array();
+    checkArray.push('* All sources');
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0) {
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '" name="source" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
+        }
+    }
+    $('#sourceListItems').html(tempList);
+    // Selection
+    if (event.id.indexOf("NextButton") != -1) {
+        $('#sourceListSelectedValue').html(checkArray[0]);
+        $('#sourceListSelectedId').html('source');
+    } else {
+        if (event.name =='source') {
+            $('#sourceListSelectedValue').html(event.id);
+        }
+    }
 }
 
 /*******************
 * Detailed graph 
 ******************/
 google.load('visualization', '1', {'packages':['annotatedtimeline']});
-var tableViewData;
-function drawChart(catChoiceLocal) {
+var dataTable;
+var chart;
+function drawChart(event) {
+
+    var selectedCategoryIdFromS1 = -1;
+    if (event.id.indexOf("NextButton") != -1) {
+       selectedCategoryIdFromS1 = (event.id.substr(10, 1) * 1 ) - 1; // "NextButtonX"
+    } else {
+        selectedCategoryIdFromS1 = $('#catListSelectedId').html().replace("NextButton", '') * 1 - 1; // "NextButtonX"
+    }
+
+    dataTable = new google.visualization.DataTable();
+
     var count = new Array();
     var dateArray = new Array();
-    var data = new google.visualization.DataTable();
-    tableViewData = new Array();
 
-    data.addColumn('date', 'Date');
-    data.addColumn('number', $('select#catForm').val() + ':');
-    data.addColumn('string', 'title1');
-    data.addColumn('string', 'text1');
+    dataTable.addColumn('date', 'Date');
+    dataTable.addColumn('number', $('select#catForm').val() + ':');
+    dataTable.addColumn('string', 'title1');
+    dataTable.addColumn('string', 'text1');
 
     // Data preparation
     var personCountDtl = 0;
@@ -216,22 +326,31 @@ function drawChart(catChoiceLocal) {
     var graphIndex = -1;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         // filters        
-        if ($('select#catForm').val() == categoriesLabels[0] ||
-            populationInfo.results.bindings[i]['type'].value == $('select#catForm').val()){
-        if (locChoice == 0  ||
-            populationInfo.results.bindings[i]['countryPCode'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['regionDisplay'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['provinceDisplay'].value == $('select#locForm').val() ||
-            //populationInfo.results.bindings[i]['departementDisplay'].value == $('select#locForm').val() ||
-            populationInfo.results.bindings[i]['campDisplay'].value == $('select#locForm').val()){
-        if (sexChoice == 0  ||
-            populationInfo.results.bindings[i]['sexDisplay'].value == $('select#sexForm').val()){
-        if (ageChoice == 0  ||
-            populationInfo.results.bindings[i]['ageDisplay'].value == $('select#ageForm').val()){
-        if (originChoice == 0  ||
-            populationInfo.results.bindings[i]['nationalityPCode'].value == $('select#originForm').val()){
-        if (sourceChoice == 0  ||
-            populationInfo.results.bindings[i]['sourceDisplay'].value == $('select#sourceForm').val()){
+        if (event.id.indexOf("NextButton") != -1  ||
+            $('#catListSelectedValue').html() == categoriesLabels[0] ||
+            populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
+        if (event.id.indexOf("NextButton") != -1  ||
+            $('#locListSelectedValue').html() == '* All camps' ||
+            $('#locListSelectedValue').html() == '-- Countries' ||
+            $('#locListSelectedValue').html() == '-- Regions' ||
+            $('#locListSelectedValue').html() == '-- Provinces' ||
+            $('#locListSelectedValue').html() == '-- Camps' ||
+            populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
+            populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
+            populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
+            populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()){
+        if (event.id.indexOf("NextButton") != -1  ||
+            $('#sexListSelectedValue').html() == '* All sex categories' ||
+            populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
+        if (event.id.indexOf("NextButton") != -1  ||
+            $('#ageListSelectedValue').html() == '* All age groups' ||
+            populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
+        if (event.id.indexOf("NextButton") != -1  ||
+            $('#originListSelectedValue').html() == '* All origins' ||
+            populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
+        if (event.id.indexOf("NextButton") != -1  ||
+            $('#sourceListSelectedValue').html() == '* All sources' ||
+            populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){
 
             // parsing by date
             if (currentDate != populationInfo.results.bindings[i]['date'].value) {
@@ -239,34 +358,15 @@ function drawChart(catChoiceLocal) {
                 graphIndex++;
                 count[graphIndex] = 0;
                 newDate = new Date();
-                switch(catChoiceLocal)
-                {
-                    case 0:
-                    // Must be improved and use the largest of all, or maybe not if not tolerated by ie.
-                        newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-                        newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-                        newDate.setUTCDate(dateArrayFull1[i].getDate());
-                        break;
-                    case 1:
-                        newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-                        newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-                        newDate.setUTCDate(dateArrayFull1[i].getDate());
-                        break;
-                    case 2:
-                        newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-                        newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-                        newDate.setUTCDate(dateArrayFull1[i].getDate());
-                        break;
-                    case 3:
-                        newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-                        newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-                        newDate.setUTCDate(dateArrayFull1[i].getDate());
-                        break;
-                    default:
-                }
+
+                newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
+                newDate.setUTCMonth(dateArrayFull1[i].getMonth());
+                newDate.setUTCDate(dateArrayFull1[i].getDate());
+
                 dateArray[graphIndex] = newDate;
+
             }
-            count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+            count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value)  * 1;
         // end filters
         }
         }
@@ -277,20 +377,27 @@ function drawChart(catChoiceLocal) {
     } // end for
 
     for (var i = 0; i < count.length; i++) {
-        tempArray.push(new Array(dateArray[i], count[i] * 1, undefined, undefined));
+        tempArray.push(new Array(dateArray[i], count[i], undefined, undefined));
     }
-    data.addRows(tempArray); 
+    dataTable.addRows(tempArray); 
+
+    tempArray = null;
+    dateArray = null;
+    count = null;
 
     var options = {
-      title : 'Evolution of the number of displaced people',
-      vAxis: {title: "Count"},
-      hAxis: {title: "Time"},
-      dateFormat: 'dd MMM yyyy',
-      displayExactValues: true
+        title : 'Evolution of the number of displaced people',
+        vAxis: {title: "Count"},
+        hAxis: {title: "Time"},
+        dateFormat: 'dd MMM yyyy',
+        displayExactValues: true
     };
 
-    var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div2'));
-    chart.draw(data, options);
+    chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div2'));
+    chart.draw(dataTable, options);
+
+    dataTable = null;
+    options = null;
 }
 
 
