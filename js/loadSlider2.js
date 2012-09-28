@@ -2,7 +2,7 @@
 /* Refresh the content when a new filter is triggered */
 function refreshSlide2(event) { 
     SetLabelsSlide2(event);
-    initializeMap(event);
+    drawMap(event);
     drawChart(event);
 }
 
@@ -21,7 +21,7 @@ function waiting(timeout_step) {
         setTimeout(waiting, timeout_step);
     }
 }
-
+/*
 function ShowLayer()
 {
     Popup.style.display="block";
@@ -32,21 +32,29 @@ function HideLayer()
     Popup.style.display="none";
     $('#map').show();
 }
-
+*/
 /*
  * Display of the map showing the current location
  */
 var map;
 var googleLayer;
 var locationBoundariesLayer;
-function initializeMap(event) {
+function drawMap(event) {
 
     if (event != null && event.id.indexOf("NextButton") == -1) {
+        var uri ='';
         if (event.name.indexOf("loc") != -1) {
-            var uri = event.name.replace("loc", '')
-            getlocationGeom(uri);
-        } 
+                uri = event.name.replace("loc", '');
+        } else {
+            uri = currentGeoZoneUri;
+        }
+
+        getlocationGeom(uri);
     }
+    else {
+        getlocationGeom(currentGeoZoneUri);
+    }
+
     if (map == null) {
         map = L.map('map');
     }
@@ -57,43 +65,55 @@ function initializeMap(event) {
 
     map.setView([12.367838, -1.530247], 6);
     map.addLayer(googleLayer);
-    $('#myModal').modal({
+    /*$('#myModal').modal({
         keyboard: false,
         backdrop: false
     })
-    $('#myModal').modal('show');
+    $('#myModal').modal('show');*/
 
     waiting(100);
 }
 
 function processGeometry () {
-    $('#myModal').modal('hide');
+
+    //$('#myModal').modal('hide');
+
     // Conversion of the string into an array of array of array of lat long coordinates
     var geomSplit = locGeom.split('],[');
     var tempArray = new Array();
     var coordinatesArray;
-    var finalGeomArray;
+    var finalGeom;
+    var geojsonFeature;
     
     for (var i = geomSplit.length - 1; i >= 0; i--) {
         coordinatesArray = geomSplit[i].split(',');
         coordinatesArray[0] = coordinatesArray[0] * 1.0;
         coordinatesArray[1] = coordinatesArray[1] * 1.0;
         tempArray[i] = [coordinatesArray[0], coordinatesArray[1]];
-        if (geomSplit.length.length < 10)console.log(coordinatesArray[0] + ", " + coordinatesArray[1]);
     };
-    geomSplit = null;
-    coordinatesArray = null;
-
-    finalGeomArray =  [tempArray];
 
     // Layer display
-    var geojsonFeature = {
-        "type": "Feature",
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": finalGeomArray
-        }
-    };
+    if (geomSplit.length == 1) {
+
+        finalGeom = [coordinatesArray[0], coordinatesArray[1]];
+
+        geojsonFeature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": finalGeom
+            }
+        };
+    } else {
+        finalGeom =  [tempArray];
+        geojsonFeature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": finalGeom
+            }
+        };
+    }
 
     if (locationBoundariesLayer != null){
         map.removeLayer(locationBoundariesLayer);
@@ -112,13 +132,15 @@ var sexChoice;
 var ageChoice;
 var originChoice;
 var sourceChoice;
+var currentGeoZone;
+var biggestGeoZone;
+var currentGeoZoneUri;
+var biggestGeoZoneUri;
 function SetLabelsSlide2(event) { 
 
     var selectedCategoryIdFromS1 = -1;
     if (event.id.indexOf("NextButton") != -1) {
        selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
-    } else {
-        selectedCategoryIdFromS1 = $('#catListSelectedId').html().replace("NextButton", '') * 1 - 1; // "NextButtonX"
     }
 
     // page title
@@ -129,80 +151,126 @@ function SetLabelsSlide2(event) {
     $('#catListItems').empty();
     var tempList = '';
     for (var i = 0; i < categoriesLabels.length; i++) {
-        tempList += '<li><a id="' + categoriesLabels[i] + ' name="catChoice" onclick="refreshSlide2(this)" >' + categoriesLabels[i] + '</a></li>';
+        tempList += '<li><a id="' + categoriesLabels[i] + '" name="catChoice" onclick="refreshSlide2(this)" >' + categoriesLabels[i] + '</a></li>';
     }
     $('#catListItems').html(tempList);
     tempList = null;
     // Selection
-    var tempValue = categoriesLabels[0];
-    var tempId = categoriesLabels[0];
-    if (selectedCategoryIdFromS1 != -1) {
+    var tempValue;// = categoriesLabels[0];
+    var tempId;// = categoriesLabels[0];
+    if (selectedCategoryIdFromS1 != -1) { // from the first slide
         tempValue = categoriesLabels[selectedCategoryIdFromS1];
         tempId = categoriesLabels[selectedCategoryIdFromS1];
+
+        $('#catListSelectedValue').html(tempValue);
+        $('#catListSelectedId').html(tempId);
+    } else {
+        if (event.name =='catChoice') {
+            tempValue = event.id;
+            tempId = event.id;
+
+        $('#catListSelectedValue').html(tempValue);
+        $('#catListSelectedId').html(tempId);
+        }
+
     }
-    $('#catListSelectedValue').html(tempValue);
-    $('#catListSelectedId').html(tempId);
 
     // Load location list (all levels)
     var infoLabelAdded = false;
     $('#locListItems').empty();
-    var tempList = '<li><a id="' + biggestGeoZone + '" name="loc" onclick="refreshSlide2(this)" href="#graph" >* All camps</a></li>';
+    var tempList = '<li><a id="* All camps" name="loc" onclick="refreshSlide2(this)" >* All camps</a></li>';
     var checkArray = new Array();
     checkArray.push('* All camps');
+
+    // Selection on location list
+    if (event.id.indexOf("NextButton") != -1) { // Coming from the first slide
+
+        // initialization
+        biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+        currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
+        biggestGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
+        currentGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
+
+        $('#locListSelectedValue').html(checkArray[0]);
+    } else{
+        if (event.name.indexOf("loc") != -1) {
+            currentGeoZoneUri = '';
+            $('#locListSelectedValue').html(event.id);
+        }
+        /* else {
+            var uri = event.name.replace("loc", '');
+
+        }
+*/
+    }
+    $('#locListSelectedId').html('loc');
+
+    // Filling the location list
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        // catching the current zone URI
+        if (currentGeoZoneUri == '') {
+            if (populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) {
+                currentGeoZoneUri = populationInfo.results.bindings[i]['countryUri'].value;
+            }
+        }
         if (!infoLabelAdded){
-            tempList += '<li><a>-- Countries</a></li>';
+            tempList += '<li><a>-- Admin level 0</a></li>';
             infoLabelAdded = true;
         }
         if ($.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['countryDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['countryUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['countryDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['countryDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['countryDisplay'].value + '</a></li>'; 
             checkArray.push(populationInfo.results.bindings[i]['countryDisplay'].value);
         }
     }
     infoLabelAdded = false;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if (currentGeoZoneUri == '') {
+            if (populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html()) {
+                currentGeoZoneUri = populationInfo.results.bindings[i]['regionUri'].value;
+            }
+        }
         if (!infoLabelAdded){
-            tempList += '<li><a>-- Regions</a></li>';
+            tempList += '<li><a>-- Admin level 1</a></li>';
             infoLabelAdded = true;
         }
         if ($.inArray(populationInfo.results.bindings[i]['regionDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['regionDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['regionUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['regionDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['regionDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['regionUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['regionDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['regionDisplay'].value);
         }
     }
     infoLabelAdded = false;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if (currentGeoZoneUri == '') {
+            if (populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html()) {
+                currentGeoZoneUri = populationInfo.results.bindings[i]['provinceUri'].value;
+            }
+        }
         if (!infoLabelAdded){
-            tempList += '<li><a>-- Provinces</a></li>';
+            tempList += '<li><a>-- Admin level 2</a></li>';
             infoLabelAdded = true;
         }
         if ($.inArray(populationInfo.results.bindings[i]['provinceDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['provinceUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['provinceUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['provinceDisplay'].value);
         }
     }
     infoLabelAdded = false;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+        if (currentGeoZoneUri == '') {
+            if (populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()) {
+                currentGeoZoneUri = populationInfo.results.bindings[i]['campUri'].value;
+            }
+        }
         if (!infoLabelAdded){
-            tempList += '<li><a>-- Camps</a></li>';
+            tempList += '<li><a>-- Affected Population Location</a></li>';
             infoLabelAdded = true;
         }
         if ($.inArray(populationInfo.results.bindings[i]['campDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['campDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['campUri'].value + '" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['campDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['campDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['campUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['campDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['campDisplay'].value);
         }
     }
     $('#locListItems').html(tempList);
-    // Selection
-    if (event.id.indexOf("NextButton") != -1) {
-        $('#locListSelectedValue').html(checkArray[0]);
-        $('#locListSelectedId').html('loc');
-    } else{
-        if (event.name.indexOf("loc") != -1) {
-            var uri = event.name.replace("loc", '')
-            $('#locListSelectedValue').html(event.id);
-        } 
-    }
 
     // Load sex list
     $('#sexListItems').empty();
@@ -211,7 +279,7 @@ function SetLabelsSlide2(event) {
     checkArray.push('* All sex categories');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['sexDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['sexDisplay'].value + '" name="sex" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['sexDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['sexDisplay'].value + '" name="sex" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sexDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['sexDisplay'].value);
         }
     }
@@ -233,7 +301,7 @@ function SetLabelsSlide2(event) {
     checkArray.push('* All age groups');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['ageDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['ageDisplay'].value + '" name="age" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['ageDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['ageDisplay'].value + '" name="age" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['ageDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['ageDisplay'].value);
         }
     }
@@ -255,7 +323,7 @@ function SetLabelsSlide2(event) {
     checkArray.push('* All origins');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['nationalityDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '" name="origin" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '" name="origin" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['nationalityDisplay'].value);
         }
     }
@@ -277,7 +345,7 @@ function SetLabelsSlide2(event) {
     checkArray.push('* All sources');
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '" name="source" onclick="refreshSlide2(this)" href="#graph" >' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</a></li>';
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '" name="source" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
         }
     }
@@ -326,7 +394,7 @@ function drawChart(event) {
     var graphIndex = -1;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         // filters        
-        if (event.id.indexOf("NextButton") != -1  ||
+        if (//event.id.indexOf("NextButton") != -1  ||
             $('#catListSelectedValue').html() == categoriesLabels[0] ||
             populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
         if (event.id.indexOf("NextButton") != -1  ||

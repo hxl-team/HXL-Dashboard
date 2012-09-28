@@ -60,7 +60,7 @@
             <table style="width: 860px;" >
                 <tr>
                     <td colspan="2" width="620" style="vertical-align: top;" >
-                        <a name="graph"></a> 
+                        <!--<a name="graph"></a> -->
                         <div id="chart_div2" style="width: 850px; height: 350px; margin: 10px 20px 10px 0px; border: 1px solid black;" >
                         </div>
                         <div id="" style="margin: 0px; text-align: center;" >

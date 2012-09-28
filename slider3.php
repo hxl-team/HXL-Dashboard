@@ -11,7 +11,7 @@
         <div>
             <h3 id="tableViewTitle" ></h3>
             <br />
-            <div style="overflow-x: scroll; overflow-y: scroll; width: 860px; height: 500px; margin: 20px auto;" >
+            <div style="overflow-x: scroll; overflow-y: scroll; width: 860px; height: 600px; margin: 20px auto;" >
                 <div id="tableView" style="width: 2000px;" ></div>
             </div>
         </div>

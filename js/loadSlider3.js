@@ -9,6 +9,7 @@ function InitLabelsTableView() {
  * Use the filtered data to display the flat table.
  */
 var tableView;
+var oTableTools;
 function LoadTableView() {
 
     var personCount = new Array();
@@ -131,14 +132,21 @@ function LoadTableView() {
             { "sTitle": "Reported by", "sClass": "w50" }
         ],
         "sDom": 'T<"clear">lfrtip',
-        "oTableTools": {
-            "sSwfPath": "datatables/tableTools/swf/copy_cvs_xls_pdf.swf"
-            },
-"fnInitComplete": function() {
-this.fnAdjustColumnSizing(true);
-}
+        /*"oTableTools": {
+            "sSwfPath": "lib/datatables/tableTools/swf/copy_cvs_xls_pdf.swf"
+        },*/
+        "fnInitComplete": function() {
+            this.fnAdjustColumnSizing(true);
+        }
     } );  
+ 
 
+    oTableTools = new TableTools( tableView, {
+            "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" //lib/datatables/tableTools/swf/copy_cvs_xls_pdf.swf"
+    } );
+    
+    //$('#tableView').before( oTableTools.dom.container );
+ 
     tableView = null;
     tableViewData = null;
     personCount = null;

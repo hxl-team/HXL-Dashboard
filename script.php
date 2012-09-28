@@ -14,7 +14,7 @@ $queryResult = getQueryResults($query);
 if ($queryResult->num_rows() == 0) echo 'no result';
 else {
 	$return = '';
-    // Certainly not the safest algotythm to extract coordinates from the polygon string.
+    // To extract coordinates from the polygon string.
     while( $row = $queryResult->fetch_array() ){  
 
         // Removing the first and last part of the string result depending on the length of the type name.

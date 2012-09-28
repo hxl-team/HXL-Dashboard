@@ -146,10 +146,6 @@ var dateArray1;
 var dateArray2;
 var dateArray3;
 var dateArray4;
-var currentGeoZone;
-var biggestGeoZone;
-var currentGeoZoneUri;
-var biggestGeoZoneUri;
 function initSparklines() {
       
     if (populationInfo.results.bindings.length == 0) return;
@@ -187,12 +183,6 @@ function initSparklines() {
     dateArrayFull2 = new Array();
     dateArrayFull3 = new Array();
     dateArrayFull4 = new Array();
-
-    //
-    biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
-    currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
-    biggestGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
-    currentGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
 
     var currentDate = '';
     var graphIndex = -1;

@@ -25,7 +25,7 @@ function NextSlide(event) {
     document.getElementById('slideContainer2').style.display="block";
     document.getElementById('slideContainer1').style.display="none";
     
-    initializeMap();
+    drawMap(event);
     drawChart(event); 
 }
 
@@ -54,6 +54,15 @@ function PreviousSlide(event) {
         case 'PreviousButton2':
             document.getElementById('slideContainer3').style.display="none";
             document.getElementById('slideContainer2').style.display="block";
+
+            // Cleaning the dataTable and especially the tableTools responsible on IE for an iterative 50 Mo accumalation of wasted memory on the process iexplorer.exe.
+            oTableTools.fnCleanUp();
+            //$(tableView).dataTable().fnDestroy();
+            if (typeof(CollectGarbage) == "function") {
+                //CollectGarbage();
+            }
+            //$("#tableView").empty(); 
+
             break;
     }
 }
