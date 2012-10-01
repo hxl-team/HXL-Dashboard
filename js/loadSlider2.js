@@ -41,19 +41,26 @@ var googleLayer;
 var locationBoundariesLayer;
 function drawMap(event) {
 
-    if (event != null && event.id.indexOf("NextButton") == -1) {
+    if (event != null &&
+        event.id.indexOf("NextButton") == -1 &&
+        event.id.indexOf("infoPopover") == -1) {
         var uri ='';
         if (event.name.indexOf("loc") != -1) {
                 uri = event.name.replace("loc", '');
         } else {
             uri = currentGeoZoneUri;
         }
-
-        getlocationGeom(uri);
     }
     else {
-        getlocationGeom(currentGeoZoneUri);
+        uri = currentGeoZoneUri;
     }
+
+    getlocationGeom(uri);
+
+    if (_DEBUG) {
+        console.log(uri);
+    }
+
 
     if (map == null) {
         map = L.map('map');
@@ -75,6 +82,7 @@ function drawMap(event) {
 }
 
 function processGeometry () {
+//console.log(locGeom);
 
     //$('#myModal').modal('hide');
 
@@ -138,9 +146,14 @@ var currentGeoZoneUri;
 var biggestGeoZoneUri;
 function SetLabelsSlide2(event) { 
 
+//console.log(event.id);
+
     var selectedCategoryIdFromS1 = -1;
     if (event.id.indexOf("NextButton") != -1) {
        selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
+    }
+    if (event.id.indexOf("infoPopover") != -1) {
+       selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
     }
 
     // page title
@@ -154,6 +167,9 @@ function SetLabelsSlide2(event) {
         tempList += '<li><a id="' + categoriesLabels[i] + '" name="catChoice" onclick="refreshSlide2(this)" >' + categoriesLabels[i] + '</a></li>';
     }
     $('#catListItems').html(tempList);
+
+    //document.getElementById('catListItems').innerHTML = tempList;
+    //$('#catListItems').html(tempList);
     tempList = null;
     // Selection
     var tempValue;// = categoriesLabels[0];
@@ -178,18 +194,24 @@ function SetLabelsSlide2(event) {
     // Load location list (all levels)
     var infoLabelAdded = false;
     $('#locListItems').empty();
-    var tempList = '<li><a id="* All camps" name="loc" onclick="refreshSlide2(this)" >* All camps</a></li>';
+    var tempList = '<li><a id="' + lblLoc0 + '" name="loc' + populationInfo.results.bindings[0]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + lblLoc0 + '</a></li>';
     var checkArray = new Array();
-    checkArray.push('* All camps');
+    checkArray.push(lblLoc0);
 
     // Selection on location list
-    if (event.id.indexOf("NextButton") != -1) { // Coming from the first slide
+    if (event.id.indexOf("NextButton") != -1 ||
+        event.id.indexOf("infoPopover") != -1) { // Coming from the first slide
+
+
 
         // initialization
         biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         biggestGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
         currentGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
+
+//console.log(currentGeoZoneUri);
+
 
         $('#locListSelectedValue').html(checkArray[0]);
     } else{
@@ -274,9 +296,9 @@ function SetLabelsSlide2(event) {
 
     // Load sex list
     $('#sexListItems').empty();
-    tempList = '<li><a>* All sex categories</a></li>';
+    tempList = '<li><a id="' + lblSex + '" onclick="refreshSlide2(this)" name="sex" >'+ lblSex + '</a></li>';
     checkArray = new Array();
-    checkArray.push('* All sex categories');
+    checkArray.push(lblSex);
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['sexDisplay'].value, checkArray) < 0) {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['sexDisplay'].value + '" name="sex" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sexDisplay'].value + '</a></li>';
@@ -285,7 +307,8 @@ function SetLabelsSlide2(event) {
     }
     $('#sexListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1) {
+    if (event.id.indexOf("NextButton") != -1 ||
+        event.id.indexOf("infoPopover") != -1) {
         $('#sexListSelectedValue').html(checkArray[0]);
         $('#sexListSelectedId').html('sex');
     } else {
@@ -296,9 +319,9 @@ function SetLabelsSlide2(event) {
 
     // Load age list
     $('#ageListItems').empty();
-    tempList = '<li><a>* All age groups</a></li>';
+    tempList = '<li><a id="' + lblAge + '" onclick="refreshSlide2(this)" name="age" >'+ lblAge + '</a></li>';
     checkArray = new Array();
-    checkArray.push('* All age groups');
+    checkArray.push(lblAge);
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['ageDisplay'].value, checkArray) < 0) {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['ageDisplay'].value + '" name="age" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['ageDisplay'].value + '</a></li>';
@@ -307,7 +330,8 @@ function SetLabelsSlide2(event) {
     }
     $('#ageListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1) {
+    if (event.id.indexOf("NextButton") != -1 ||
+        event.id.indexOf("infoPopover") != -1) {
         $('#ageListSelectedValue').html(checkArray[0]);
         $('#ageListSelectedId').html('age');
     } else {
@@ -318,9 +342,9 @@ function SetLabelsSlide2(event) {
 
     // Load origin list
     $('#originListItems').empty();
-    tempList = '<li><a>* All origins</a></li>';
+    tempList = '<li><a id="' + lblOri + '" onclick="refreshSlide2(this)" name="origin" >'+ lblOri + '</a></li>';
     checkArray = new Array();
-    checkArray.push('* All origins');
+    checkArray.push(lblOri);
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['nationalityDisplay'].value, checkArray) < 0) {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '" name="origin" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['nationalityDisplay'].value + '</a></li>';
@@ -329,7 +353,8 @@ function SetLabelsSlide2(event) {
     }
     $('#originListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1) {
+    if (event.id.indexOf("NextButton") != -1 ||
+        event.id.indexOf("infoPopover") != -1) {
         $('#originListSelectedValue').html(checkArray[0]);
         $('#originListSelectedId').html('origin');
     } else {
@@ -340,9 +365,9 @@ function SetLabelsSlide2(event) {
 
     // Load source list
     $('#sourceListItems').empty();
-    tempList = '<li><a>* All sources</a></li>';
+    tempList = '<li><a id="' + lblSou + '" onclick="refreshSlide2(this)" name="source" >'+ lblSou + '</a></li>';
     checkArray = new Array();
-    checkArray.push('* All sources');
+    checkArray.push(lblSou);
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
         if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0) {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '" name="source" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</a></li>';
@@ -351,7 +376,8 @@ function SetLabelsSlide2(event) {
     }
     $('#sourceListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1) {
+    if (event.id.indexOf("NextButton") != -1 ||
+        event.id.indexOf("infoPopover") != -1) {
         $('#sourceListSelectedValue').html(checkArray[0]);
         $('#sourceListSelectedId').html('source');
     } else {
@@ -368,10 +394,26 @@ google.load('visualization', '1', {'packages':['annotatedtimeline']});
 var dataTable;
 var chart;
 function drawChart(event) {
+/*
 
+    if (event.id.indexOf("infoPopover") != -1) {
+       selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
+    }
+
+
+
+    if (event.id.indexOf("NextButton") != -1) {
+       selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
+    }
+    if (event.id.indexOf("infoPopover") != -1) {
+       selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
+    }
+*/
     var selectedCategoryIdFromS1 = -1;
     if (event.id.indexOf("NextButton") != -1) {
-       selectedCategoryIdFromS1 = (event.id.substr(10, 1) * 1 ) - 1; // "NextButtonX"
+       selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
+    } else if (event.id.indexOf("infoPopover") != -1) {
+       selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
     } else {
         selectedCategoryIdFromS1 = $('#catListSelectedId').html().replace("NextButton", '') * 1 - 1; // "NextButtonX"
     }
@@ -382,7 +424,7 @@ function drawChart(event) {
     var dateArray = new Array();
 
     dataTable.addColumn('date', 'Date');
-    dataTable.addColumn('number', $('select#catForm').val() + ':');
+    dataTable.addColumn('number', $('#catListSelectedValue').html() + ':');
     dataTable.addColumn('string', 'title1');
     dataTable.addColumn('string', 'text1');
 
@@ -398,7 +440,7 @@ function drawChart(event) {
             $('#catListSelectedValue').html() == categoriesLabels[0] ||
             populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
         if (event.id.indexOf("NextButton") != -1  ||
-            $('#locListSelectedValue').html() == '* All camps' ||
+            $('#locListSelectedValue').html() == lblLoc0 ||
             $('#locListSelectedValue').html() == '-- Countries' ||
             $('#locListSelectedValue').html() == '-- Regions' ||
             $('#locListSelectedValue').html() == '-- Provinces' ||
@@ -408,16 +450,16 @@ function drawChart(event) {
             populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
             populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()){
         if (event.id.indexOf("NextButton") != -1  ||
-            $('#sexListSelectedValue').html() == '* All sex categories' ||
+            $('#sexListSelectedValue').html() == lblSex ||
             populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
         if (event.id.indexOf("NextButton") != -1  ||
-            $('#ageListSelectedValue').html() == '* All age groups' ||
+            $('#ageListSelectedValue').html() == lblAge ||
             populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
         if (event.id.indexOf("NextButton") != -1  ||
-            $('#originListSelectedValue').html() == '* All origins' ||
+            $('#originListSelectedValue').html() == lblOri ||
             populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
         if (event.id.indexOf("NextButton") != -1  ||
-            $('#sourceListSelectedValue').html() == '* All sources' ||
+            $('#sourceListSelectedValue').html() == lblSou ||
             populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){
 
             // parsing by date

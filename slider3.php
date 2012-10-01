@@ -11,9 +11,13 @@
         <div>
             <h3 id="tableViewTitle" ></h3>
             <br />
-            <div style="overflow-x: scroll; overflow-y: scroll; width: 860px; height: 600px; margin: 20px auto;" >
-                <div id="tableView" style="width: 2000px;" ></div>
+            <div id="tableViewBefore1" ></div>
+            <div id="tableViewBefore2" ></div>
+            <br style="clear: both;" />
+            <div id="tableViewBlock" style="overflow-x: scroll; overflow-y: scroll; width: 860px; height: 600px; margin: 20px auto;" ><!-- -->
+                <div id="tableView" style="width: 2000px;  white-space: nowrap; " ></div>
             </div>
+            <div id="tableViewAfter" ></div>
         </div>
     </div>
 </div>

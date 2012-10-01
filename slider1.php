@@ -53,7 +53,7 @@
 								<td colspan="2">
 									<div style="text-align: right;" >
 										as of <span id="date1" ></span> |
-										<a id="infoPopover1" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
+										<a id="infoPopover1" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
 										<button id="NextButton1" class="btn" >More >></button>
 									</div> 
 								</td>
@@ -85,7 +85,7 @@
 								<td colspan="2">
 									<div style="text-align: right;" >
 										as of <span id="date2" ></span> |
-										<a id="infoPopover2" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
+										<a id="infoPopover2" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
 										<button id="NextButton2" class="btn" >More >></button>
 									</div> 
 								</td>
@@ -117,7 +117,7 @@
 								<td colspan="2">
 									<div style="text-align: right;" >
 										as of <span id="date3" ></span> |
-										<a id="infoPopover3" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
+										<a id="infoPopover3" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
 										<button id="NextButton3" class="btn" >More >></button>
 									</div> 
 								</td>
@@ -149,7 +149,7 @@
 								<td colspan="2">
 									<div style="text-align: right;" >
 										as of <span id="date4" ></span> |
-										<a id="infoPopover4" data-content="" rel="popover" href="#" data-original-title="Info" >Info</a> | 
+										<a id="infoPopover4" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
 										<button id="NextButton4" class="btn" >More >></button>
 									</div> 
 								</td>

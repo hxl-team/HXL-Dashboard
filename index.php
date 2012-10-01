@@ -1,3 +1,16 @@
+<script type="text/javascript">
+var _DEBUG = false;
+
+var lblLoc0 = "* All Affected Population Locations";
+var lblLoc1 = "* All Affected Population Locations";
+var lblLoc2 = "* All Affected Population Locations";
+var lblLoc3 = "* All Affected Population Locations";
+var lblSex = "* All sex categories";
+var lblAge = "* All age groups";
+var lblOri = "* All origins";
+var lblSou = "* All sources";
+
+</script> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,9 +36,9 @@
     <!-- Map -->
     <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
     <!--[if lte IE 8]><link rel="stylesheet" href="lib/leaflet/leaflet.ie.css" /><![endif]-->
-    <script src="lib/leaflet/leaflet.js"></script>
-    <script src='lib/leaflet/leaflet-google.js'></script>
-    <script src='http://maps.google.com/maps/api/js?sensor=false&amp;v=3.2'></script>
+    <script type='text/javascript' src="lib/leaflet/leaflet.js"></script>
+    <script type='text/javascript' src='lib/leaflet/leaflet-google.js'></script>
+    <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false&amp;v=3.2'></script>
 
     <!-- DataTables -->
     <script type="text/javascript" src="lib/datatables/js/jquery.dataTables.min.js"></script>
@@ -36,10 +49,10 @@
     <link href="lib/datatables/css/demo_table.css" rel="stylesheet">
 
     <!-- Bootstrap -->
-    <script src="lib/bootstrap/js/bootstrap.js"></script>
-    <script src="lib/bootstrap/js/bootstrap-modal.js"></script>
-    <script src="js/bootstrap/bootstrap-tooltip.js"></script>  
-    <script src="js/bootstrap/bootstrap-popover.js"></script>
+    <script type='text/javascript' src="lib/bootstrap/js/bootstrap.js"></script>
+    <script type='text/javascript' src="lib/bootstrap/js/bootstrap-modal.js"></script>
+    <script type='text/javascript' src="js/bootstrap/bootstrap-tooltip.js"></script>  
+    <script type='text/javascript' src="js/bootstrap/bootstrap-popover.js"></script>
 
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>

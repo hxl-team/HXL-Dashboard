@@ -50,7 +50,7 @@ function getEmergenciesInfo () {
 	function displayData(data) {
 		if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){
 			jsonObject = jQuery.parseJSON(data);
-			if (jsonObject == null){ // Necessary for FF on blackmesh (!?)
+			if (jsonObject == null){ // Necessary for FF on blackmesh
 				jsonObject = data;
 			}
 		} else {

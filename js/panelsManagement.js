@@ -20,6 +20,11 @@ $(document).ready(function () {
 });
 
 function NextSlide(event) {
+
+    if (_DEBUG) {
+        console.log('From slide 1 ... ');
+    }
+
     SetLabelsSlide2(event);
 
     document.getElementById('slideContainer2').style.display="block";
@@ -37,6 +42,14 @@ function LastSlide() {
     document.getElementById('slideContainer3').style.display="block";
 }
 
+function quickTable(event) {
+    if (_DEBUG) {
+        console.log("quickTable: " + event.id);
+    }
+    NextSlide(event);
+    LastSlide();
+}
+
 function PrintTime() {
     var currentDate = new Date()
     var minutes = currentDate.getMinutes();
@@ -45,24 +58,39 @@ function PrintTime() {
 }
 
 function PreviousSlide(event) {
+
+
     switch(event.id)
     {
         case 'PreviousButton1':
+            if (_DEBUG) {
+                console.log('From slide 2 to slide 1');
+            }
             document.getElementById('slideContainer2').style.display="none";
             document.getElementById('slideContainer1').style.display="block";
             break;
         case 'PreviousButton2':
+            if (_DEBUG) {
+                console.log('From slide 3 to slide 2');
+            }
+
+            SetLabelsSlide2(event);
+
             document.getElementById('slideContainer3').style.display="none";
             document.getElementById('slideContainer2').style.display="block";
-
+    
+            drawMap(event);
+            drawChart(event); 
+    
             // Cleaning the dataTable and especially the tableTools responsible on IE for an iterative 50 Mo accumalation of wasted memory on the process iexplorer.exe.
-            oTableTools.fnCleanUp();
-            //$(tableView).dataTable().fnDestroy();
+            oTableTools.fnCleanUp(); // improtant
+            /* Barely no effect with the following:
+            $(tableView).dataTable().fnDestroy();
             if (typeof(CollectGarbage) == "function") {
                 //CollectGarbage();
             }
-            //$("#tableView").empty(); 
-
+            $("#tableView").empty(); 
+            */
             break;
     }
 }

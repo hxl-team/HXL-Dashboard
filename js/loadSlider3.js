@@ -36,7 +36,7 @@ function LoadTableView() {
         if ($('#catListSelectedValue').html() == categoriesLabels[0] ||
             populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
 
-        if ($('#locListSelectedValue').html() == '* All camps' ||
+        if ($('#locListSelectedValue').html() == lblLoc0 ||
             $('#locListSelectedValue').html() == '-- Countries' ||
             $('#locListSelectedValue').html() == '-- Regions' ||
             $('#locListSelectedValue').html() == '-- Provinces' ||
@@ -45,13 +45,13 @@ function LoadTableView() {
             populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
             populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
             populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()){
-        if ($('#sexListSelectedValue').html() == '* All sex categories' ||
+        if ($('#sexListSelectedValue').html() == lblSex ||
             populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
-        if ($('#ageListSelectedValue').html() == '* All age groups' ||
+        if ($('#ageListSelectedValue').html() == lblAge ||
             populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
-        if ($('#originListSelectedValue').html() == '* All origins' ||
+        if ($('#originListSelectedValue').html() == lblOri ||
             populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
-        if ($('#sourceListSelectedValue').html() == '* All sources' ||
+        if ($('#sourceListSelectedValue').html() == lblSou ||
             populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){
 
             graphIndex++;
@@ -74,7 +74,9 @@ function LoadTableView() {
             } else {
                 housesholdCount[graphIndex] = "N/A";
             }
-        
+     
+//console.log("sexValue: " + sexValue);
+   
             // Storing the result of the filtering for the table view.
             locValue = currentGeoZone;
             catValue = populationInfo.results.bindings[i]['type'].value;
@@ -120,7 +122,7 @@ function LoadTableView() {
         "bPaginate": true,
         "aoColumns": [
             { "sTitle": "Date", "sClass": "w30" },
-            { "sTitle": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type of population&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "sClass": "w90" },
+            { "sTitle": "Type of population", "sClass": "w90" },
             { "sTitle": "Person count", "sClass": "w45" },
             { "sTitle": "Household count", "sClass": "w65" },
             { "sTitle": "Location", "sClass": "w50" },
@@ -140,12 +142,31 @@ function LoadTableView() {
         }
     } );  
  
-
+    // Instanciation of tools better this way to be able to clean them separately.
     oTableTools = new TableTools( tableView, {
-            "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" //lib/datatables/tableTools/swf/copy_cvs_xls_pdf.swf"
+            "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" 
     } );
     
-    //$('#tableView').before( oTableTools.dom.container );
+    $("div[class='DTTT btn-group']").hide();
+    $('#tableViewBlock').before( oTableTools.dom.container );
+
+    $('#tableDisplay_info').appendTo("#tableViewBefore1");
+    //$('#tableViewBefore').add("<br style=\"clear: both;\" />");
+    $('#tableDisplay_length').appendTo('#tableViewBefore2');
+
+    $("div[class='dataTables_paginate paging_bootstrap pagination']").appendTo("#tableViewBefore2");
+
+
+DoubleScroll(document.getElementById('tableViewBlock'));
+
+    //$('#tableDisplay_length').before( oTableTools.dom.container );
+/*
+    $('#tableDisplay_info').appendTo("#tableViewAfter");
+    $("div[class='dataTables_paginate paging_bootstrap pagination']").appendTo("#tableViewAfter");
+*/
+    //$("div[class='dataTables_paginate paging_bootstrap pagination']").hide();//after('#tableViewBlock');
+    //$(".source").appendTo(".destination");
+//dataTables_paginate paging_bootstrap pagination
  
     tableView = null;
     tableViewData = null;
@@ -154,3 +175,40 @@ function LoadTableView() {
     dateArray = null;
     tempArray = null;
 }
+
+/*
+    function DoubleScroll(element) {
+        var scrollbar= document.createElement('div');
+        scrollbar.appendChild(document.createElement('div'));
+        scrollbar.style.overflow= 'auto';
+        scrollbar.style.overflowY= 'hidden';
+        scrollbar.firstChild.style.width= element.scrollWidth+'px';
+        scrollbar.firstChild.style.paddingTop= '1px';
+        scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
+        scrollbar.onscroll= function() {
+            element.scrollLeft= scrollbar.scrollLeft;
+        };
+        element.onscroll= function() {
+            scrollbar.scrollLeft= element.scrollLeft;
+        };
+        element.parentNode.insertBefore(scrollbar, element);
+    }
+
+    DoubleScroll(document.getElementById('tableViewBlock'));*/
+function DoubleScroll(element) {
+        var scrollbar= document.createElement('div');
+        scrollbar.appendChild(document.createElement('div'));
+        scrollbar.style.overflow= 'auto';
+        scrollbar.style.overflowY= 'hidden';
+        scrollbar.style.width= '150px';
+        scrollbar.firstChild.style.width= element.scrollWidth+'px';
+        scrollbar.firstChild.style.paddingTop= '1px';
+        scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
+        scrollbar.onscroll= function() {
+            element.scrollLeft= scrollbar.scrollLeft;
+        };
+        element.onscroll= function() {
+            scrollbar.scrollLeft= element.scrollLeft;
+        };
+        element.parentNode.insertBefore(scrollbar, element);
+    }

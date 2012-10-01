@@ -38,17 +38,14 @@
                                 <span id="catListSelectedId" style="display: none;" >Test1</span>
                                 <span class="caret"></span>
                             </a>
-                            <ul id="catListItems" class="dropdown-menu">
+                            <ul id="catListItems" class="dropdown-menu" >
                             </ul>
                         </div>
-<!--
-                        <form name="catForm" action="" onchange="refreshSlide2()" style="margin: 0px 0px 10px 0px;">
-                            <select id="catForm" class="btn" name="populations" style="width: 250px; text-align: left;" >
-                            </select>
-                        </form>-->
                     </td>
                 </tr>
             </table>
+            <br />
+            <br />
             <br />
             <table>
                 <tr>
@@ -126,7 +123,7 @@
                         </div>
                     </td>  
                     <td>
-                        <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 1px solid black;">
+                        <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 3px solid black;">
                         </div>
                     </td>
                 </tr>
