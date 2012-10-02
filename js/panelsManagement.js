@@ -35,6 +35,9 @@ function NextSlide(event) {
 }
 
 function LastSlide() {
+
+            //cleaningTableView();
+
     InitLabelsTableView();
     LoadTableView();
 
@@ -82,17 +85,22 @@ function PreviousSlide(event) {
             drawMap(event);
             drawChart(event); 
     
-            // Cleaning the dataTable and especially the tableTools responsible on IE for an iterative 50 Mo accumalation of wasted memory on the process iexplorer.exe.
-            oTableTools.fnCleanUp(); // improtant
-            /* Barely no effect with the following:
-            $(tableView).dataTable().fnDestroy();
-            if (typeof(CollectGarbage) == "function") {
-                //CollectGarbage();
-            }
-            $("#tableView").empty(); 
-            */
+            cleaningTableView();
+
             break;
     }
+}
+
+function cleaningTableView() {
+    // Cleaning the dataTable and especially the tableTools responsible on IE for an iterative 50 Mo accumalation of wasted memory on the process iexplorer.exe.
+    oTableTools.fnCleanUp(); // improtant
+    /* Barely no effect with the following:
+    $(tableView).dataTable().fnDestroy();
+    if (typeof(CollectGarbage) == "function") {
+        //CollectGarbage();
+    }
+    $("#tableView").empty(); 
+    */
 }
 
 function bindButtonsEvents() {

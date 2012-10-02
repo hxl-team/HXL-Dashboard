@@ -9,6 +9,7 @@ function InitLabelsTableView() {
  * Use the filtered data to display the flat table.
  */
 var tableView;
+var tableView2;
 var oTableTools;
 function LoadTableView() {
 
@@ -74,9 +75,7 @@ function LoadTableView() {
             } else {
                 housesholdCount[graphIndex] = "N/A";
             }
-     
-//console.log("sexValue: " + sexValue);
-   
+        
             // Storing the result of the filtering for the table view.
             locValue = currentGeoZone;
             catValue = populationInfo.results.bindings[i]['type'].value;
@@ -99,7 +98,7 @@ function LoadTableView() {
     } // end for
     $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );
 
-    var itemPerPage = 15;
+    var itemPerPage = 25;
     /*
     if (graphIndex > 3 * itemPerPage){
         itemPerPage = 25;
@@ -111,27 +110,28 @@ function LoadTableView() {
         itemPerPage = 100;
     }
 */
+
     tableView = $('#tableDisplay').dataTable( {
         "aaData": tableViewData,
         "iDisplayLength": itemPerPage,
-        "aLengthMenu": [[15, 25, 50, -1], [15, 25, 50, "All"]],
+        "aLengthMenu": [[25, 50, -1], [25, 50, "All"]],
         /*"sScrollY": "500px",
         "sScrollX": "100%",
         "sScrollXInner": "2000px",*/
-        "bAutoWidth": false,
+        /*"bAutoWidth": false,*/
         "bPaginate": true,
         "aoColumns": [
-            { "sTitle": "Date", "sClass": "w30" },
-            { "sTitle": "Type of population", "sClass": "w90" },
+            { "sTitle": "Date", "sClass": "w90" },
+            { "sTitle": "Type of population", "sClass": "w180" },
             { "sTitle": "Person count", "sClass": "w45" },
             { "sTitle": "Household count", "sClass": "w65" },
-            { "sTitle": "Location", "sClass": "w50" },
-            { "sTitle": "Sex", "sClass": "w30" },
-            { "sTitle": "Age", "sClass": "w30" },
-            { "sTitle": "Nationality", "sClass": "w50" },
-            { "sTitle": "Source", "sClass": "w80" },
-            { "sTitle": "Method", "sClass": "w80" },
-            { "sTitle": "Reported by", "sClass": "w50" }
+            { "sTitle": "Location", "sClass": "w180" },
+            { "sTitle": "Sex", "sClass": "w50" },
+            { "sTitle": "Age", "sClass": "w50" },
+            { "sTitle": "Nationality", "sClass": "w100" },
+            { "sTitle": "Source", "sClass": "w180" },
+            { "sTitle": "Method", "sClass": "w180" },
+            { "sTitle": "Reported by", "sClass": "w60" }
         ],
         "sDom": 'T<"clear">lfrtip',
         /*"oTableTools": {
@@ -141,33 +141,28 @@ function LoadTableView() {
             this.fnAdjustColumnSizing(true);
         }
     } );  
- 
+
     // Instanciation of tools better this way to be able to clean them separately.
     oTableTools = new TableTools( tableView, {
             "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" 
     } );
-    
     $("div[class='DTTT btn-group']").hide();
-    $('#tableViewBlock').before( oTableTools.dom.container );
+    $('#tableViewBefore2').before( oTableTools.dom.container );
 
+    // Text showing what is displaied per page
+    $("#tableViewBefore1").empty();
     $('#tableDisplay_info').appendTo("#tableViewBefore1");
-    //$('#tableViewBefore').add("<br style=\"clear: both;\" />");
-    $('#tableDisplay_length').appendTo('#tableViewBefore2');
 
-    $("div[class='dataTables_paginate paging_bootstrap pagination']").appendTo("#tableViewBefore2");
+    // To choose how many records per page
+    $("#tableViewBefore3").empty();
+    $("#tableViewBefore3b").empty();
+    $('#tableDisplay_length').appendTo('#tableViewBefore3');
+    $('#tableDisplay_filter').appendTo('#tableViewBefore3b');
 
+    // pagination
+    $("#tableViewBefore4").empty();
+    $("div[class='dataTables_paginate paging_bootstrap pagination']").appendTo("#tableViewBefore4");
 
-DoubleScroll(document.getElementById('tableViewBlock'));
-
-    //$('#tableDisplay_length').before( oTableTools.dom.container );
-/*
-    $('#tableDisplay_info').appendTo("#tableViewAfter");
-    $("div[class='dataTables_paginate paging_bootstrap pagination']").appendTo("#tableViewAfter");
-*/
-    //$("div[class='dataTables_paginate paging_bootstrap pagination']").hide();//after('#tableViewBlock');
-    //$(".source").appendTo(".destination");
-//dataTables_paginate paging_bootstrap pagination
- 
     tableView = null;
     tableViewData = null;
     personCount = null;
@@ -175,40 +170,3 @@ DoubleScroll(document.getElementById('tableViewBlock'));
     dateArray = null;
     tempArray = null;
 }
-
-/*
-    function DoubleScroll(element) {
-        var scrollbar= document.createElement('div');
-        scrollbar.appendChild(document.createElement('div'));
-        scrollbar.style.overflow= 'auto';
-        scrollbar.style.overflowY= 'hidden';
-        scrollbar.firstChild.style.width= element.scrollWidth+'px';
-        scrollbar.firstChild.style.paddingTop= '1px';
-        scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
-        scrollbar.onscroll= function() {
-            element.scrollLeft= scrollbar.scrollLeft;
-        };
-        element.onscroll= function() {
-            scrollbar.scrollLeft= element.scrollLeft;
-        };
-        element.parentNode.insertBefore(scrollbar, element);
-    }
-
-    DoubleScroll(document.getElementById('tableViewBlock'));*/
-function DoubleScroll(element) {
-        var scrollbar= document.createElement('div');
-        scrollbar.appendChild(document.createElement('div'));
-        scrollbar.style.overflow= 'auto';
-        scrollbar.style.overflowY= 'hidden';
-        scrollbar.style.width= '150px';
-        scrollbar.firstChild.style.width= element.scrollWidth+'px';
-        scrollbar.firstChild.style.paddingTop= '1px';
-        scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
-        scrollbar.onscroll= function() {
-            element.scrollLeft= scrollbar.scrollLeft;
-        };
-        element.onscroll= function() {
-            scrollbar.scrollLeft= element.scrollLeft;
-        };
-        element.parentNode.insertBefore(scrollbar, element);
-    }

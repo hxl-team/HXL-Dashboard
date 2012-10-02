@@ -1,0 +1,92 @@
+
+/* Menu */
+.navbar .nav .active > a, .navbar .nav .active > a:hover {
+    border-bottom: 1px solid #B91222;
+}
+.navbar .nav > li > a {
+    float: none;
+    padding: 10px 15px;
+}
+
+/* Main red frame */
+.hero-unit {
+    border: 1px solid #B91222;
+}
+
+/* Navigation butons */
+div.nav-hxl {
+    clear: both;
+}
+
+/* Bootstrap popover */
+.popover-title {
+    font-weight: bold;
+    text-align:center;
+}
+.popover-content {
+    text-align:center;
+}
+
+
+/* Datatables for table view */
+.dataTables_length {
+    width: 100%;
+}
+.dataTables_filter {
+    float: left;
+    text-align: left;
+    width: 100%;
+}
+.w10 {
+    width: 10px;
+    text-align: center;
+}
+.w20 {
+    width: 20px;
+    text-align: center;
+}
+.w30 {
+    width: 30px;
+    text-align: center;
+}
+.w40 {
+    width: 40px;
+    text-align: center;
+}
+.w45 {
+    width: 45px;
+    text-align: center;
+}
+.w50 {
+    width: 50px;
+    text-align: center;
+}
+.w60 {
+    width: 60px;
+    text-align: center;
+}
+.w65 {
+    width: 65px;
+    text-align: center;
+}
+.w70 {
+    width: 70px;
+    text-align: center;
+}
+.w80 {
+    width: 80px;
+    text-align: center;
+}
+.w90 {
+    width: 90px;
+    text-align: center;
+}
+.w100 {
+    width: 100px;
+    text-align: center;
+}
+
+.w180 {
+    width: 180px;
+    text-align: center;
+}

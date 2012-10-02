@@ -17,12 +17,10 @@ var lblSou = "* All sources";
 	<title>Humanitarian Profile Data Browser</title>
 	<meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
     <link rel="shortcut icon" href="img/favicon.ico">
-    <link href="css/hxlator.css" rel="stylesheet"> 
     <link href="css/slider.css" rel="stylesheet"> 
     
     <!--[if lt IE 9]><script src="js/html5.js"></script><![endif]-->
     <script src="js/jquery/jquery-1.8.2.js"></script>
-    <script type="text/javascript" src="js/slide-fade-content.js"></script>
     <script type="text/javascript" src="js/jquery/jquery.sparkline.min.js"></script>
     <script src="js/json2.js"></script> 
     <script src="js/sparqlQueries.js"></script>  
@@ -50,104 +48,19 @@ var lblSou = "* All sources";
 
     <!-- Bootstrap -->
     <script type='text/javascript' src="lib/bootstrap/js/bootstrap.js"></script>
-    <script type='text/javascript' src="lib/bootstrap/js/bootstrap-modal.js"></script>
-    <script type='text/javascript' src="js/bootstrap/bootstrap-tooltip.js"></script>  
-    <script type='text/javascript' src="js/bootstrap/bootstrap-popover.js"></script>
 
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>
 
-<style type="text/css">
-
-.popover {
-     border: 0px;
-     background-color:transparent; 
-}
-.popover-inner {
-     border: 2px solid black;
-     background-color:transparent; 
-}
-
-
-
-
-.w10 {
-    width: 10px;
-    text-align: center;
-}
-.w20 {
-    width: 20px;
-    text-align: center;
-}
-.w30 {
-    width: 30px;
-    text-align: center;
-}
-.w40 {
-    width: 40px;
-    text-align: center;
-}
-.w45 {
-    width: 45px;
-    text-align: center;
-}
-.w50 {
-    width: 50px;
-    text-align: center;
-}
-.w60 {
-    width: 60px;
-    text-align: center;
-}
-.w65 {
-    width: 65px;
-    text-align: center;
-}
-.w70 {
-    width: 70px;
-    text-align: center;
-}
-.w80 {
-    width: 80px;
-    text-align: center;
-}
-.w90 {
-    width: 90px;
-    text-align: center;
-}
-.w100 {
-    width: 100px;
-    text-align: center;
-}
-
-
-</style>
+    <!-- Style personalization -->
+    <link href="css/dashboard.css" rel="stylesheet">
 
 </head>
 <body>
-
-
-<div id="myModal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Please wait</h3>
-    </div>
-    <div class="modal-body">
-        <img src="img/loading.gif" />
-        <p><span id="waitingText" >Data is being downloaded... </span></p>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn">Close</a>
-        <a href="#" class="btn btn-primary">Save changes</a>
-    </div>
-</div>
-
-
-
     <div class="navbar container" style="width: 940px;" >
         <div class="container" style="width: 940px;" >
             <span class="brand"><img src="img/logo.png" /></span>
-            <div class="nav-hxlator">
+            <div class="nav-hxl">
                 <ul class="nav" id="topnav">
                 <li class="active"><a href="." style="background-color: #FFFFFF; box-shadow:none;" >Humanitarian Profile Data Browser</a></li>
                 </ul>

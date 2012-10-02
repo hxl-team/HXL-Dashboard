@@ -45,8 +45,6 @@
                 </tr>
             </table>
             <br />
-            <br />
-            <br />
             <table>
                 <tr>
                     <td>
@@ -123,7 +121,7 @@
                         </div>
                     </td>  
                     <td>
-                        <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 3px solid black;">
+                        <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 1px solid black;">
                         </div>
                     </td>
                 </tr>

@@ -69,17 +69,17 @@ function setEmergencyChoice(event) {
 function initInfoCategory(categoriesData) {
 
     //  Buttons over
-    $("#infoPopover1").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-    $("#catPopover1").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
+    $("#infoPopover1").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
+    $("#catPopover1").popover({placement:'left', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
     
-    $("#infoPopover2").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-    $("#catPopover2").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
+    $("#infoPopover2").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
+    $("#catPopover2").popover({placement:'left', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
     
-    $("#infoPopover3").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-    $("#catPopover3").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
+    $("#infoPopover3").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
+    $("#catPopover3").popover({placement:'left', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
     
-    $("#infoPopover4").popover({placement:'bottom', delay: {show: 300, hide: 100 }}); 
-    $("#catPopover4").popover({placement:'left', delay: {show: 300, hide: 100 }}); 
+    $("#infoPopover4").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
+    $("#catPopover4").popover({placement:'left', trigger: 'hover', delay: {show: 300, hide: 100 }}); 
 
     // Display
     // Category and its popover
@@ -326,7 +326,7 @@ function initSparklines() {
     for (var j = 0; j < reportedBy1.length; j++) {
         pop1Full += ' ' + reportedBy1[j];
     }
-    pop1Full += '.';
+    pop1Full += '.<br />(Click for all details)';
     for (var i=0, attrs=infoPop1.attributes, l=attrs.length; i<l; i++){
         if (attrs.item(i).nodeName == 'data-content') {
             attrs.item(i).value = pop1Full;
@@ -347,7 +347,7 @@ function initSparklines() {
     for (var j = 0; j < reportedBy2.length; j++) {
         pop2Full += ' ' + reportedBy2[j];
     }
-    pop2Full += '.';
+    pop2Full += '.<br />(Click for all details)';
     for (var i=0, attrs=infoPop2.attributes, l=attrs.length; i<l; i++){
         if (attrs.item(i).nodeName == 'data-content') {
             attrs.item(i).value = pop2Full;
@@ -368,7 +368,7 @@ function initSparklines() {
     for (var j = 0; j < reportedBy3.length; j++) {
         pop3Full += ' ' + reportedBy3[j];
     }
-    pop3Full += '.';
+    pop3Full += '.<br />(Click for all details)';
     for (var i=0, attrs=infoPop3.attributes, l=attrs.length; i<l; i++){
         if (attrs.item(i).nodeName == 'data-content') {
             attrs.item(i).value = pop3Full;
@@ -389,7 +389,7 @@ function initSparklines() {
     for (var j = 0; j < reportedBy4.length; j++) {
         pop4Full += ' ' + reportedBy4[j];
     }
-    pop4Full += '.';
+    pop4Full += '.<br />(Click for all details)';
     for (var i=0, attrs=infoPop4.attributes, l=attrs.length; i<l; i++){
         if (attrs.item(i).nodeName == 'data-content') {
             attrs.item(i).value = pop4Full;

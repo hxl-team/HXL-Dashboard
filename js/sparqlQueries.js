@@ -209,7 +209,7 @@ function getlocationGeom (geomUri) {
 
 	locGeom = '';
     var request = $.ajax({
-      url: "script.php",
+      url: "sparqlQueries.php",
       type: "POST",
       data: {uri : geomUri},
       dataType: "html"

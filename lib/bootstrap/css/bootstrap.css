@@ -4267,8 +4267,8 @@ a.thumbnail:hover {
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding;
   background-clip: padding-box;
-  /*border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.2); [VP] [HXL]*/
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
