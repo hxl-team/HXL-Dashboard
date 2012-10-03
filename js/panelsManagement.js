@@ -32,14 +32,24 @@ function NextSlide(event) {
     
     drawMap(event);
     drawChart(event); 
+
+
+
+
+    //InitLabelsTableView();
+    //LoadTableView();
+    /*$("div[class='DTTT btn-group']").hide(); // DownloadBar
+    $('#tableViewBefore2').before( oTableTools.dom.container );*/
+//$("div[class='DTTT btn-group']").clone().appendTo('#DownloadBar');
+
 }
 
 function LastSlide() {
 
-            //cleaningTableView();
-
     InitLabelsTableView();
     LoadTableView();
+
+    //$('#tableViewBefore2').before( oTableTools.dom.container );
 
     document.getElementById('slideContainer2').style.display="none";
     document.getElementById('slideContainer3').style.display="block";
@@ -81,11 +91,13 @@ function PreviousSlide(event) {
 
             document.getElementById('slideContainer3').style.display="none";
             document.getElementById('slideContainer2').style.display="block";
-    
+
             drawMap(event);
             drawChart(event); 
     
-            cleaningTableView();
+            //cleaningTableView();
+
+            //$('.downloadBar').prepend( oTableTools.dom.container );
 
             break;
     }
@@ -93,14 +105,19 @@ function PreviousSlide(event) {
 
 function cleaningTableView() {
     // Cleaning the dataTable and especially the tableTools responsible on IE for an iterative 50 Mo accumalation of wasted memory on the process iexplorer.exe.
-    oTableTools.fnCleanUp(); // improtant
-    /* Barely no effect with the following:
+    //oTableTools.fnCleanUp(); // improtant
+    // Barely no effect with the following:
     $(tableView).dataTable().fnDestroy();
+    tableView = null;
+
+
+//$(".DTTT_collection").remove();
+
     if (typeof(CollectGarbage) == "function") {
-        //CollectGarbage();
+        CollectGarbage();
     }
     $("#tableView").empty(); 
-    */
+    
 }
 
 function bindButtonsEvents() {

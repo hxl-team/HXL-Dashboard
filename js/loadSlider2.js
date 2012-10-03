@@ -21,18 +21,7 @@ function waiting(timeout_step) {
         setTimeout(waiting, timeout_step);
     }
 }
-/*
-function ShowLayer()
-{
-    Popup.style.display="block";
-    $('#map').hide();
-}
-function HideLayer()
-{
-    Popup.style.display="none";
-    $('#map').show();
-}
-*/
+
 /*
  * Display of the map showing the current location
  */
@@ -64,14 +53,18 @@ function drawMap(event) {
 
     if (map == null) {
         map = L.map('map');
+    } else {
+
+    map.removeLayer(googleLayer);
+    googleLayer = null;
     }
 
     if (googleLayer == null) {
         googleLayer = new L.Google('ROADMAP');
-    }
-
-    map.setView([12.367838, -1.530247], 6);
     map.addLayer(googleLayer);
+    }
+    map.setView([12.367838, -1.530247], 6);
+
     /*$('#myModal').modal({
         keyboard: false,
         backdrop: false
@@ -81,18 +74,23 @@ function drawMap(event) {
     waiting(100);
 }
 
+
+var geomSplit;
+var tempArray;
+var coordinatesArray;
+var finalGeom;
+var geojsonFeature;
 function processGeometry () {
 //console.log(locGeom);
 
     //$('#myModal').modal('hide');
 
-    // Conversion of the string into an array of array of array of lat long coordinates
-    var geomSplit = locGeom.split('],[');
-    var tempArray = new Array();
-    var coordinatesArray;
-    var finalGeom;
-    var geojsonFeature;
     
+
+    // Conversion of the string into an array of array of array of lat long coordinates
+    geomSplit = locGeom.split('],[');
+    tempArray = new Array();
+
     for (var i = geomSplit.length - 1; i >= 0; i--) {
         coordinatesArray = geomSplit[i].split(',');
         coordinatesArray[0] = coordinatesArray[0] * 1.0;
@@ -125,10 +123,18 @@ function processGeometry () {
 
     if (locationBoundariesLayer != null){
         map.removeLayer(locationBoundariesLayer);
+        locationBoundariesLayer = null;
     }
 
     locationBoundariesLayer = L.geoJson().addTo(map);
     locationBoundariesLayer.addData(geojsonFeature);
+
+    geomSplit = null;
+    tempArray = null;
+    coordinatesArray = null;
+    finalGeom = null;
+    geojsonFeature = null;
+    //map = null;
 }
 
 /*
@@ -508,6 +514,7 @@ function drawChart(event) {
 
     dataTable = null;
     options = null;
+    chart = null;
 }
 
 

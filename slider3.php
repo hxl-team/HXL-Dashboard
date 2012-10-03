@@ -12,7 +12,7 @@
             <span id="tableViewTitle" style="font-size: 18px; line-height: 27px; color: inherit; font-weight: bold; margin: 0; text-rendering: optimizelegibility;" ></span>
             <br>
             <br />
-            <table width="860" border="0" >
+            <table width="850" border="0" >
                 <tr>
                     <td width="450">
                         <div id="tableViewBefore1" ></div>
@@ -24,15 +24,13 @@
                 <tr>
                     <td>
                         <div id="tableViewBefore3" ></div>
-                        <br style="clear:both" >
-                        <div id="tableViewBefore3b" ></div>
                     </td>
                     <td>
                         <div id="tableViewBefore4" ></div>
                     </td>
                 </tr>
             </table>            
-            <div id="tableViewBlock" style="overflow-x: scroll; overflow-y: hidden; width: 860px; margin: 0px auto; border-right: 1px dotted grey;" ><!--overflow-x: scroll; height: 600px;  -->
+            <div id="tableViewBlock" style="overflow-x: scroll; overflow-y: hidden; width: 850px; margin: 0px auto; border-right: 1px dotted grey;" ><!--overflow-x: scroll; height: 600px;  -->
                 <div id="tableView" style="width: 1800px;  white-space: nowrap; border: 1px solid black;" ></div><!-- -->
             </div>
             <div id="tableViewAfter" ></div>

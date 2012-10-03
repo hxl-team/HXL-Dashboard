@@ -142,31 +142,35 @@ function LoadTableView() {
         }
     } );  
 
-    // Instanciation of tools better this way to be able to clean them separately.
+    // Instanciation of the download bar.
+    // Better this way to be able to clean them separately.
     oTableTools = new TableTools( tableView, {
-            "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" 
+        "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" 
     } );
-    $("div[class='DTTT btn-group']").hide();
-    $('#tableViewBefore2').before( oTableTools.dom.container );
+    //$("div[class='DTTT btn-group']").clone().appendTo('#tableViewBefore2');
+    //$("div[class='DTTT btn-group']").hide();
+    //$("#tableViewBefore2").empty();
+    //$('#tableViewBefore2').append( oTableTools.dom.container );
+    //$('.downloadBar').prepend( oTableTools.dom.container );
 
-    // Text showing what is displaied per page
+    // Text showing what is displayed per page
     $("#tableViewBefore1").empty();
     $('#tableDisplay_info').appendTo("#tableViewBefore1");
 
     // To choose how many records per page
     $("#tableViewBefore3").empty();
-    $("#tableViewBefore3b").empty();
+    $("#tableViewBefore2").empty();
     $('#tableDisplay_length').appendTo('#tableViewBefore3');
-    $('#tableDisplay_filter').appendTo('#tableViewBefore3b');
+    $('#tableDisplay_filter').appendTo('#tableViewBefore2');
 
     // pagination
     $("#tableViewBefore4").empty();
     $("div[class='dataTables_paginate paging_bootstrap pagination']").appendTo("#tableViewBefore4");
 
-    tableView = null;
     tableViewData = null;
     personCount = null;
     housesholdCount = null;
     dateArray = null;
     tempArray = null;
+    oTableTools = null;
 }

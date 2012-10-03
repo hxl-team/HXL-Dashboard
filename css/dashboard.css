@@ -33,9 +33,13 @@ div.nav-hxl {
     width: 100%;
 }
 .dataTables_filter {
-    float: left;
-    text-align: left;
+    float: right;
+    text-align: right;
     width: 100%;
+}
+.paging_bootstrap {
+    height: 40px;
+    margin: 0px;
 }
 .w10 {
     width: 10px;

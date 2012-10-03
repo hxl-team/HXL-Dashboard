@@ -45,29 +45,21 @@
                 </tr>
             </table>
             <br />
-            <table>
-                <tr>
-                    <td>
-                        
-                    </td>
-                </tr>
-            </table>
             <table style="width: 860px;" >
                 <tr>
                     <td colspan="2" width="620" style="vertical-align: top;" >
-                        <!--<a name="graph"></a> -->
                         <div id="chart_div2" style="width: 850px; height: 350px; margin: 10px 20px 10px 0px; border: 1px solid black;" >
                         </div>
-                        <div id="" style="margin: 0px; text-align: center;" >
-                            <button>XLS</button>
+                        <div class="downloadBar" style="margin: 0px; text-align: center;" >
+                         <!--   <button>XLS</button>
                             <button>GML</button>
-                            <button>CSV</button>                        
+                            <button>CSV</button>                     -->    
                         </div>
                     </td>
                 </tr>
                     <td style="vertical-align: top;" >
                         <div style="margin: 0px 10px 10px 0px;" >
-                            Location (all admin levels and camps):<br />
+                            Locations:<br />
                             <div id="locList" class="btn-group" style="margin: 0px 0px 8px 0px;" >
                                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" style="width: 230px;" >
                                     <span id="locListSelectedValue" style="float: left;" ></span>
