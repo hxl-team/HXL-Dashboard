@@ -52,6 +52,9 @@ var lblSou = "* All sources";
     <!-- Sliding panels -->
     <script type='text/javascript' src='js/panelsManagement.js'></script>
 
+    <!-- Browser detection -->
+    <script src="http://hxl.humanitarianresponse.info/data/js/browserDetection.js"></script>
+
     <!-- Style personalization -->
     <link href="css/dashboard.css" rel="stylesheet">
 

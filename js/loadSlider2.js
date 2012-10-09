@@ -61,7 +61,7 @@ function drawMap(event) {
 
     if (googleLayer == null) {
         googleLayer = new L.Google('ROADMAP');
-    map.addLayer(googleLayer);
+        map.addLayer(googleLayer);
     }
     map.setView([12.367838, -1.530247], 6);
 
