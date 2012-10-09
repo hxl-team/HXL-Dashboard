@@ -53,7 +53,7 @@ var lblSou = "* All sources";
     <script type='text/javascript' src='js/panelsManagement.js'></script>
 
     <!-- Browser detection -->
-    <script src="http://hxl.humanitarianresponse.info/data/js/browserDetection.js"></script>
+    <script src="js/browserDetection.js"></script>
 
     <!-- Style personalization -->
     <link href="css/dashboard.css" rel="stylesheet">
