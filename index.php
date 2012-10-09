@@ -71,9 +71,6 @@ var lblSou = "* All sources";
         </div>
     </div> 
     <div class="container" style="text-align: left; width: 940px;">
-        <a href="https://sites.google.com/site/hxlproject/"><img src="img/hxl-logo-s.png" align="right" /></a>
-        <br />
-        <br />
         <span style="margin-left: 20px;">Note: this is a test setup and some of the data shown here may be inaccurate, outdated, or even entirely made up.</span>
      	<br />
         <!-- DISPLAY CONTAINER -->
@@ -95,7 +92,7 @@ var lblSou = "* All sources";
             </div>
                 <br />
             <p id="footer" style="text-align: center;" >
-                <a href="http://hxl.humanitarianresponse.info/">Powered by HXL</a> &copy; 2012 UNOCHA
+                <a href="http://hxl.humanitarianresponse.info/">Powered by HXL</a>
             </p> 
         </div>
         <div style="clear: both;" ></div>
