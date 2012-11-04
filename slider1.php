@@ -29,6 +29,8 @@
             </table>
 			<br />
 			<br />
+			<div id="noDataBlock" >
+			</div>
 			<div id="dataBlock" >
 				<!-- SPARKLINE BLOC 1 -->
 				<div class="well" style="width:500px; margin:0 auto;" >

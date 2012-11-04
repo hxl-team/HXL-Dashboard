@@ -1,16 +1,3 @@
-<script type="text/javascript">
-var _DEBUG = false;
-
-var lblLoc0 = "* All Affected Population Locations";
-var lblLoc1 = "* All Affected Population Locations";
-var lblLoc2 = "* All Affected Population Locations";
-var lblLoc3 = "* All Affected Population Locations";
-var lblSex = "* All sex categories";
-var lblAge = "* All age groups";
-var lblOri = "* All origins";
-var lblSou = "* All sources";
-
-</script> 
 <!DOCTYPE html>
 <html lang="en">
 <head>

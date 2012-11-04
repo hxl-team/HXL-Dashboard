@@ -42,7 +42,7 @@ prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix geo: <http://www.opengis.net/ont/geosparql#>
 
 SELECT * WHERE {
-  <http://hxl.humanitarianresponse.info/datatest/locations/apl/bfa/BFA046001001> geo:hasGeometry ?geomUri .
+  <http://hxl.humanitarianresponse.info/data/locations/apl/bfa/BFA046001001> geo:hasGeometry ?geomUri .
   ?geomUri geo:hasSerialization ?geom
 }";*/
     try {

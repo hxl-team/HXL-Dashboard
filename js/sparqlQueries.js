@@ -17,12 +17,14 @@ function getEmergenciesInfo () {
 	var jsonObject = new Array();
 	$query = queryPrefix;
 	$query += 'SELECT DISTINCT ?emergencyUri ?emergencyDisplay WHERE {';
-	$query += 'GRAPH <http://hxl.humanitarianresponse.info/data/datacontainers/unocha/1234567890.000002> {';
+	$query += 'GRAPH ?graph {';
+	//$query += 'GRAPH <http://hxl.humanitarianresponse.info/data/datacontainers/unocha/1234567890.000002> {';
 	$query += '?emergencyUri rdf:type hxl:Emergency .';
 	$query += '?emergencyUri hxl:commonTitle ?emergencyDisplay .';
 	$query += '?emergencyUri hxl:atLocation ?countryUri .';
 	$query += '}';
 	$query += '}';
+	$query += 'ORDER BY ?emergencyUri';
 
 	//console.log($query);
 				
@@ -44,7 +46,7 @@ function getEmergenciesInfo () {
 	});
 
 	function displayError(xhr, textStatus, errorThrown) {
-		alert(textStatus + ': ' + errorThrown);
+		console.log(textStatus + ': ' + errorThrown);
 	}
 
 	function displayData(data) {
@@ -144,7 +146,7 @@ function getPopulationInfo (emergencyUri) {
 	$query += '?population hxl:SexCategory ?sexCategory .';
 	$query += '?population hxl:AgeGroup ?ageGroup .';
 	$query += '?population hxl:nationality ?nationality .';
-	$query += '?graph hxl:validityStart ?date .';
+	$query += '?graph hxl:validOn ?date .';
 	$query += '?graph hxl:reportedBy ?reporterUri .';
 	$query += '}';
 	$query += '?typeUri skos:prefLabel ?type .';
@@ -166,7 +168,7 @@ function getPopulationInfo (emergencyUri) {
 	$.ajax({
 		url: 'http://hxl.humanitarianresponse.info/sparql',
 		headers: {
-			Accept: 'application/sparql-results+json',
+			Accept: 'application/sparql-results+json'
 		},
 		data: { 
 			query: $query 

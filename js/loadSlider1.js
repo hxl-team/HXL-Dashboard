@@ -9,8 +9,6 @@ categoriesInfo = getCategoriesInfo ();
 var populationInfo;
 
 
- 
-
 /* Refresh the content when the emergency choice triggers. */
 function refreshSlide1(event) { 
     setEmergencyChoice(event);
@@ -21,15 +19,59 @@ function refreshSlide1(event) {
 }
 
 /* Hides the sparkline blocks. */
-function testHideSparklines() {      
-    if (populationInfo == null || populationInfo == undefined || 
-        populationInfo.results.bindings.length == 0 || populationInfo.results.bindings[0] == null ||
-        emergenciesList == null || emergenciesList == undefined ||
-        categoriesInfo == null || categoriesInfo == undefined) {
+function testHideSparklines()
+{      
+    if (populationInfo == null) {
         $('#dataBlock').hide(); 
-        return;
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No population available (1)<br /><br />"); 
+        return false;
+    }   
+    if (populationInfo == undefined) {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No population available (2)<br /><br />"); 
+        return false;
+    }   
+    if (populationInfo.results.bindings.length == 0) {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No population available (3)<br /><br />"); 
+        return false;
+    }   
+    if (populationInfo.results.bindings[0] == null) {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No population available (4)<br /><br />"); 
+        return false;
+    }   
+    /*
+     *
+    if (populationInfo == null || populationInfo == undefined || 
+        populationInfo.results.bindings.length == 0 || populationInfo.results.bindings[0] == null) {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No population available<br /><br />"); 
+        return false;
+    }   */
+    else if (emergenciesList == null || emergenciesList == undefined)
+    {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No emergency available<br /><br />"); 
+        return false;
     }
-    $('#dataBlock').show(); 
+    else if (categoriesInfo == null || categoriesInfo == undefined)
+    {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />No categories available<br /><br />"); 
+        return false;
+    }
+    $('#noDataBlock').html(""); 
+    $('#noDataBlock').hide(); 
+    $('#noDataBlock').show(); 
+    return true;
 }
 
 /*
@@ -39,6 +81,7 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+
 /*
  * Displays the title and the emergency selection.
  */
@@ -47,14 +90,18 @@ function setEmergencyChoice(event) {
     // Filling the list
     $('#emeListItems').empty();
     var tempList = '';
-    for (var i = emergenciesList.results.bindings.length - 1; i >= 0; i--) {
+    //for (var i = emergenciesList.results.bindings.length - 1; i >= 0; i--) {
+    for (var i = 0 ; i < emergenciesList.results.bindings.length; i++) {
         tempList += '<li><a id="' + i + '" onclick="refreshSlide1(this)" >' + emergenciesList.results.bindings[i]['emergencyDisplay'].value + '</a></li>';
     }
     $('#emeListItems').html(tempList);
     tempList = null;
+    
     // List choice
+// Warning: Temporary setting using element 1 corresponding to the first set of test data
     var tempValue = emergenciesList.results.bindings[1]['emergencyDisplay'].value;
     var tempId = emergenciesList.results.bindings[1]['emergencyUri'].value;
+    
     if (event != null) {
         tempValue = emergenciesList.results.bindings[event.id]['emergencyDisplay'].value;
         tempId = emergenciesList.results.bindings[event.id]['emergencyUri'].value;
@@ -148,7 +195,10 @@ var dateArray3;
 var dateArray4;
 function initSparklines() {
       
-    if (populationInfo.results.bindings.length == 0) return;
+    if (populationInfo.results.bindings.length == 0)
+    {
+        return;
+    } 
 
     var source1 = new Array();
     var source2 = new Array();
