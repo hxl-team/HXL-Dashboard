@@ -70,7 +70,7 @@ function testHideSparklines()
     }
     $('#noDataBlock').html(""); 
     $('#noDataBlock').hide(); 
-    $('#noDataBlock').show(); 
+    $('#dataBlock').show(); 
     return true;
 }
 
@@ -86,6 +86,7 @@ function numberWithCommas(x) {
  * Displays the title and the emergency selection.
  */
 function setEmergencyChoice(event) {
+
 
     // Filling the list
     $('#emeListItems').empty();
