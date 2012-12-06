@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Humanitarian Profile Data Browser</title>
-	<meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
+    <title>Humanitarian Profile Dashboard</title>
+    <meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
     <link rel="shortcut icon" href="img/favicon.ico">
     <link href="css/slider.css" rel="stylesheet"> 
     
@@ -41,6 +41,8 @@
 
     <!-- Browser detection -->
     <script src="js/browserDetection.js"></script>
+    
+    <script src="js/functions.js"></script>  
 
     <!-- Style personalization -->
     <link href="css/dashboard.css" rel="stylesheet">

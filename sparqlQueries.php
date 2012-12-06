@@ -37,14 +37,6 @@ echo $return;
 
 
 function getQueryResults($query){
-   /* $query= "prefix hxl: <http://hxl.humanitarianresponse.info/ns/#>
-prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix geo: <http://www.opengis.net/ont/geosparql#>
-
-SELECT * WHERE {
-  <http://hxl.humanitarianresponse.info/data/locations/apl/bfa/BFA046001001> geo:hasGeometry ?geomUri .
-  ?geomUri geo:hasSerialization ?geom
-}";*/
     try {
         $db = sparql_connect( "http://hxl.humanitarianresponse.info/sparql" );
         

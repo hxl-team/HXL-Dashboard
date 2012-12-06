@@ -4,7 +4,7 @@
  */
 ?>
 <div id="slide1" class="slide" style="width: 900px;" style="margin: 0 auto;" >
-	<div id="slideContainer1" style="width: 860px; margin: 20px auto;">
+	<div id="slideContainer1" display="block" style="width: 860px; margin: 20px auto;">
 		<!--<div style="width: 860px; margin: 20px auto;" >-->
             <table>
                 <tr>

@@ -8,7 +8,7 @@
 </script>
 
 <div id="slide2" class="slide" style="width: 900px;" style="margin: 0 auto;" >
-    <div id="slideContainer2" >
+    <div id="slideContainer2" display="none" >
         <div style="margin: 20px;" >
             <table>
                 <tr>

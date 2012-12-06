@@ -4,7 +4,7 @@
  */
 ?>
 <div id="slide3" class="slide" style="width: 900px;" style="margin: 0 auto;" >
-    <div id="slideContainer3" >
+    <div id="slideContainer3" display="none" >
         <div style="width: 850px; margin: 20px auto;" >
             <button id="PreviousButton2" class="btn" ><< Detailed view</button>
             <br style="clear:both" >

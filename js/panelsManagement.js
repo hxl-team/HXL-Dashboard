@@ -17,22 +17,31 @@ var SlideWidth = 900;
 var SlideSpeed = 900;
 
 /* Slide 1 Initialization */
-$(document).ready(function () {
+$(document).ready
+(
+    function () 
+    {
+    /*
+        document.getElementById('slideContainer1').style.display="block";
+        document.getElementById('slideContainer2').style.display="none";
+        document.getElementById('slideContainer3').style.display="none";
+    */
+        setEmergencyChoice(null);  
+        populationInfo = getPopulationInfo(document.getElementById('emeListSelectedId').innerHTML);
+        initInfoCategory(categoriesInfo);  
+        
+        
+        
+        initSparkline1();  
+        //initSparklines(populationInfo);  
+        testHideSparklines(populationInfo);
+    }
+);
 
-    document.getElementById('slideContainer1').style.display="block";
-    document.getElementById('slideContainer2').style.display="none";
-    document.getElementById('slideContainer3').style.display="none";
-
-    setEmergencyChoice(null);  
-    getPopulationInfo (document.getElementById('emeListSelectedId').innerHTML);
-    initInfoCategory(categoriesInfo);  
-    initSparklines();  
-    testHideSparklines();
-});
-
-function NextSlide(event) {
-
-    if (_DEBUG) {
+function NextSlide(event) 
+{
+    if (_DEBUG) 
+    {
         console.log('From slide 1 ... ');
     }
 
@@ -55,8 +64,8 @@ function NextSlide(event) {
 
 }
 
-function LastSlide() {
-
+function LastSlide() 
+{
     InitLabelsTableView();
     LoadTableView();
 
@@ -66,35 +75,39 @@ function LastSlide() {
     document.getElementById('slideContainer3').style.display="block";
 }
 
-function quickTable(event) {
-    if (_DEBUG) {
+function quickTable(event) 
+{
+    if (_DEBUG) 
+    {
         console.log("quickTable: " + event.id);
     }
     NextSlide(event);
     LastSlide();
 }
 
-function PrintTime() {
+function PrintTime() 
+{
     var currentDate = new Date()
     var minutes = currentDate.getMinutes();
     var secondes = currentDate.getSeconds();
     return minutes + ":" + secondes;
 }
 
-function PreviousSlide(event) {
-
-
+function PreviousSlide(event) 
+{
     switch(event.id)
     {
         case 'PreviousButton1':
-            if (_DEBUG) {
+            if (_DEBUG) 
+            {
                 console.log('From slide 2 to slide 1');
             }
             document.getElementById('slideContainer2').style.display="none";
             document.getElementById('slideContainer1').style.display="block";
             break;
         case 'PreviousButton2':
-            if (_DEBUG) {
+            if (_DEBUG) 
+            {
                 console.log('From slide 3 to slide 2');
             }
 
