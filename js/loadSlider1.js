@@ -11,55 +11,31 @@ var categoriesInfo = getCategoriesInfo ();
 /* Refresh the content when the emergency choice triggers. */
 function refreshSlide1(eventId) 
 {
-    
-    Console.log("refreshSlide1    must not appear now------------------------");
-    
+    //console.log("refreshSlide1: " + emergenciesList.results.bindings[eventId]['emergencyUri'].value);
     
     setEmergencyChoice(eventId);
-    populationInfo = getPopulationInfo(document.getElementById('emeListSelectedId').innerHTML);
+    populationInfo = getPopulationInfo(emergenciesList.results.bindings[eventId]['emergencyUri'].value);
     initInfoCategory(categoriesInfo);  
     initSparkline1();  
     initSparkline2(); 
     initSparkline3();  
+    initSparkline4();  
     testHideSparklines(populationInfo);
 }
 
 /* Hides the sparkline blocks. */
 function testHideSparklines()
 {      
-    if (populationInfo == null) {
+    if (populationInfo == null ||
+        populationInfo == undefined || 
+        populationInfo.results.bindings.length == 0 || 
+        populationInfo.results.bindings[0] == null) {
         $('#dataBlock').hide(); 
         $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No population available (1)<br /><br />"); 
+        $('#noDataBlock').html("<br /><br />No population data available<br /><br />"); 
         return false;
     }   
-    if (populationInfo == undefined) {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No population available (2)<br /><br />"); 
-        return false;
-    }   
-    if (populationInfo.results.bindings.length == 0) {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No population available (3)<br /><br />"); 
-        return false;
-    }   
-    if (populationInfo.results.bindings[0] == null) {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No population available (4)<br /><br />"); 
-        return false;
-    }   
-    /*
-     *
-    if (populationInfo == null || populationInfo == undefined || 
-        populationInfo.results.bindings.length == 0 || populationInfo.results.bindings[0] == null) {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No population available<br /><br />"); 
-        return false;
-    }   */
+    
     else if (emergenciesList == null || emergenciesList == undefined)
     {
         $('#dataBlock').hide(); 
@@ -613,6 +589,49 @@ function initSparkline3()
     $("#sparkline3").sparkline
     (
         regularSum3, 
+        {
+            type: 'line',
+            width: '80',
+            height: '34',
+            lineWidth: 2,
+            lineColor: '#6699cc',
+            fillColor: '#F5F5F5',
+            spotColor: '#046CB6',
+            minSpotColor: '',
+            maxSpotColor: '',
+            highlightSpotColor: '#000000',
+            highlightLineColor: '#000000',
+            spotRadius: 2,
+            chartRangeMin: 0
+        }
+    );
+}
+
+/*
+ * It initializes the Others sparkline and the few information 
+ * linked to it.
+ */
+function initSparkline4()
+{
+    // Displays the big count
+    $("#lastCount4").html(0);
+    $("#lastCount4").attr("title", "0 people"); 
+
+    // Date
+    $("#date4").html(" - ");
+
+    // Popups Info
+    var infoPop3 = document.getElementById("infoPopover3");
+    var pop3Full = '';
+    pop3Full = 'Source: undefined';
+    pop3Full += '.<br />Method: undefined';
+    pop3Full += '.<br />Reported by: undefined';
+    pop3Full += '.<br />(Click for all details)';
+    
+    // Instanciation
+    $("#sparkline4").sparkline
+    (
+        [0], 
         {
             type: 'line',
             width: '80',

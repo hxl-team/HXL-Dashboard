@@ -133,11 +133,12 @@ function getCategoriesInfo ()
 
 function getPopulationInfo(emergencyUri)
 {
+    //console.log("getPopulationInfo: " + emergencyUri);
     if (emergencyUri == null )
     {
         emergencyUri = emergenciesList.results.bindings[1]['emergencyUri'].value;
     }
-
+    
     jQuery.support.cors = true; // for IE8+
     
     $query = queryPrefix;
@@ -146,7 +147,7 @@ function getPopulationInfo(emergencyUri)
     $query += '{ \n';
     $query += '  GRAPH ?graph  \n';
     $query += '  { \n';
-    $query += '    ?graph hxl:aboutEmergency <http://hxl.humanitarianresponse.info/data/emergencies/mali2012test> . \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
     $query += '    ?graph hxl:validOn ?date . \n';
     $query += '    ?graph hxl:reportedBy ?reportedBy . \n';
     $query += '    ?population hxl:personCount ?personCount . \n';
