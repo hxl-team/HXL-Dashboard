@@ -2,13 +2,22 @@
 /*
  * Creates an associative array in which indexes are all the known dates.
  */
-function matrixCreation(dataArray)
+function matrixCreation(dataArray, typeFilter)
 {
     var result = new Array();
     var currentDate = '';
     // For each unique day, an index is created in dateArray
     for (var i = 0; i < dataArray.results.bindings.length; i++)
     {
+        if (typeFilter != null)
+        {
+            
+            if (populationInfo.results.bindings[i]['populationType'].value != typeFilter) 
+            {
+                continue;
+            }
+        }
+        
         // use the first 10 caracters of a date following the pattern "yyyy-mm-dd".
         // Otherwise, consider using something like value.split(" ")[0]
         if (currentDate != dataArray.results.bindings[i]['date'].value.substr(0,10))
@@ -206,7 +215,13 @@ function linearizeTimeline(timeReference, rawData)
         previousValue = rawData[oldId];
         oldId++;
     }
+    //console.log("-------------------------------------------------");
+    //console.log(result[sumId]);
     result[sumId] = rawData[oldId - 1]; // the last value
+    // before the last value (just a hack so that we can see the latest value
+    // on the compacted sparkline)
+    result[sumId - 1] = rawData[oldId - 1]; 
+    //console.log(result[sumId]);
     
     return result;
 }

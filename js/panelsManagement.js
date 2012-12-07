@@ -33,6 +33,8 @@ $(document).ready
         
         
         initSparkline1();  
+        initSparkline2();  
+        initSparkline3();  
         //initSparklines(populationInfo);  
         testHideSparklines(populationInfo);
     }

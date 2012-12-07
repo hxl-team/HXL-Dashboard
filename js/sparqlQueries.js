@@ -133,83 +133,15 @@ function getCategoriesInfo ()
 
 function getPopulationInfo(emergencyUri)
 {
-    //console.log("getPopulationInfo." + emergencyUri);
-
-	// TODO set it at 0 when ready
     if (emergencyUri == null )
     {
         emergencyUri = emergenciesList.results.bindings[1]['emergencyUri'].value;
     }
 
     jQuery.support.cors = true; // for IE8+
-
-    // This query considers there is no departments!
-    $query = queryPrefix;
-    
-    $query += 'SELECT DISTINCT * \n';
-    $query += 'WHERE \n';
-    $query += '{ \n';
-    $query += 'GRAPH ?graph \n';
-    $query += '{ \n';
-    $query += '?graph hxl:aboutEmergency <http://hxl.humanitarianresponse.info/data/emergencies/mali2012test> . \n';
-    $query += '?graph hxl:validOn ?date . \n';
-    $query += '?graph hxl:reportedBy ?reporterBy . \n';
-    $query += '?population hxl:personCount ?personCount . \n';
-    $query += 'OPTIONAL  \n';
-    $query += '{ \n';
-    $query += '?population hxl:householdCount ?householdCount . \n';
-    $query += '} \n';
-    $query += '?population rdf:type ?popType . \n';
-    $query += '?population hxl:method ?countMethod . \n';
-    $query += '?population hxl:source ?source . \n';
-    $query += '?population hxl:sexCategory ?sexCategory . \n';
-    $query += '?population hxl:AgeGroup ?ageGroup . \n';
-    $query += '?population hxl:nationality ?nationality . \n';
-    $query += '?population hxl:atLocation ?location . \n';
-    $query += '} \n';
-    $query += '?source hxl:abbreviation ?sourceDisplay . \n';
-    $query += '?reportedBy foaf:Member_of ?reporter . \n';
-    $query += '?reporter hxl:orgDisplayName ?reportedByDisplay . \n';
-    $query += '} \n';
-    $query += 'ORDER BY ASC(?date) \n';
-    
-    /*
-     *PREFIX hxl: <http://hxl.humanitarianresponse.info/ns/#> 
-PREFIX geo: <http://www.opengis.net/ont/geosparql#> 
-PREFIX dc: <http://purl.org/dc/terms/> 
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
-PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
- 
-SELECT DISTINCT ?population ?location ?pcode ?personCount ?date ?populationTypeDisplay 
-WHERE  
-{ 
-  GRAPH ?graph  
-  { 
-    ?graph hxl:aboutEmergency <http://hxl.humanitarianresponse.info/data/emergencies/mali2012test> . 
-    ?graph hxl:validOn ?date . 
-    ?graph hxl:reportedBy ?reporterBy . 
-    ?population hxl:personCount ?personCount . 
-    ?population rdf:type ?populationType . 
-    ?population hxl:atLocation ?location . 
-    ?population hxl:source ?source . 
-    ?population hxl:atLocation ?location . 
-  } 
-  ?location hxl:pcode ?pcode . 
-  ?populationType skos:prefLabel ?populationTypeDisplay . 
-  ?source hxl:abbreviation ?sourceDisplay . 
-  ?reportedBy foaf:Member_of ?reporter . 
-  ?reporter hxl:orgDisplayName ?reportedByDisplay . 
-} 
-ORDER BY ASC(?date) 
-
-*/
-    
     
     $query = queryPrefix;
-    $query += 'SELECT DISTINCT ?population ?location ?pcode ?personCount ?date ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri \n';
+    $query += 'SELECT DISTINCT ?population ?location ?pcode ?personCount ?date ?populationType ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri \n';
     $query += 'WHERE  \n';
     $query += '{ \n';
     $query += '  GRAPH ?graph  \n';
@@ -228,62 +160,15 @@ ORDER BY ASC(?date)
     $query += '  ?countryUri hxl:atLevel ?adminLevel .  \n';
     $query += '  ?countryUri hxl:featureName ?countryDisplay .  \n';
     $query += '  ?populationType skos:prefLabel ?populationTypeDisplay . \n';
-    $query += '  ?source hxl:abbreviation ?sourceDisplay . \n';
+    $query += '  OPTIONAL \n';
+    $query += '  { \n';
+    $query += '    ?source hxl:abbreviation ?sourceDisplay . \n';
+    $query += '  } \n';
     $query += '  ?reportedBy foaf:Member_of ?reporter . \n';
     $query += '  ?reporter hxl:orgDisplayName ?reportedByDisplay . \n';
     $query += '  FILTER regex(str(?adminLevel), "0$") . \n';
     $query += '} \n';
     $query += 'ORDER BY ASC(?date) \n\n';
-    
-    
-    /*
-	$query += '?reporterUri foaf:Member_of ?reporter .';
-	$query += '?reporter hxl:orgDisplayName ?reportedByDisplay .';
-    
-    /*
-    
-	$query += 'SELECT DISTINCT ?emergencyDisplay ?countryUri ?regionUri ?provinceUri ?campUri ?population ?graph ?date ?countryDisplay ?countryPCode ?regionDisplay ?provinceDisplay ?campDisplay ?personCount ?householdCount ?sexDisplay ?ageGroup ?ageDisplay ?nationalityDisplay ?nationality ?methodDisplay ?nationalityPCode ?sourceDisplay ?reportedByDisplay ?type ?typeUri WHERE {';
-        
-        
-        
-        
-        
-        
-        /*
-    $query += '<' + emergencyUri + '> hxl:commonTitle ?emergencyDisplay .';
-    //$query += '<' + emergencyUri + '> hxl:atLocation ?countryUri .';
-    $query += '?countryUri hxl:pcode ?countryPCode .';
-    $query += '?countryUri hxl:featureName ?countryDisplay .';
-	$query += '?regionUri hxl:atLocation ?countryUri .';
-	$query += '?provinceUri hxl:atLocation ?regionUri .';
-	$query += '?campUri hxl:atLocation ?provinceUri .';
-	$query += '?population hxl:atLocation ?campUri .';
-	$query += 'GRAPH ?graph {';
-	$query += '?population hxl:personCount ?personCount .';
-	$query += 'OPTIONAL { ?population hxl:householdCount ?householdCount .}';
-	$query += '?population rdf:type ?typeUri .';
-	$query += '?population hxl:method ?methodDisplay .';
-	$query += '?population hxl:source ?source .';
-	$query += '?population hxl:SexCategory ?sexCategory .';
-	$query += '?population hxl:AgeGroup ?ageGroup .';
-	$query += '?population hxl:nationality ?nationality .';
-	$query += '?graph hxl:validOn ?date .';
-	$query += '?graph hxl:reportedBy ?reporterUri .';
-	$query += '}';
-	$query += '?typeUri skos:prefLabel ?type .';
-	$query += '?campUri hxl:featureName ?campDisplay .';
-    $query += '?provinceUri hxl:featureName ?provinceDisplay .';
-    $query += '?regionUri hxl:featureName ?regionDisplay .';
-    $query += '?nationality hxl:featureName ?nationalityDisplay .';
-    $query += '?nationality hxl:pcode ?nationalityPCode .';
-	$query += '?ageGroup hxl:title ?ageDisplay .';
-	$query += '?source hxl:abbreviation ?sourceDisplay .';
-	$query += '?sexCategory hxl:title ?sexDisplay .';
-	$query += '?reporterUri foaf:Member_of ?reporter .';
-	$query += '?reporter hxl:orgDisplayName ?reportedByDisplay .';
-	$query += '}';
-	$query += 'ORDER BY ASC(?date)';
-*/
     //console.log($query);
 
     $.ajax
@@ -330,12 +215,10 @@ ORDER BY ASC(?date)
 	if (populationInfo.results.bindings[0] != null) {
 // must depend on the selection of the Location ddlist.
 		getlocationGeom(populationInfo.results.bindings[0]['countryUri'].value);
-	}*/
-        
+	}
+        */
     return populationInfo;
 }
-
-
 
 var locGeom;
 function getlocationGeom (geomUri) 
