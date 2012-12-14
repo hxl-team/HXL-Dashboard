@@ -142,7 +142,7 @@ function getPopulationInfo(emergencyUri)
     jQuery.support.cors = true; // for IE8+
     
     $query = queryPrefix;
-    $query += 'SELECT DISTINCT ?population ?location ?pcode ?personCount ?date ?populationType ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri \n';
+    $query += 'SELECT DISTINCT ?population ?location ?pcode ?personCount ?date ?populationType ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri ?nationalityDisplay ?sexDisplay ?ageDisplay ?fromAge ?toAge \n';
     $query += 'WHERE  \n';
     $query += '{ \n';
     $query += '  GRAPH ?graph  \n';
@@ -155,12 +155,69 @@ function getPopulationInfo(emergencyUri)
     $query += '    ?population hxl:atLocation ?location . \n';
     $query += '    ?population hxl:source ?source . \n';
     $query += '    ?population hxl:method ?countMethod . \n';
+    $query += '    ?population hxl:nationality ?nationality . \n';
     $query += '  } \n';
     $query += '  ?location hxl:pcode ?pcode . \n';
     $query += '  ?location hxl:atLocation+ ?countryUri . \n';
     $query += '  ?countryUri hxl:atLevel ?adminLevel .  \n';
     $query += '  ?countryUri hxl:featureName ?countryDisplay .  \n';
     $query += '  ?populationType skos:prefLabel ?populationTypeDisplay . \n';
+    
+    
+    
+    $query += '  ?location hxl:featureName ?locationName . \n';
+    $query += '  ?nationality hxl:featureName ?nationalityDisplay . \n';
+    $query += '  ?nationality hxl:featureRefName ?nationalityRefDisplay . \n';
+    $query += '   \n';
+/*    
+    $query += '  OPTIONAL \n';
+    $query += '  { \n';
+    $query += '    ?location hxl:atLocation ?locationAdminUnit3 . \n';
+    $query += '    ?locationAdminUnit3 hxl:atLocation ?locationAdminUnit2 . \n';
+    $query += '    ?locationAdminUnit2 hxl:atLocation ?locationAdminUnit1 . \n';
+    $query += '    ?locationAdminUnit1 hxl:atLocation ?locationCountry . \n';
+    $query += '     \n';
+    $query += '    ?locationAdminUnit3 hxl:featureName ?adminUnit3Display . \n';
+    $query += '    ?locationAdminUnit2 hxl:featureName ?adminUnit2Display . \n';
+    $query += '    ?locationAdminUnit1 hxl:featureName ?adminUnit1Display . \n';
+    $query += '  } \n';
+*/
+    $query += '  OPTIONAL \n';
+    $query += '  { \n';
+    $query += '    ?location hxl:atLocation ?locationAdminUnit2 . \n';
+    $query += '    ?locationAdminUnit2 hxl:atLocation ?locationAdminUnit1 . \n';
+    $query += '    ?locationAdminUnit1 hxl:atLocation ?locationCountry . \n';
+    $query += '     \n';
+    $query += '    ?locationAdminUnit2 hxl:featureName ?adminUnit2Display . \n';
+    $query += '    ?locationAdminUnit1 hxl:featureName ?adminUnit1Display . \n';
+    $query += '  } \n';
+    $query += '  OPTIONAL \n';
+    $query += '  { \n';
+    $query += '    ?location hxl:atLocation ?locationAdminUnit1 . \n';
+    $query += '    ?locationAdminUnit1 hxl:atLocation ?locationCountry . \n';
+    $query += '     \n';
+    $query += '    ?locationAdminUnit1 hxl:featureName ?adminUnit1Display . \n';
+    $query += '  } \n';
+    $query += '   \n';
+    $query += '  <http://hxl.humanitarianresponse.info/data/emergencies/mali2012test> hxl:commonTitle ?emergencyDisplay . \n';
+    $query += '  ?locationCountry hxl:featureName ?countryDisplay . \n';
+  
+  
+    $query += '  OPTIONAL \n';
+    $query += '  { \n';
+    $query += '    ?population hxl:sexCategory ?sex . \n';
+    $query += '    ?sex hxl:title ?sexDisplay . \n';
+    $query += '  } \n';
+    $query += '  OPTIONAL \n';
+    $query += '  { \n';
+    $query += '    ?population hxl:AgeGroup ?age . \n'; //  TODO: change to ageGroup
+    $query += '    ?age hxl:title ?ageDisplay . \n';
+    $query += '    ?age hxl:fromAge ?fromAge . \n';
+    $query += '    OPTIONAL \n';
+    $query += '    { \n';
+    $query += '      ?age hxl:toAge ?toAge . \n';
+    $query += '    } \n';
+    $query += '  } \n';
     $query += '  OPTIONAL \n';
     $query += '  { \n';
     $query += '    ?source hxl:abbreviation ?sourceDisplay . \n';
@@ -170,6 +227,7 @@ function getPopulationInfo(emergencyUri)
     $query += '  FILTER regex(str(?adminLevel), "0$") . \n';
     $query += '} \n';
     $query += 'ORDER BY ASC(?date) \n\n';
+    //$query += 'LIMIT 2000 \n\n';
     //console.log($query);
 
     $.ajax

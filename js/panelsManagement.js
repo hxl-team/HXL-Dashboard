@@ -1,5 +1,3 @@
-var _DEBUG = false;
-
 var lblLoc0 = "* All Affected Population Locations";
 var lblLoc1 = "* All Affected Population Locations";
 var lblLoc2 = "* All Affected Population Locations";
@@ -43,27 +41,10 @@ $(document).ready
 
 function NextSlide(event) 
 {
-    if (_DEBUG) 
-    {
-        console.log('From slide 1 ... ');
-    }
-
-    SetLabelsSlide2(event);
-
     document.getElementById('slideContainer2').style.display="block";
     document.getElementById('slideContainer1').style.display="none";
     
-    drawMap(event);
-    drawChart(event); 
-
-
-
-
-    //InitLabelsTableView();
-    //LoadTableView();
-    /*$("div[class='DTTT btn-group']").hide(); // DownloadBar
-    $('#tableViewBefore2').before( oTableTools.dom.container );*/
-//$("div[class='DTTT btn-group']").clone().appendTo('#DownloadBar');
+    refreshSlide2(event);
 
 }
 
@@ -80,10 +61,6 @@ function LastSlide()
 
 function quickTable(event) 
 {
-    if (_DEBUG) 
-    {
-        console.log("quickTable: " + event.id);
-    }
     NextSlide(event);
     LastSlide();
 }
@@ -101,27 +78,16 @@ function PreviousSlide(event)
     switch(event.id)
     {
         case 'PreviousButton1':
-            if (_DEBUG) 
-            {
-                console.log('From slide 2 to slide 1');
-            }
             document.getElementById('slideContainer2').style.display="none";
             document.getElementById('slideContainer1').style.display="block";
             break;
         case 'PreviousButton2':
-            if (_DEBUG) 
-            {
-                console.log('From slide 3 to slide 2');
-            }
-
-            SetLabelsSlide2(event);
 
             document.getElementById('slideContainer3').style.display="none";
             document.getElementById('slideContainer2').style.display="block";
 
-            drawMap(event);
-            drawChart(event); 
-    
+            refreshSlide2(event);
+            
             //cleaningTableView();
 
             //$('.downloadBar').prepend( oTableTools.dom.container );

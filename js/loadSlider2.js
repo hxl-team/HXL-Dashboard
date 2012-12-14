@@ -1,23 +1,56 @@
 
-/* Refresh the content when a new filter is triggered */
-function refreshSlide2(event) { 
-    SetLabelsSlide2(event);
+var comingFromTheFirstSlide;
+var comingFromTheThirdSlide;
+
+/* 
+ * Refresh the content when a new filter is triggered
+ */
+function refreshSlide2(event) 
+{     
+    comingFromTheFirstSlide = false;
+    comingFromTheThirdSlide = false;
+    
+//console.log(event.id.indexOf("NextButton"));
+    
+    if (event.id.indexOf("NextButton") != -1) 
+    {
+    //console.log("event.id.indexOf(NextButton)");
+        
+        comingFromTheFirstSlide = true;
+        comingFromTheThirdSlide = false;
+    }
+    if (event.id.indexOf("infoPopover") != -1) 
+    {
+        comingFromTheFirstSlide = false;
+        comingFromTheThirdSlide = true;
+    }
+    
+    updateFiltersSelection(event);
+    setFilteringLists(event);
     drawMap(event);
     drawChart(event);
 }
 
-function geometryReady() {
-    if (locGeom != '') {
+function geometryReady() 
+{
+    if (locGeom != '') 
+    {
         return true;
-    } else {
+    } 
+    else 
+    {
         return false;
     }
 }
 
-function waiting(timeout_step) {
-    if (geometryReady()) {
+function waiting(timeout_step) 
+{
+    if (geometryReady()) 
+    {
         processGeometry();
-    } else {
+    } 
+    else 
+    {
         setTimeout(waiting, timeout_step);
     }
 }
@@ -28,38 +61,42 @@ function waiting(timeout_step) {
 var map;
 var googleLayer;
 var locationBoundariesLayer;
-function drawMap(event) {
-
+function drawMap (event) 
+{
+    // TODO: simplify the test
     if (event != null &&
-        event.id.indexOf("NextButton") == -1 &&
-        event.id.indexOf("infoPopover") == -1) {
+        !comingFromTheFirstSlide &&
+        !comingFromTheThirdSlide) 
+    {
         var uri ='';
         if (event.name.indexOf("loc") != -1) {
-                uri = event.name.replace("loc", '');
-        } else {
+            uri = event.name.replace("loc", '');
+        } 
+        else 
+        {
             uri = currentGeoZoneUri;
         }
     }
-    else {
+    else 
+    {
         uri = currentGeoZoneUri;
     }
 
     getlocationGeom(uri);
 
-    if (_DEBUG) {
-        console.log(uri);
-    }
-
-
-    if (map == null) {
+    if (map == null) 
+    {
         map = L.map('map');
-    } else {
+    } 
+    else 
+    {
 
     map.removeLayer(googleLayer);
     googleLayer = null;
     }
 
-    if (googleLayer == null) {
+    if (googleLayer == null) 
+    {
         googleLayer = new L.Google('ROADMAP');
         map.addLayer(googleLayer);
     }
@@ -80,7 +117,8 @@ var tempArray;
 var coordinatesArray;
 var finalGeom;
 var geojsonFeature;
-function processGeometry () {
+function processGeometry() 
+{
 //console.log(locGeom);
 
     //$('#myModal').modal('hide');
@@ -91,7 +129,8 @@ function processGeometry () {
     geomSplit = locGeom.split('],[');
     tempArray = new Array();
 
-    for (var i = geomSplit.length - 1; i >= 0; i--) {
+    for (var i = geomSplit.length - 1; i >= 0; i--) 
+    {
         coordinatesArray = geomSplit[i].split(',');
         coordinatesArray[0] = coordinatesArray[0] * 1.0;
         coordinatesArray[1] = coordinatesArray[1] * 1.0;
@@ -99,7 +138,8 @@ function processGeometry () {
     };
 
     // Layer display
-    if (geomSplit.length == 1) {
+    if (geomSplit.length == 1) 
+    {
 
         finalGeom = [coordinatesArray[0], coordinatesArray[1]];
 
@@ -110,18 +150,23 @@ function processGeometry () {
                 "coordinates": finalGeom
             }
         };
-    } else {
+    } 
+    else 
+    {
         finalGeom =  [tempArray];
-        geojsonFeature = {
+        geojsonFeature = 
+        {
             "type": "Feature",
-            "geometry": {
+            "geometry":
+            {
                 "type": "Polygon",
                 "coordinates": finalGeom
             }
         };
     }
 
-    if (locationBoundariesLayer != null){
+    if (locationBoundariesLayer != null)
+    {
         map.removeLayer(locationBoundariesLayer);
         locationBoundariesLayer = null;
     }
@@ -150,26 +195,40 @@ var currentGeoZone;
 var biggestGeoZone;
 var currentGeoZoneUri;
 var biggestGeoZoneUri;
-function SetLabelsSlide2(event) { 
 
-//console.log(event.id);
+/*
+ * This function manages with the drop down list aimed at filtering the data
+ * to output new visualizations.
+ * It consists in filling the lists 
+ */
+function updateFiltersSelection (event) 
+{ 
+
+//console.log(event.name + "-----------------------updateFiltersSelection: " + event.id);
 
     var selectedCategoryIdFromS1 = -1;
-    if (event.id.indexOf("NextButton") != -1) {
+    if (comingFromTheFirstSlide) 
+    {
+//console.log("comingFromTheFirstSlide");
        selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
     }
-    if (event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheThirdSlide) 
+    {
+//console.log("comingFromTheThirdSlide");
        selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
+//console.log("!!!comingFromTheThirdSlide: " + event.id);
     }
 
     // page title
     // the country must be a parametre after proto
-    $("#detailedViewTitle").html('Detailed view > ' + populationInfo.results.bindings[0]['countryDisplay'].value + ' > ');
+    //$("#detailedViewTitle").html('Detailed view > ' + populationInfo.results.bindings[0]['countryDisplay'].value + ' > ');
+    $("#detailedViewTitle").html('Detailed view > All countries > ');
 
     // Population categorie drop down list
     $('#catListItems').empty();
     var tempList = '';
-    for (var i = 0; i < categoriesLabels.length; i++) {
+    for (var i = 0; i < categoriesLabels.length; i++) 
+    {
         tempList += '<li><a id="' + categoriesLabels[i] + '" name="catChoice" onclick="refreshSlide2(this)" >' + categoriesLabels[i] + '</a></li>';
     }
     $('#catListItems').html(tempList);
@@ -180,145 +239,165 @@ function SetLabelsSlide2(event) {
     // Selection
     var tempValue;// = categoriesLabels[0];
     var tempId;// = categoriesLabels[0];
-    if (selectedCategoryIdFromS1 != -1) { // from the first slide
+    if (selectedCategoryIdFromS1 != -1) // coming here after change of slide
+    {
+        
+        //console.log("1");
         tempValue = categoriesLabels[selectedCategoryIdFromS1];
         tempId = categoriesLabels[selectedCategoryIdFromS1];
 
         $('#catListSelectedValue').html(tempValue);
         $('#catListSelectedId').html(tempId);
-    } else {
-        if (event.name =='catChoice') {
-            tempValue = event.id;
-            tempId = event.id;
+    } 
+    else if (event.name =='catChoice') // new population category
+    {
+        //console.log("2");
+        tempValue = event.id;
+        tempId = event.id;
 
         $('#catListSelectedValue').html(tempValue);
         $('#catListSelectedId').html(tempId);
-        }
-
     }
 
-    // Load location list (all levels)
-    var infoLabelAdded = false;
+    // Set choice for the location
     $('#locListItems').empty();
-    var tempList = '<li><a id="' + lblLoc0 + '" name="loc' + populationInfo.results.bindings[0]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + lblLoc0 + '</a></li>';
-    var checkArray = new Array();
-    checkArray.push(lblLoc0);
 
-    // Selection on location list
-    if (event.id.indexOf("NextButton") != -1 ||
-        event.id.indexOf("infoPopover") != -1) { // Coming from the first slide
-
-
-
+    // Setting the selection on location list
+    if (comingFromTheFirstSlide || // Coming from the first slide
+        comingFromTheThirdSlide) // Coming from the third slide
+    {
         // initialization
         biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         biggestGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
         currentGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
 
-//console.log(currentGeoZoneUri);
-
-
-        $('#locListSelectedValue').html(checkArray[0]);
-    } else{
-        if (event.name.indexOf("loc") != -1) {
+        $('#locListSelectedValue').html(lblLoc0);
+    } 
+    else // from filters
+    {
+        if (event.name.indexOf("loc") != -1) 
+        {
             currentGeoZoneUri = '';
             $('#locListSelectedValue').html(event.id);
         }
-        /* else {
-            var uri = event.name.replace("loc", '');
-
-        }
-*/
     }
     $('#locListSelectedId').html('loc');
 
+    // Section for filling lists
+    // Section for filling lists
+}
+/*
+ * This function manages with the drop down list aimed at filtering the data
+ * to output new visualizations.
+ * It consists in filling the lists 
+ */
+function setFilteringLists(event) 
+{ 
+//console.log(event.id);
+
+    var infoLabelAdded = false;
+    var tempList = '<li><a id="' + lblLoc0 + '" name="loc' + populationInfo.results.bindings[0]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + lblLoc0 + '</a></li>';
+    var checkArray = new Array();
+    checkArray.push(lblLoc0);
+
     // Filling the location list
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        // catching the current zone URI
-        if (currentGeoZoneUri == '') {
-            if (populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    {
+        // checking the current zone URI
+        if (currentGeoZoneUri == '') 
+        {
+            if (populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) 
+            {
                 currentGeoZoneUri = populationInfo.results.bindings[i]['countryUri'].value;
             }
         }
-        if (!infoLabelAdded){
+        
+        if (!infoLabelAdded)
+        {
             tempList += '<li><a>-- Admin level 0</a></li>';
             infoLabelAdded = true;
         }
-        if ($.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, checkArray) < 0) {
+        if ($.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, checkArray) < 0) 
+        {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['countryDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['countryDisplay'].value + '</a></li>'; 
             checkArray.push(populationInfo.results.bindings[i]['countryDisplay'].value);
         }
     }
     infoLabelAdded = false;
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if (currentGeoZoneUri == '') {
-            if (populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html()) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    {
+        if (currentGeoZoneUri == '') 
+        {
+            if (populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html()) 
+            {
                 currentGeoZoneUri = populationInfo.results.bindings[i]['regionUri'].value;
             }
         }
-        if (!infoLabelAdded){
+        if (!infoLabelAdded)
+        {
             tempList += '<li><a>-- Admin level 1</a></li>';
             infoLabelAdded = true;
         }
-        if ($.inArray(populationInfo.results.bindings[i]['regionDisplay'].value, checkArray) < 0) {
+        
+        // TODO: maybe make a function for all these test because the intermediary levels are optionals
+        if (populationInfo.results.bindings[i]['adminUnit1Display'] != undefined && 
+            $.inArray(populationInfo.results.bindings[i]['adminUnit1Display'].value, checkArray) < 0) 
+        {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['regionDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['regionUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['regionDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['regionDisplay'].value);
         }
     }
     infoLabelAdded = false;
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if (currentGeoZoneUri == '') {
-            if (populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html()) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    {
+        if (currentGeoZoneUri == '') 
+        {
+            if (populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html()) 
+            {
                 currentGeoZoneUri = populationInfo.results.bindings[i]['provinceUri'].value;
             }
         }
-        if (!infoLabelAdded){
+        if (!infoLabelAdded)
+        {
             tempList += '<li><a>-- Admin level 2</a></li>';
             infoLabelAdded = true;
         }
-        if ($.inArray(populationInfo.results.bindings[i]['provinceDisplay'].value, checkArray) < 0) {
+        if (populationInfo.results.bindings[i]['provinceDisplay'] != undefined &&
+            $.inArray(populationInfo.results.bindings[i]['provinceDisplay'].value, checkArray) < 0) 
+        {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['provinceUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['provinceDisplay'].value);
         }
     }
     infoLabelAdded = false;
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if (currentGeoZoneUri == '') {
-            if (populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()) {
-                currentGeoZoneUri = populationInfo.results.bindings[i]['campUri'].value;
-            }
-        }
-        if (!infoLabelAdded){
-            tempList += '<li><a>-- Affected Population Location</a></li>';
-            infoLabelAdded = true;
-        }
-        if ($.inArray(populationInfo.results.bindings[i]['campDisplay'].value, checkArray) < 0) {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['campDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['campUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['campDisplay'].value + '</a></li>';
-            checkArray.push(populationInfo.results.bindings[i]['campDisplay'].value);
-        }
-    }
-    $('#locListItems').html(tempList);
 
     // Load sex list
     $('#sexListItems').empty();
     tempList = '<li><a id="' + lblSex + '" onclick="refreshSlide2(this)" name="sex" >'+ lblSex + '</a></li>';
     checkArray = new Array();
     checkArray.push(lblSex);
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['sexDisplay'].value, checkArray) < 0) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    {
+        if (populationInfo.results.bindings[i]['sexDisplay'] != undefined &&
+            $.inArray(populationInfo.results.bindings[i]['sexDisplay'].value, checkArray) < 0) 
+        {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['sexDisplay'].value + '" name="sex" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sexDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['sexDisplay'].value);
         }
     }
     $('#sexListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1 ||
-        event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheFirstSlide ||
+        comingFromTheThirdSlide) 
+    {
         $('#sexListSelectedValue').html(checkArray[0]);
         $('#sexListSelectedId').html('sex');
-    } else {
-        if (event.name =='sex') {
+    } 
+    else 
+    {
+        if (event.name =='sex') 
+        {
             $('#sexListSelectedValue').html(event.id);
         }
     }
@@ -328,20 +407,27 @@ function SetLabelsSlide2(event) {
     tempList = '<li><a id="' + lblAge + '" onclick="refreshSlide2(this)" name="age" >'+ lblAge + '</a></li>';
     checkArray = new Array();
     checkArray.push(lblAge);
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['ageDisplay'].value, checkArray) < 0) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    {
+        if (populationInfo.results.bindings[i]['ageDisplay'] != undefined &&
+            $.inArray(populationInfo.results.bindings[i]['ageDisplay'].value, checkArray) < 0) 
+        {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['ageDisplay'].value + '" name="age" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['ageDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['ageDisplay'].value);
         }
     }
     $('#ageListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1 ||
-        event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheFirstSlide ||
+        comingFromTheThirdSlide) 
+    {
         $('#ageListSelectedValue').html(checkArray[0]);
         $('#ageListSelectedId').html('age');
-    } else {
-        if (event.name =='age') {
+    } 
+    else 
+    {
+        if (event.name =='age') 
+        {
             $('#ageListSelectedValue').html(event.id);
         }
     }
@@ -359,8 +445,8 @@ function SetLabelsSlide2(event) {
     }
     $('#originListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1 ||
-        event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheFirstSlide ||
+        comingFromTheThirdSlide) {
         $('#originListSelectedValue').html(checkArray[0]);
         $('#originListSelectedId').html('origin');
     } else {
@@ -368,6 +454,7 @@ function SetLabelsSlide2(event) {
             $('#originListSelectedValue').html(event.id);
         }
     }
+    
 
     // Load source list
     $('#sourceListItems').empty();
@@ -375,15 +462,16 @@ function SetLabelsSlide2(event) {
     checkArray = new Array();
     checkArray.push(lblSou);
     for (var i = 0; i < populationInfo.results.bindings.length; i++) {
-        if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0) {
+        if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined &&
+            $.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0) {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '" name="source" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
         }
     }
     $('#sourceListItems').html(tempList);
     // Selection
-    if (event.id.indexOf("NextButton") != -1 ||
-        event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheFirstSlide ||
+        comingFromTheThirdSlide) {
         $('#sourceListSelectedValue').html(checkArray[0]);
         $('#sourceListSelectedId').html('source');
     } else {
@@ -391,111 +479,261 @@ function SetLabelsSlide2(event) {
             $('#sourceListSelectedValue').html(event.id);
         }
     }
+    
 }
 
 /*******************
 * Detailed graph 
 ******************/
 google.load('visualization', '1', {'packages':['annotatedtimeline']});
-var dataTable;
+var chartData;
 var chart;
-function drawChart(event) {
+function drawChart (event) 
+{
+    //console.log(event);
+    //console.log(event.id);
+
 /*
 
-    if (event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheThirdSlide) {
        selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
     }
 
 
 
-    if (event.id.indexOf("NextButton") != -1) {
+    if (comingFromTheFirstSlide) {
        selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
     }
-    if (event.id.indexOf("infoPopover") != -1) {
+    if (comingFromTheThirdSlide) {
        selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
     }
 */
+//console.log("NextButton: " + event.id.indexOf("NextButton"));
+//console.log("infoPopover: " + event.id.indexOf("infoPopover"));
+
     var selectedCategoryIdFromS1 = -1;
-    if (event.id.indexOf("NextButton") != -1) {
+    // Getting the id of the clicked "Next" button".
+    if (comingFromTheFirstSlide) 
+    {
        selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
-    } else if (event.id.indexOf("infoPopover") != -1) {
+    } 
+    else if (comingFromTheThirdSlide) 
+    {
        selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
-    } else {
+    } 
+    else 
+    {
         selectedCategoryIdFromS1 = $('#catListSelectedId').html().replace("NextButton", '') * 1 - 1; // "NextButtonX"
     }
 
-    dataTable = new google.visualization.DataTable();
+    chartData = new google.visualization.DataTable();
 
-    var count = new Array();
     var dateArray = new Array();
 
-    dataTable.addColumn('date', 'Date');
-    dataTable.addColumn('number', $('#catListSelectedValue').html() + ':');
-    dataTable.addColumn('string', 'title1');
-    dataTable.addColumn('string', 'text1');
+    chartData.addColumn('date', 'Date');
+    chartData.addColumn('number', $('#catListSelectedValue').html() + ':');
+    chartData.addColumn('string', 'title1');
+    chartData.addColumn('string', 'text1');
 
+
+    // Creation of the list of populations passing the current filter
+    var dailyPopList = new Array();
+    for (var i = 0; i < populationInfo.results.bindings.length; i++)
+    {
+        // filters        
+        if (comingFromTheFirstSlide  ||
+            $('#catListSelectedValue').html() == categoriesLabels[0] ||
+            populationInfo.results.bindings[i]['populationTypeDisplay'].value == $('#catListSelectedValue').html())
+        {
+            //console.log($('#locListSelectedValue').html());
+            
+            if (comingFromTheFirstSlide  ||
+                $('#locListSelectedValue').html() == lblLoc0 ||
+                $('#locListSelectedValue').html() == '-- Countries' ||
+                $('#locListSelectedValue').html() == '-- Regions' ||
+                $('#locListSelectedValue').html() == '-- Provinces' ||
+                $('#locListSelectedValue').html() == '-- Camps' ||
+                populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
+                populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
+                populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
+                populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html())
+            {
+                if (comingFromTheFirstSlide  ||
+                    $('#sexListSelectedValue').html() == lblSex ||
+                    (populationInfo.results.bindings[i]['sexDisplay'] != undefined &&
+                    populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()))
+                {
+                    if (comingFromTheFirstSlide  ||
+                        $('#ageListSelectedValue').html() == lblAge ||
+                        (populationInfo.results.bindings[i]['ageDisplay'] != undefined &&
+                        populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()))
+                    {
+                        if (comingFromTheFirstSlide  ||
+                            $('#originListSelectedValue').html() == lblOri ||
+                            (populationInfo.results.bindings[i]['nationalityDisplay'] != undefined &&
+                            populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()))
+                        {
+                            if (comingFromTheFirstSlide  ||
+                                $('#sourceListSelectedValue').html() == lblSou ||
+                                (populationInfo.results.bindings[i]['sourceDisplay'] != undefined &&
+                                populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()))
+                            {
+
+                                if ($.inArray(populationInfo.results.bindings[i]['population'].value, dailyPopList) < 0)
+                                {
+                                    dailyPopList.push(populationInfo.results.bindings[i]['population'].value);
+                                }
+        
+                            }
+                        }
+                    }
+                }
+            }
+        }  // end filters
+    } // end for
+    
+  //  console.log(dailyPopList.length);
+    
+    
+    var popCountMatrix = new Array();
+    
+    
     // Data preparation
-    var personCountDtl = 0;
     var newDate;
     var tempArray = new Array();
     var currentDate = '';
     var graphIndex = -1;
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+    var tempDay;
+    var popCounts = new Array();
+    var dates = new Array();
+    var pops = new Array();
+    
+    for (var i = 0; i < populationInfo.results.bindings.length; i++)
+    {
         // filters        
-        if (//event.id.indexOf("NextButton") != -1  ||
+        if (comingFromTheFirstSlide  ||
             $('#catListSelectedValue').html() == categoriesLabels[0] ||
-            populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
-        if (event.id.indexOf("NextButton") != -1  ||
-            $('#locListSelectedValue').html() == lblLoc0 ||
-            $('#locListSelectedValue').html() == '-- Countries' ||
-            $('#locListSelectedValue').html() == '-- Regions' ||
-            $('#locListSelectedValue').html() == '-- Provinces' ||
-            $('#locListSelectedValue').html() == '-- Camps' ||
-            populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
-            populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
-            populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
-            populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()){
-        if (event.id.indexOf("NextButton") != -1  ||
-            $('#sexListSelectedValue').html() == lblSex ||
-            populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
-        if (event.id.indexOf("NextButton") != -1  ||
-            $('#ageListSelectedValue').html() == lblAge ||
-            populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
-        if (event.id.indexOf("NextButton") != -1  ||
-            $('#originListSelectedValue').html() == lblOri ||
-            populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
-        if (event.id.indexOf("NextButton") != -1  ||
-            $('#sourceListSelectedValue').html() == lblSou ||
-            populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){
+            populationInfo.results.bindings[i]['populationTypeDisplay'].value == $('#catListSelectedValue').html())
+        {
+            //console.log($('#locListSelectedValue').html());
+            
+            if (comingFromTheFirstSlide  ||
+                $('#locListSelectedValue').html() == lblLoc0 ||
+                $('#locListSelectedValue').html() == '-- Countries' ||
+                $('#locListSelectedValue').html() == '-- Regions' ||
+                $('#locListSelectedValue').html() == '-- Provinces' ||
+                $('#locListSelectedValue').html() == '-- Camps' ||
+                populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
+                populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
+                populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
+                populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html())
+            {
+                if (comingFromTheFirstSlide  ||
+                    $('#sexListSelectedValue').html() == lblSex ||
+                    (populationInfo.results.bindings[i]['sexDisplay'] != undefined &&
+                    populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()))
+                {
+                    if (comingFromTheFirstSlide  ||
+                        $('#ageListSelectedValue').html() == lblAge ||
+                        (populationInfo.results.bindings[i]['ageDisplay'] != undefined &&
+                        populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()))
+                    {
+                        if (comingFromTheFirstSlide  ||
+                            $('#originListSelectedValue').html() == lblOri ||
+                            (populationInfo.results.bindings[i]['nationalityDisplay'] != undefined &&
+                            populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()))
+                        {
+                            if (comingFromTheFirstSlide  ||
+                                $('#sourceListSelectedValue').html() == lblSou ||
+                                (populationInfo.results.bindings[i]['sourceDisplay'] != undefined &&
+                                populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()))
+                            {
 
-            // parsing by date
-            if (currentDate != populationInfo.results.bindings[i]['date'].value) {
-                currentDate = populationInfo.results.bindings[i]['date'].value;
-                graphIndex++;
-                count[graphIndex] = 0;
-                newDate = new Date();
+popCounts.push(populationInfo.results.bindings[i]['personCount'].value);
+pops.push(populationInfo.results.bindings[i]['population'].value);
 
-                newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-                newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-                newDate.setUTCDate(dateArrayFull1[i].getDate());
+                                tempDay = populationInfo.results.bindings[i]['date'].value.split(" ")[0];
 
-                dateArray[graphIndex] = newDate;
+                                // parsing by date
+                                if (currentDate != tempDay) 
+                                {
+                                //console.log("test");
+                                    currentDate = tempDay;
+                                    graphIndex++;
+                                    //count[graphIndex] = 0;
+                                    newDate = new Date();
 
+                                    newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
+                                    newDate.setUTCMonth(dateArrayFull1[i].getMonth());
+                                    newDate.setUTCDate(dateArrayFull1[i].getDate());
+                                    newDate.setUTCHours(0);
+                                    newDate.setMinutes(0);
+                                    newDate.setSeconds(0);
+                                    newDate.setMilliseconds(0);
+
+                                    dateArray[graphIndex] = newDate;
+
+newDate = tempDay;
+
+
+                                    // adding the second dimension to the matrix
+                                    popCountMatrix[newDate] = new Array(dailyPopList.length);
+                                    
+                                }
+                                
+dates.push(newDate);
+                                
+                                for (var j = 0; j < dailyPopList.length; j++)
+                                {
+                                    if (dailyPopList[j] == populationInfo.results.bindings[i]['population'].value)
+                                    {
+                                        popCountMatrix[newDate][j] = parseInt(populationInfo.results.bindings[i]['personCount'].value);
+                                        /*
+                                        //console.log(newDate + " - " + j + " - " + popCountMatrix[newDate][j]);// + " - " + dailyPopList[j]);
+                                        if (populationInfo.results.bindings[i]['populationTypeDisplay'].value == "Internally Displaced Population")
+                                            {
+                                                console.log(populationInfo.results.bindings[i]['personCount'].value);
+                                                console.log(popCountMatrix[newDate][j]);
+                                                console.log(newDate);
+                                                *console.log(j);
+                                            }*/
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                }
             }
-            count[graphIndex] = parseInt(count[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value)  * 1;
-        // end filters
-        }
-        }
-        }
-        }
-        }
-        }
+        }  // end filters
     } // end for
 
-    for (var i = 0; i < count.length; i++) {
+                
+    fillingTheGaps(popCountMatrix, dailyPopList.length);
+
+    
+    var count = new Array(dateArray.length);
+    var dateId = 0;
+    for (var tempDate in popCountMatrix)
+    {
+        count[dateId] = 0;
+        for (var i = 0; i < popCountMatrix[tempDate].length; i++)
+        {
+            //console.log(tempDate + " - " + i + " - " + popCountMatrix[tempDate][i]);
+            count[dateId] += popCountMatrix[tempDate][i];
+        }
+        dateId++;
+    }
+    
+   
+
+    for (var i = 0; i < count.length; i++) 
+    {
+        //console.log(dateArray[i]);
+        //console.log(count[i]);
         tempArray.push(new Array(dateArray[i], count[i], undefined, undefined));
     }
-    dataTable.addRows(tempArray); 
+    chartData.addRows(tempArray); 
 
     tempArray = null;
     dateArray = null;
@@ -510,9 +748,9 @@ function drawChart(event) {
     };
 
     chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div2'));
-    chart.draw(dataTable, options);
+    chart.draw(chartData, options);
 
-    dataTable = null;
+    chartData = null;
     options = null;
     chart = null;
 }

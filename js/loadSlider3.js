@@ -2,7 +2,7 @@
  *
  */
 function InitLabelsTableView() { 
-    $("#tableViewTitle").html(populationInfo.results.bindings[0]['emergencyDisplay'].value + ' > Table view');
+    //$("#tableViewTitle").html(populationInfo.results.bindings[0]['emergencyDisplay'].value + ' > Table view');
 }
 
 /*
@@ -50,10 +50,10 @@ function LoadTableView() {
             populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
         if ($('#ageListSelectedValue').html() == lblAge ||
             populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
-        if ($('#originListSelectedValue').html() == lblOri ||
+        /*if ($('#originListSelectedValue').html() == lblOri ||
             populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
         if ($('#sourceListSelectedValue').html() == lblSou ||
-            populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){
+            populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){*/
 
             graphIndex++;
             personCount[graphIndex] = 0;
@@ -78,19 +78,47 @@ function LoadTableView() {
         
             // Storing the result of the filtering for the table view.
             locValue = currentGeoZone;
-            catValue = populationInfo.results.bindings[i]['type'].value;
-            sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
-            ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
-            originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
-            sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
-            methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
-            reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
+            catValue = '';
+            if (populationInfo.results.bindings[i]['populationTypeDisplay'] != undefined)
+            {
+                catValue = populationInfo.results.bindings[i]['populationTypeDisplay'].value;
+            }
+            sexValue = '';
+            if (populationInfo.results.bindings[i]['sexDisplay'] != undefined)
+            {
+                sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
+            }
+            ageValue = '';
+            if (populationInfo.results.bindings[i]['ageDisplay'] != undefined)
+            {
+                ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
+            }
+            originValue = '';
+            if (populationInfo.results.bindings[i]['nationalityDisplay'] != undefined)
+            {
+                originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
+            }
+            sourceValue = '';
+            if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
+            {
+                sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
+            }
+            methodValue = '';
+            if (populationInfo.results.bindings[i]['methodDisplay'] != undefined)
+            {
+                methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
+            }
+            reportedByValue = '';
+            if (populationInfo.results.bindings[i]['reportedByDisplay'] != undefined)
+            {
+                reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
+            }
 
             // This date format works on IE8 and FF.
             tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
         // end filters
-        }
-        }
+        //}
+        //}
         }
         }
         }

@@ -1,10 +1,10 @@
 
 
 var emergenciesLabels;
-var emergenciesList = getEmergenciesInfo ();
+var emergenciesList = getEmergenciesInfo();
 
 var categoriesLabels;
-var categoriesInfo = getCategoriesInfo ();
+var categoriesInfo = getCategoriesInfo();
 //var populationInfo;
 
 
@@ -61,6 +61,7 @@ function testHideSparklines()
  */
 function numberWithCommas(x) 
 {
+    if (x == undefined) return null;
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -201,6 +202,7 @@ function initSparkline1()
     
     var currentDate = '';
     var graphIndex = -1;
+    
     // Getting the personCounts and the rest of the data
     for (var i = 0; i < populationInfo.results.bindings.length; i++)
     {
@@ -212,11 +214,13 @@ function initSparkline1()
             count1[graphIndex] = 0;
         }
 
-        // Getting the main graph count and date, the main source, method and reported by
+        // Getting the main graph count and date, the main source, method and 
+        // reported by
         count1[graphIndex] = parseInt(count1[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
         
         dateArray1[graphIndex] = new Date(populationInfo.results.bindings[i]['date'].value);
-        // For the chart, the date format can be interpreted only like "yyyy, m, d" but not "yyyy-m-d".
+        // For the chart, the date format can be interpreted only like 
+        // "yyyy, m, d" but not "yyyy-m-d".
         if (navigator.appName == 'Microsoft Internet Explorer')
         {
             dateArrayFull1[i] = new Date(populationInfo.results.bindings[i]['date'].value.replace('-', ', '));

@@ -9,13 +9,10 @@ function matrixCreation(dataArray, typeFilter)
     // For each unique day, an index is created in dateArray
     for (var i = 0; i < dataArray.results.bindings.length; i++)
     {
-        if (typeFilter != null)
+        if (typeFilter != null &&
+            populationInfo.results.bindings[i]['populationType'].value != typeFilter) 
         {
-            
-            if (populationInfo.results.bindings[i]['populationType'].value != typeFilter) 
-            {
-                continue;
-            }
+            continue;
         }
         
         // use the first 10 caracters of a date following the pattern "yyyy-mm-dd".
@@ -81,8 +78,11 @@ function dataDroping(dateArray, rawData)
  */
 function fillingTheGaps(dateArray, nbrOfPops)
 {
+    var limit = 40;
+    var count = 0;
     for (var popIndex = 0; popIndex < nbrOfPops; popIndex++) 
     {
+        count++;
         var currentCount = 0;
         for (var dateKey in dateArray)
         {
