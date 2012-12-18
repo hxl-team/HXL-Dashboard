@@ -32,96 +32,113 @@ function LoadTableView() {
     var methodValue;
     var reportedByValue;
 
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    {
         // filters      
         if ($('#catListSelectedValue').html() == categoriesLabels[0] ||
-            populationInfo.results.bindings[i]['type'].value == $('#catListSelectedValue').html()){
+            populationInfo.results.bindings[i]['populationTypeDisplay'].value == $('#catListSelectedValue').html())
+        {
 
-        if ($('#locListSelectedValue').html() == lblLoc0 ||
-            $('#locListSelectedValue').html() == '-- Countries' ||
-            $('#locListSelectedValue').html() == '-- Regions' ||
-            $('#locListSelectedValue').html() == '-- Provinces' ||
-            $('#locListSelectedValue').html() == '-- Camps' ||
-            populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
-            populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
-            populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
-            populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html()){
-        if ($('#sexListSelectedValue').html() == lblSex ||
-            populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()){
-        if ($('#ageListSelectedValue').html() == lblAge ||
-            populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()){
-        /*if ($('#originListSelectedValue').html() == lblOri ||
-            populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
-        if ($('#sourceListSelectedValue').html() == lblSou ||
-            populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){*/
+            if ($('#locListSelectedValue').html() == lblLoc0 ||
+                $('#locListSelectedValue').html() == '-- Countries' ||
+                $('#locListSelectedValue').html() == '-- Regions' ||
+                $('#locListSelectedValue').html() == '-- Provinces' ||
+                $('#locListSelectedValue').html() == '-- Camps' ||
+                (populationInfo.results.bindings[i]['countryDisplay'] != undefined &&
+                populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) ||
+                (populationInfo.results.bindings[i]['regionDisplay'] != undefined &&
+                populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html()) ||
+                (populationInfo.results.bindings[i]['provinceDisplay'] != undefined &&
+                populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html()) ||
+                (populationInfo.results.bindings[i]['locationDisplay'] != undefined &&
+                populationInfo.results.bindings[i]['locationDisplay'].value == $('#locListSelectedValue').html()))
+            {
+                if ($('#sexListSelectedValue').html() == lblSex ||
+                    (populationInfo.results.bindings[i]['sexDisplay'] != undefined &&
+                    populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()))
+                {
+                    if ($('#ageListSelectedValue').html() == lblAge ||
+                        (populationInfo.results.bindings[i]['ageDisplay'] != undefined &&
+                        populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()))
+                    {
+                    /*if ($('#originListSelectedValue').html() == lblOri ||
+                        populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
+                    if ($('#sourceListSelectedValue').html() == lblSou ||
+                        populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){*/
 
-            graphIndex++;
-            personCount[graphIndex] = 0;
-            housesholdCount[graphIndex] = 0;
-            newDate = new Date();
-            newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-            newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-            newDate.setUTCDate(dateArrayFull1[i].getDate());
-            dateArray[graphIndex] = newDate;
+                        graphIndex++;
+                        personCount[graphIndex] = 0;
+                        housesholdCount[graphIndex] = 0;
+                        newDate = new Date();
+                        newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
+                        newDate.setUTCMonth(dateArrayFull1[i].getMonth());
+                        newDate.setUTCDate(dateArrayFull1[i].getDate());
+                        dateArray[graphIndex] = newDate;
 
-            // PersonCounts and householdCounts
-            if (populationInfo.results.bindings[i]['personCount'] != null) {
-                personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
-            } else {
-                personCount[graphIndex] = "N/A";
-            }
-            if (populationInfo.results.bindings[i]['housesholdCount'] != null) {
-                housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['housesholdCount'].value);
-            } else {
-                housesholdCount[graphIndex] = "N/A";
-            }
-        
-            // Storing the result of the filtering for the table view.
-            locValue = currentGeoZone;
-            catValue = '';
-            if (populationInfo.results.bindings[i]['populationTypeDisplay'] != undefined)
-            {
-                catValue = populationInfo.results.bindings[i]['populationTypeDisplay'].value;
-            }
-            sexValue = '';
-            if (populationInfo.results.bindings[i]['sexDisplay'] != undefined)
-            {
-                sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
-            }
-            ageValue = '';
-            if (populationInfo.results.bindings[i]['ageDisplay'] != undefined)
-            {
-                ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
-            }
-            originValue = '';
-            if (populationInfo.results.bindings[i]['nationalityDisplay'] != undefined)
-            {
-                originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
-            }
-            sourceValue = '';
-            if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
-            {
-                sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
-            }
-            methodValue = '';
-            if (populationInfo.results.bindings[i]['methodDisplay'] != undefined)
-            {
-                methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
-            }
-            reportedByValue = '';
-            if (populationInfo.results.bindings[i]['reportedByDisplay'] != undefined)
-            {
-                reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
-            }
+                        // PersonCounts and householdCounts
+                        if (populationInfo.results.bindings[i]['personCount'] != null)
+                        {
+                            personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+                        } 
+                        else 
+                        {
+                            personCount[graphIndex] = "N/A";
+                        }
+                        if (populationInfo.results.bindings[i]['housesholdCount'] != null) 
+                        {
+                            housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['housesholdCount'].value);
+                        } 
+                        else 
+                        {
+                            housesholdCount[graphIndex] = "N/A";
+                        }
 
-            // This date format works on IE8 and FF.
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
-        // end filters
-        //}
-        //}
-        }
-        }
-        }
+                        // Storing the result of the filtering for the table view.
+                        locValue = currentGeoZone;
+                        catValue = '';
+                        if (populationInfo.results.bindings[i]['populationTypeDisplay'] != undefined)
+                        {
+                            catValue = populationInfo.results.bindings[i]['populationTypeDisplay'].value;
+                        }
+                        sexValue = '';
+                        if (populationInfo.results.bindings[i]['sexDisplay'] != undefined)
+                        {
+                            sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
+                        }
+                        ageValue = '';
+                        if (populationInfo.results.bindings[i]['ageDisplay'] != undefined)
+                        {
+                            ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
+                        }
+                        originValue = '';
+                        if (populationInfo.results.bindings[i]['nationalityDisplay'] != undefined)
+                        {
+                            originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
+                        }
+                        sourceValue = '';
+                        if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
+                        {
+                            sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
+                        }
+                        methodValue = '';
+                        if (populationInfo.results.bindings[i]['methodDisplay'] != undefined)
+                        {
+                            methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
+                        }
+                        reportedByValue = '';
+                        if (populationInfo.results.bindings[i]['reportedByDisplay'] != undefined)
+                        {
+                            reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
+                        }
+
+                        // This date format works on IE8 and FF.
+                        tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
+                    // end filters
+                    //}
+                    //}
+                    }
+                }
+            }
         }
     } // end for
     $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );

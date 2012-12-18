@@ -26,9 +26,9 @@
     <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false&amp;v=3.2'></script>
 
     <!-- DataTables -->
-    <script type="text/javascript" src="lib/datatables/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="lib/datatables/tableTools/js/TableTools.js"></script>
-    <script type="text/javascript" src="lib/datatables/tableTools/js/ZeroClipboard.js"></script>
+    <script type="text/javascript" src="lib/Datatables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="lib/Datatables/TableTools/media/js/TableTools.js"></script>
+    <script type="text/javascript" src="lib/DataTables/TableTools/media/js/ZeroClipboard.js"></script>
     <script type="text/javascript" charset="utf-8" src="lib/datatables/dataTables.bootstrap.js"></script>
     <link href="lib/datatables/css/demo_page.css" rel="stylesheet">
     <link href="lib/datatables/css/demo_table.css" rel="stylesheet">
@@ -60,7 +60,7 @@
         </div>
     </div> 
     <div class="container" style="text-align: left; width: 940px;">
-        <span style="margin-left: 20px;">Note: this is a test setup and some of the data shown here may be inaccurate, outdated, or even entirely made up.</span>
+        <span class="label label-warning" style="margin-left: 20px;">Note:</span><span class="text-warning" > This is a test setup and some of the data shown here may be inaccurate, outdated, or even entirely made up.</span>
      	<br />
         <!-- DISPLAY CONTAINER -->
         <div style="position: relative" >
@@ -87,20 +87,17 @@
         <div style="clear: both;" ></div>
         <div class="container footer">
     		<div class="row">
-                <div class="span3"><strong>Contact</strong><br />
-            		This site is part of the HumanitarianResponse network. Write to 
-         	         <a href="mailto:info@humanitarianresponse.info">info@humanitarianresponse.info</a> for more information.
-                </div>
-                <div class="span3"><strong>Links</strong><br />
-                    <a href="https://sites.google.com/site/hxlproject/">HXL Project</a><br />
-                    <a href="http://hxl.humanitarianresponse.info/">HXL Standard</a>
-                </div>
-    		    <div class="span3"><strong>Follow HXL</strong><br />
-    		        <span class="label label-warning">TBD</span>
-                </div>
-    		    <div class="span3"><strong>Legal</strong><br />
-    		      &copy; 2012 UNOCHA
-                </div>
+                    <div class="span3"><strong>Contact</strong><br />
+                        This site is part of the HumanitarianResponse network. Write to 
+                        <a href="mailto:info@humanitarianresponse.info">info@humanitarianresponse.info</a> for more information.
+                    </div>
+                    <div class="span3"><strong>Links</strong><br />
+                        <a href="https://sites.google.com/site/hxlproject/">HXL Project</a><br />
+                        <a href="http://hxl.humanitarianresponse.info/">HXL Standard</a>
+                    </div>
+                    <div class="span3"><strong>Legal</strong><br />
+                        &copy; 2012 UNOCHA
+                    </div>
     		</div>
 	   </div>
     </div>

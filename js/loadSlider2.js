@@ -10,7 +10,7 @@ function refreshSlide2(event)
     comingFromTheFirstSlide = false;
     comingFromTheThirdSlide = false;
     
-//console.log(event.id.indexOf("NextButton"));
+//console.log("refreshSlide2" + event.id);
     
     if (event.id.indexOf("NextButton") != -1) 
     {
@@ -33,7 +33,10 @@ function refreshSlide2(event)
 
 function geometryReady() 
 {
-    if (locGeom != '') 
+        console.log("geometryReady: " + locGeom);
+    if (locGeom != undefined &&
+        locGeom != '' &&
+        locGeom != 'no result') 
     {
         return true;
     } 
@@ -47,6 +50,7 @@ function waiting(timeout_step)
 {
     if (geometryReady()) 
     {
+        console.log("waiting");
         processGeometry();
     } 
     else 
@@ -100,7 +104,7 @@ function drawMap (event)
         googleLayer = new L.Google('ROADMAP');
         map.addLayer(googleLayer);
     }
-    map.setView([12.367838, -1.530247], 6);
+    map.setView([14.5, -1.6], 4);
 
     /*$('#myModal').modal({
         keyboard: false,
@@ -121,26 +125,23 @@ function processGeometry()
 {
 //console.log(locGeom);
 
-    //$('#myModal').modal('hide');
-
-    
-
     // Conversion of the string into an array of array of array of lat long coordinates
     geomSplit = locGeom.split('],[');
     tempArray = new Array();
 
     for (var i = geomSplit.length - 1; i >= 0; i--) 
     {
+//console.log(geomSplit[i]);
         coordinatesArray = geomSplit[i].split(',');
         coordinatesArray[0] = coordinatesArray[0] * 1.0;
         coordinatesArray[1] = coordinatesArray[1] * 1.0;
         tempArray[i] = [coordinatesArray[0], coordinatesArray[1]];
-    };
+    }
 
     // Layer display
     if (geomSplit.length == 1) 
     {
-
+//console.log("geomSplit.length == 1");
         finalGeom = [coordinatesArray[0], coordinatesArray[1]];
 
         geojsonFeature = {
@@ -153,6 +154,7 @@ function processGeometry()
     } 
     else 
     {
+//console.log("geomSplit.length else");
         finalGeom =  [tempArray];
         geojsonFeature = 
         {
@@ -204,7 +206,7 @@ var biggestGeoZoneUri;
 function updateFiltersSelection (event) 
 { 
 
-//console.log(event.name + "-----------------------updateFiltersSelection: " + event.id);
+//console.log(event.name + "updateFiltersSelection: " + event.id);
 
     var selectedCategoryIdFromS1 = -1;
     if (comingFromTheFirstSlide) 
@@ -242,7 +244,7 @@ function updateFiltersSelection (event)
     if (selectedCategoryIdFromS1 != -1) // coming here after change of slide
     {
         
-        //console.log("1");
+//console.log("selectedCategoryIdFromS1: " + selectedCategoryIdFromS1);
         tempValue = categoriesLabels[selectedCategoryIdFromS1];
         tempId = categoriesLabels[selectedCategoryIdFromS1];
 
@@ -267,11 +269,16 @@ function updateFiltersSelection (event)
         comingFromTheThirdSlide) // Coming from the third slide
     {
         // initialization
+        biggestGeoZone = 'Mali';
+        currentGeoZone = 'Mali';
+        biggestGeoZoneUri = 'http://hxl.humanitarianresponse.info/data/locations/admin/mli/MLI';
+        currentGeoZoneUri = 'http://hxl.humanitarianresponse.info/data/locations/admin/mli/MLI';
+        /*
         biggestGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         currentGeoZone = populationInfo.results.bindings[0]['countryDisplay'].value;
         biggestGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
         currentGeoZoneUri = populationInfo.results.bindings[0]['countryUri'].value;
-
+*/
         $('#locListSelectedValue').html(lblLoc0);
     } 
     else // from filters
@@ -283,10 +290,8 @@ function updateFiltersSelection (event)
         }
     }
     $('#locListSelectedId').html('loc');
-
-    // Section for filling lists
-    // Section for filling lists
 }
+
 /*
  * This function manages with the drop down list aimed at filtering the data
  * to output new visualizations.
@@ -297,7 +302,7 @@ function setFilteringLists(event)
 //console.log(event.id);
 
     var infoLabelAdded = false;
-    var tempList = '<li><a id="' + lblLoc0 + '" name="loc' + populationInfo.results.bindings[0]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + lblLoc0 + '</a></li>';
+    var tempList = '<li><a id="' + lblLoc0 + '" name="loc' + currentGeoZoneUri + '" onclick="refreshSlide2(this)" >' + lblLoc0 + '</a></li>';
     var checkArray = new Array();
     checkArray.push(lblLoc0);
 
@@ -307,19 +312,24 @@ function setFilteringLists(event)
         // checking the current zone URI
         if (currentGeoZoneUri == '') 
         {
-            if (populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) 
+            if (populationInfo.results.bindings[i]['countryDisplay'] != undefined &&
+                populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) 
             {
                 currentGeoZoneUri = populationInfo.results.bindings[i]['countryUri'].value;
             }
         }
-        
+        // Adding the countries
         if (!infoLabelAdded)
         {
             tempList += '<li><a>-- Admin level 0</a></li>';
             infoLabelAdded = true;
         }
-        if ($.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, checkArray) < 0) 
+        
+//console.log('biggestGeoZone');
+        if (populationInfo.results.bindings[i]['countryDisplay'] != undefined &&
+            $.inArray(populationInfo.results.bindings[i]['countryDisplay'].value, checkArray) < 0) 
         {
+            //console.log(populationInfo.results.bindings[i]['countryDisplay'].value);
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['countryDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['countryUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['countryDisplay'].value + '</a></li>'; 
             checkArray.push(populationInfo.results.bindings[i]['countryDisplay'].value);
         }
@@ -327,11 +337,13 @@ function setFilteringLists(event)
     infoLabelAdded = false;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) 
     {
+            //console.log(populationInfo.results.bindings[i]['locationAdminUnit1'].value);
         if (currentGeoZoneUri == '') 
         {
-            if (populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html()) 
+            if (populationInfo.results.bindings[i]['adminUnit1Display'] != undefined &&
+                populationInfo.results.bindings[i]['adminUnit1Display'].value == $('#locListSelectedValue').html()) 
             {
-                currentGeoZoneUri = populationInfo.results.bindings[i]['regionUri'].value;
+                currentGeoZoneUri = populationInfo.results.bindings[i]['locationAdminUnit1'].value;
             }
         }
         if (!infoLabelAdded)
@@ -339,23 +351,23 @@ function setFilteringLists(event)
             tempList += '<li><a>-- Admin level 1</a></li>';
             infoLabelAdded = true;
         }
-        
-        // TODO: maybe make a function for all these test because the intermediary levels are optionals
         if (populationInfo.results.bindings[i]['adminUnit1Display'] != undefined && 
             $.inArray(populationInfo.results.bindings[i]['adminUnit1Display'].value, checkArray) < 0) 
         {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['regionDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['regionUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['regionDisplay'].value + '</a></li>';
-            checkArray.push(populationInfo.results.bindings[i]['regionDisplay'].value);
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['adminUnit1Display'].value + '" name="loc' + populationInfo.results.bindings[i]['locationAdminUnit1'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['adminUnit1Display'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['adminUnit1Display'].value);
         }
     }
     infoLabelAdded = false;
     for (var i = 0; i < populationInfo.results.bindings.length; i++) 
     {
+            //console.log(populationInfo.results.bindings[i]['locationAdminUnit2'].value);
         if (currentGeoZoneUri == '') 
         {
-            if (populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html()) 
+            if (populationInfo.results.bindings[i]['locationAdminUnit2'] != undefined  &&
+                populationInfo.results.bindings[i]['locationAdminUnit2'].value == $('#locListSelectedValue').html()) 
             {
-                currentGeoZoneUri = populationInfo.results.bindings[i]['provinceUri'].value;
+                currentGeoZoneUri = populationInfo.results.bindings[i]['locationAdminUnit2'].value;
             }
         }
         if (!infoLabelAdded)
@@ -363,14 +375,19 @@ function setFilteringLists(event)
             tempList += '<li><a>-- Admin level 2</a></li>';
             infoLabelAdded = true;
         }
-        if (populationInfo.results.bindings[i]['provinceDisplay'] != undefined &&
-            $.inArray(populationInfo.results.bindings[i]['provinceDisplay'].value, checkArray) < 0) 
+        if (populationInfo.results.bindings[i]['adminUnit2Display'] != undefined &&
+            $.inArray(populationInfo.results.bindings[i]['adminUnit2Display'].value, checkArray) < 0) 
         {
-            tempList += '<li><a id="' + populationInfo.results.bindings[i]['provinceDisplay'].value + '" name="loc' + populationInfo.results.bindings[i]['provinceUri'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['provinceDisplay'].value + '</a></li>';
-            checkArray.push(populationInfo.results.bindings[i]['provinceDisplay'].value);
+            tempList += '<li><a id="' + populationInfo.results.bindings[i]['adminUnit2Display'].value + '" name="loc' + populationInfo.results.bindings[i]['locationAdminUnit2'].value + '" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['adminUnit2Display'].value + '</a></li>';
+            checkArray.push(populationInfo.results.bindings[i]['adminUnit2Display'].value);
         }
     }
     infoLabelAdded = false;
+    $('#locListItems').html(tempList);
+
+
+//////////////////////////////
+
 
     // Load sex list
     $('#sexListItems').empty();
@@ -461,9 +478,11 @@ function setFilteringLists(event)
     tempList = '<li><a id="' + lblSou + '" onclick="refreshSlide2(this)" name="source" >'+ lblSou + '</a></li>';
     checkArray = new Array();
     checkArray.push(lblSou);
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) {
+    for (var i = 0; i < populationInfo.results.bindings.length; i++)
+    {
         if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined &&
-            $.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0) {
+            $.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, checkArray) < 0)
+        {
             tempList += '<li><a id="' + populationInfo.results.bindings[i]['sourceDisplay'].value + '" name="source" onclick="refreshSlide2(this)" >' + populationInfo.results.bindings[i]['sourceDisplay'].value + '</a></li>';
             checkArray.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
         }
@@ -493,24 +512,6 @@ function drawChart (event)
     //console.log(event);
     //console.log(event.id);
 
-/*
-
-    if (comingFromTheThirdSlide) {
-       selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
-    }
-
-
-
-    if (comingFromTheFirstSlide) {
-       selectedCategoryIdFromS1 = event.id.replace("NextButton", '') * 1 - 1; // "NextButtonX"
-    }
-    if (comingFromTheThirdSlide) {
-       selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
-    }
-*/
-//console.log("NextButton: " + event.id.indexOf("NextButton"));
-//console.log("infoPopover: " + event.id.indexOf("infoPopover"));
-
     var selectedCategoryIdFromS1 = -1;
     // Getting the id of the clicked "Next" button".
     if (comingFromTheFirstSlide) 
@@ -521,11 +522,12 @@ function drawChart (event)
     {
        selectedCategoryIdFromS1 = event.id.replace("infoPopover", '') * 1 - 1; // "NextButtonX"
     } 
-    else 
+    /*else 
     {
         selectedCategoryIdFromS1 = $('#catListSelectedId').html().replace("NextButton", '') * 1 - 1; // "NextButtonX"
+        console.log("use filters" + selectedCategoryIdFromS1);
     }
-
+*/
     chartData = new google.visualization.DataTable();
 
     var dateArray = new Array();
@@ -541,12 +543,9 @@ function drawChart (event)
     for (var i = 0; i < populationInfo.results.bindings.length; i++)
     {
         // filters        
-        if (comingFromTheFirstSlide  ||
-            $('#catListSelectedValue').html() == categoriesLabels[0] ||
+        if ($('#catListSelectedValue').html() == categoriesLabels[0] ||
             populationInfo.results.bindings[i]['populationTypeDisplay'].value == $('#catListSelectedValue').html())
         {
-            //console.log($('#locListSelectedValue').html());
-            
             if (comingFromTheFirstSlide  ||
                 $('#locListSelectedValue').html() == lblLoc0 ||
                 $('#locListSelectedValue').html() == '-- Countries' ||
@@ -554,9 +553,11 @@ function drawChart (event)
                 $('#locListSelectedValue').html() == '-- Provinces' ||
                 $('#locListSelectedValue').html() == '-- Camps' ||
                 populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
-                populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
-                populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
-                populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html())
+                (populationInfo.results.bindings[i]['adminUnit1Display'] != undefined &&
+                populationInfo.results.bindings[i]['adminUnit1Display'].value == $('#locListSelectedValue').html()) ||
+                (populationInfo.results.bindings[i]['adminUnit2Display'] != undefined &&
+                populationInfo.results.bindings[i]['adminUnit2Display'].value == $('#locListSelectedValue').html()) ||
+                populationInfo.results.bindings[i]['locationDisplay'].value == $('#locListSelectedValue').html())
             {
                 if (comingFromTheFirstSlide  ||
                     $('#sexListSelectedValue').html() == lblSex ||
@@ -578,7 +579,6 @@ function drawChart (event)
                                 (populationInfo.results.bindings[i]['sourceDisplay'] != undefined &&
                                 populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()))
                             {
-
                                 if ($.inArray(populationInfo.results.bindings[i]['population'].value, dailyPopList) < 0)
                                 {
                                     dailyPopList.push(populationInfo.results.bindings[i]['population'].value);
@@ -611,8 +611,7 @@ function drawChart (event)
     for (var i = 0; i < populationInfo.results.bindings.length; i++)
     {
         // filters        
-        if (comingFromTheFirstSlide  ||
-            $('#catListSelectedValue').html() == categoriesLabels[0] ||
+        if ($('#catListSelectedValue').html() == categoriesLabels[0] ||
             populationInfo.results.bindings[i]['populationTypeDisplay'].value == $('#catListSelectedValue').html())
         {
             //console.log($('#locListSelectedValue').html());
@@ -623,10 +622,13 @@ function drawChart (event)
                 $('#locListSelectedValue').html() == '-- Regions' ||
                 $('#locListSelectedValue').html() == '-- Provinces' ||
                 $('#locListSelectedValue').html() == '-- Camps' ||
+                
                 populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html() ||
-                populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html() ||
-                populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html() ||
-                populationInfo.results.bindings[i]['campDisplay'].value == $('#locListSelectedValue').html())
+                (populationInfo.results.bindings[i]['adminUnit1Display'] != undefined &&
+                populationInfo.results.bindings[i]['adminUnit1Display'].value == $('#locListSelectedValue').html()) ||
+                (populationInfo.results.bindings[i]['adminUnit2Display'] != undefined &&
+                populationInfo.results.bindings[i]['adminUnit2Display'].value == $('#locListSelectedValue').html()) ||
+                populationInfo.results.bindings[i]['locationDisplay'].value == $('#locListSelectedValue').html())
             {
                 if (comingFromTheFirstSlide  ||
                     $('#sexListSelectedValue').html() == lblSex ||
@@ -649,8 +651,8 @@ function drawChart (event)
                                 populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()))
                             {
 
-popCounts.push(populationInfo.results.bindings[i]['personCount'].value);
-pops.push(populationInfo.results.bindings[i]['population'].value);
+//popCounts.push(populationInfo.results.bindings[i]['personCount'].value);
+//pops.push(populationInfo.results.bindings[i]['population'].value);
 
                                 tempDay = populationInfo.results.bindings[i]['date'].value.split(" ")[0];
 
@@ -688,15 +690,6 @@ dates.push(newDate);
                                     if (dailyPopList[j] == populationInfo.results.bindings[i]['population'].value)
                                     {
                                         popCountMatrix[newDate][j] = parseInt(populationInfo.results.bindings[i]['personCount'].value);
-                                        /*
-                                        //console.log(newDate + " - " + j + " - " + popCountMatrix[newDate][j]);// + " - " + dailyPopList[j]);
-                                        if (populationInfo.results.bindings[i]['populationTypeDisplay'].value == "Internally Displaced Population")
-                                            {
-                                                console.log(populationInfo.results.bindings[i]['personCount'].value);
-                                                console.log(popCountMatrix[newDate][j]);
-                                                console.log(newDate);
-                                                *console.log(j);
-                                            }*/
                                     }
                                 }
                                 

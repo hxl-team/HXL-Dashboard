@@ -24,18 +24,19 @@ $(document).ready
         document.getElementById('slideContainer2').style.display="none";
         document.getElementById('slideContainer3').style.display="none";
     */
-        setEmergencyChoice(null);  
-        populationInfo = getPopulationInfo(document.getElementById('emeListSelectedId').innerHTML);
-        initInfoCategory(categoriesInfo);  
-        
-        
-        
-        initSparkline1();  
-        initSparkline2();  
-        initSparkline3(); 
-        initSparkline4();  
-        //initSparklines(populationInfo);  
-        testHideSparklines(populationInfo);
+   
+        if (setEmergencyChoice(null))
+        { 
+            populationInfo = getPopulationInfo(document.getElementById('emeListSelectedId').innerHTML);
+            initInfoCategory(categoriesInfo);  
+
+            initSparkline1();  
+            initSparkline2();  
+            initSparkline3(); 
+            initSparkline4();  
+            //initSparklines(populationInfo);  
+            testHideSparklines(populationInfo);
+        }
     }
 );
 

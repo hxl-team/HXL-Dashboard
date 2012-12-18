@@ -13,14 +13,16 @@ function refreshSlide1(eventId)
 {
     //console.log("refreshSlide1: " + emergenciesList.results.bindings[eventId]['emergencyUri'].value);
     
-    setEmergencyChoice(eventId);
-    populationInfo = getPopulationInfo(emergenciesList.results.bindings[eventId]['emergencyUri'].value);
-    initInfoCategory(categoriesInfo);  
-    initSparkline1();  
-    initSparkline2(); 
-    initSparkline3();  
-    initSparkline4();  
-    testHideSparklines(populationInfo);
+    if (setEmergencyChoice(eventId))
+    {
+        populationInfo = getPopulationInfo(emergenciesList.results.bindings[eventId]['emergencyUri'].value);
+        initInfoCategory(categoriesInfo);  
+        initSparkline1();  
+        initSparkline2(); 
+        initSparkline3();  
+        initSparkline4();  
+        testHideSparklines(populationInfo);
+    }
 }
 
 /* Hides the sparkline blocks. */
@@ -35,7 +37,6 @@ function testHideSparklines()
         $('#noDataBlock').html("<br /><br />No population data available<br /><br />"); 
         return false;
     }   
-    
     else if (emergenciesList == null || emergenciesList == undefined)
     {
         $('#dataBlock').hide(); 
@@ -71,6 +72,18 @@ function numberWithCommas(x)
  */
 function setEmergencyChoice(eventId) 
 {
+    if (emergenciesList == null ||
+        emergenciesList == undefined || 
+        emergenciesList.results == null || 
+        emergenciesList.results.bindings.length == 0 || 
+        emergenciesList.results.bindings[0] == null)
+    {
+        $('#dataBlock').hide(); 
+        $('#noDataBlock').show(); 
+        $('#noDataBlock').html("<br /><br />Emergency information temporary unavailable<br /><br />"); 
+        return false;
+    }
+    
     // Filling the list
     $('#emeListItems').empty();
     var tempList = '';

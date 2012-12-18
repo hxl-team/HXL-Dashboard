@@ -49,7 +49,7 @@ function getEmergenciesInfo ()
 
     function displayError(xhr, textStatus, errorThrown) 
     {
-        console.log(textStatus + ': ' + errorThrown);
+        alert(textStatus + ': ' + errorThrown);
     }
 
     function displayData(data) 
@@ -134,6 +134,9 @@ function getCategoriesInfo ()
 function getPopulationInfo(emergencyUri)
 {
     //console.log("getPopulationInfo: " + emergencyUri);
+    
+    populationInfo = null;
+        
     if (emergencyUri == null )
     {
         emergencyUri = emergenciesList.results.bindings[1]['emergencyUri'].value;
@@ -142,7 +145,7 @@ function getPopulationInfo(emergencyUri)
     jQuery.support.cors = true; // for IE8+
     
     $query = queryPrefix;
-    $query += 'SELECT DISTINCT ?population ?location ?pcode ?personCount ?date ?populationType ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri ?nationalityDisplay ?sexDisplay ?ageDisplay ?fromAge ?toAge \n';
+    $query += 'SELECT DISTINCT ?population ?location ?pcode ?locationDisplay ?personCount ?date ?populationType ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri ?nationalityDisplay ?sexDisplay ?ageDisplay ?fromAge ?toAge ?locationAdminUnit1 ?locationAdminUnit2 ?adminUnit1Display ?adminUnit2Display \n';
     $query += 'WHERE  \n';
     $query += '{ \n';
     $query += '  GRAPH ?graph  \n';
@@ -158,12 +161,11 @@ function getPopulationInfo(emergencyUri)
     $query += '    ?population hxl:nationality ?nationality . \n';
     $query += '  } \n';
     $query += '  ?location hxl:pcode ?pcode . \n';
+    $query += '  ?location hxl:featureName ?locationDisplay . \n';
     $query += '  ?location hxl:atLocation+ ?countryUri . \n';
     $query += '  ?countryUri hxl:atLevel ?adminLevel .  \n';
     $query += '  ?countryUri hxl:featureName ?countryDisplay .  \n';
     $query += '  ?populationType skos:prefLabel ?populationTypeDisplay . \n';
-    
-    
     
     $query += '  ?location hxl:featureName ?locationName . \n';
     $query += '  ?nationality hxl:featureName ?nationalityDisplay . \n';
@@ -210,7 +212,7 @@ function getPopulationInfo(emergencyUri)
     $query += '  } \n';
     $query += '  OPTIONAL \n';
     $query += '  { \n';
-    $query += '    ?population hxl:AgeGroup ?age . \n'; //  TODO: change to ageGroup
+    $query += '    ?population hxl:ageGroup ?age . \n'; //  TODO: change to ageGroup
     $query += '    ?age hxl:title ?ageDisplay . \n';
     $query += '    ?age hxl:fromAge ?fromAge . \n';
     $query += '    OPTIONAL \n';
@@ -220,7 +222,7 @@ function getPopulationInfo(emergencyUri)
     $query += '  } \n';
     $query += '  OPTIONAL \n';
     $query += '  { \n';
-    $query += '    ?source hxl:abbreviation ?sourceDisplay . \n';
+    $query += '    ?source hxl:orgDisplayName ?sourceDisplay . \n';
     $query += '  } \n';
     $query += '  ?reportedBy foaf:Member_of ?reporter . \n';
     $query += '  ?reporter hxl:orgDisplayName ?reportedByDisplay . \n';
