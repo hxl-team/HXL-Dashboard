@@ -9,15 +9,18 @@ function matrixCreation(dataArray)//, typeFilter)
     // For each unique day, an index is created in dateArray
     for (var i = 0; i < dataArray.length; i++)
     {
-        // correction of bug because empty person counts appeared
-        if (dataArray[i]['personCount'].value == "" )
+        /*if (typeFilter != null &&
+            populationInfo.results.bindings[i]['populationType'].value != typeFilter) 
         {
             continue;
-        }
+        }*/
+        
+        // TODO: log
+        if (dataArray[i]['personCount'].value == '') continue; 
         
         // use the first 10 caracters of a date following the pattern "yyyy-mm-dd".
         // Otherwise, consider using something like value.split(" ")[0]
-        if (currentDate != dataArray[i]['date'].value.substr(0,10))
+        if (currentDate != dataArray[i]['date'].value.substr(0,10) && dataArray[i]['personCount'].value != '')
         {
             currentDate = dataArray[i]['date'].value.substr(0,10);
             result[currentDate] = '';
@@ -42,12 +45,10 @@ function dataDroping(dateArray, rawData)
         // For each known date, it catches new population and its count to pur it in the correct place of the matrix
         for (var i = 0; i < rawData.length; i++)
         {
-            // correction of bug because empty person counts appeared
-            if (rawData[i]['personCount'].value == "" )
-            {
-                continue;
-            }
-            
+        
+            // TODO: log
+            if (rawData[i]['personCount'].value == '') continue; 
+        
             if (currentDate == rawData[i]['date'].value.substr(0,10))
             {
                 var alreadyKnownId = -1;

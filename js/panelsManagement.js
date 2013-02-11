@@ -1,12 +1,16 @@
-var lblLoc0 = "* All Affected Population Locations";
-var lblLoc1 = "* All Affected Population Locations";
+var lblLoc = "* All Affected Population Locations";
+/*var lblLoc1 = "* All Affected Population Locations";
 var lblLoc2 = "* All Affected Population Locations";
-var lblLoc3 = "* All Affected Population Locations";
+var lblLoc3 = "* All Affected Population Locations";*/
 var lblSex = "* All sex categories";
 var lblAge = "* All age groups";
 var lblOri = "* All origins";
 var lblSou = "* All sources";
 
+var sourcesSets;
+var sourcesScore;
+
+var fromSlideNbr;
 
 // Loading the slider
 window.onload = bindButtonsEvents; 
@@ -14,28 +18,54 @@ window.onload = bindButtonsEvents;
 var SlideWidth = 900;
 var SlideSpeed = 900;
 
+var emergenciesLabels;
+var emergenciesList = getEmergenciesInfo();
+
+var categoriesUris;
+var categoriesLabels = [];
+var categoriesInfo;
+var sexInfo;
+var ageInfo;
+
+var popTypeConverter = [];
+var sexConverter = [];
+var ageConverter = [];
+
 /* Slide 1 Initialization */
 $(document).ready
 (
     function () 
-    {
-    /*
-        document.getElementById('slideContainer1').style.display="block";
-        document.getElementById('slideContainer2').style.display="none";
-        document.getElementById('slideContainer3').style.display="none";
-    */
-   
+    {   
         if (setEmergencyChoice(null))
         { 
-            populationInfo = getPopulationInfo(document.getElementById('emeListSelectedId').innerHTML);
-            initInfoCategory(categoriesInfo);  
+            var emergencyUri = emergenciesList.results.bindings[0]['emergencyUri'].value;
+            
+            initDataHelpers();  
+            
+            // Display
+            initCategoryLabels();
 
+// temp
+            $("#sourcesScore").html("Sources (from the most frequent to the less): ");
+            sourcesScore = getSourcesScore(emergencyUri);
+            for (var i = 0; i < sourcesScore.results.bindings.length; i++)
+            {
+                $("#sourcesScore").html($("#sourcesScore").html() + sourcesScore.results.bindings[i]['sourceDisplay'].value + " ");
+            }
+            
+            
+        initSparkline1(emergencyUri);  
+        initSparkline2(emergencyUri); 
+        initSparkline3(emergencyUri);  
+        initSparkline4(emergencyUri);  
+        /*
             initSparkline1();  
             initSparkline2();  
             initSparkline3(); 
             initSparkline4();  
-            //initSparklines(populationInfo);  
-            testHideSparklines(populationInfo);
+            //testHideSparklines(populationInfo);
+            */
+            sourcesSets = getSourcesSets(emergencyUri);
         }
     }
 );
@@ -45,16 +75,15 @@ function NextSlide(event)
     document.getElementById('slideContainer2').style.display="block";
     document.getElementById('slideContainer1').style.display="none";
     
+    fromSlideNbr = 1;
+            
     refreshSlide2(event);
 
 }
 
 function LastSlide() 
 {
-    InitLabelsTableView();
     LoadTableView();
-
-    //$('#tableViewBefore2').before( oTableTools.dom.container );
 
     document.getElementById('slideContainer2').style.display="none";
     document.getElementById('slideContainer3').style.display="block";
@@ -79,19 +108,14 @@ function PreviousSlide(event)
     switch(event.id)
     {
         case 'PreviousButton1':
+            fromSlideNbr = 2;
             document.getElementById('slideContainer2').style.display="none";
             document.getElementById('slideContainer1').style.display="block";
             break;
         case 'PreviousButton2':
-
+            fromSlideNbr = 3;
             document.getElementById('slideContainer3').style.display="none";
             document.getElementById('slideContainer2').style.display="block";
-
-            refreshSlide2(event);
-            
-            //cleaningTableView();
-
-            //$('.downloadBar').prepend( oTableTools.dom.container );
 
             break;
     }

@@ -1,3 +1,5 @@
+
+// Prefixes for all queries
 var queryPrefix = "PREFIX hxl: <http://hxl.humanitarianresponse.info/ns/#> \n";
 queryPrefix += "PREFIX geo: <http://www.opengis.net/ont/geosparql#> \n";
 queryPrefix += "PREFIX dc: <http://purl.org/dc/terms/> \n";
@@ -7,28 +9,27 @@ queryPrefix += "PREFIX foaf: <http://xmlns.com/foaf/0.1/> \n";
 queryPrefix += "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n";
 queryPrefix += "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n \n";
 
+
 /* 
- * 
+ * Get the emergency list.
  */
 function getEmergenciesInfo () 
 {
     jQuery.support.cors = true; // for IE8+
 
     var jsonObject = new Array();
+    
     $query = queryPrefix;
     $query += 'SELECT DISTINCT ?emergencyUri ?emergencyDisplay WHERE { \n';
     $query += 'GRAPH ?graph { \n';
-    //$query += 'GRAPH <http://hxl.humanitarianresponse.info/data/datacontainers/unocha/1234567890.000002> { \n';
     $query += '?emergencyUri rdf:type hxl:Emergency . \n';
     $query += '?emergencyUri hxl:commonTitle ?emergencyDisplay . \n';
     $query += '?emergencyUri hxl:atLocation ?countryUri . \n';
     $query += '} \n';
     $query += '} \n';
     $query += 'ORDER BY ?emergencyUri \n';
+    
     //console.log($query);
-
-    var personCount = new Array();
-    var temp;
 
     $.ajax
     ({
@@ -71,7 +72,7 @@ function getEmergenciesInfo ()
 }
 
 /* 
- * 
+ * Get the categories of population below the Displaced class general category.
  */
 function getCategoriesInfo () 
 {
@@ -80,13 +81,17 @@ function getCategoriesInfo ()
     var jsonObject = new Array();
 
     $query = queryPrefix;
-    $query += 'SELECT ?classLabel ?classDefinition ?subClassLabel ?subClassDefinition WHERE { \n';
-    $query += 'hxl:Displaced skos:prefLabel ?classLabel . \n';
-    $query += 'hxl:Displaced rdfs:comment ?classDefinition . \n';
-    $query += '?subClass rdfs:subClassOf hxl:Displaced . \n';
-    $query += '?subClass skos:prefLabel ?subClassLabel . \n';
-    $query += '?subClass rdfs:comment ?subClassDefinition . \n';
+    $query += 'SELECT ?class ?classLabel ?classDefinition ?subClass ?subClassLabel ?subClassDefinition \n';
+    $query += 'WHERE \n';
+    $query += '{ \n';
+    $query += '  hxl:Displaced skos:prefLabel ?classLabel . \n';
+    $query += '  ?class skos:prefLabel ?classLabel . \n';
+    $query += '  hxl:Displaced rdfs:comment ?classDefinition . \n';
+    $query += '  ?subClass rdfs:subClassOf hxl:Displaced . \n';
+    $query += '  ?subClass skos:prefLabel ?subClassLabel . \n';
+    $query += '  ?subClass rdfs:comment ?subClassDefinition . \n';
     $query += '} \n';
+    
     //console.log($query);
 
     var personCount = new Array();
@@ -123,7 +128,9 @@ function getCategoriesInfo ()
             {
                 jsonObject = data;
             }
-        } else {
+        }
+        else
+        {
                 jsonObject = data;
         }
     }
@@ -131,105 +138,160 @@ function getCategoriesInfo ()
     return jsonObject;
 }
 
-function getPopulationInfo(emergencyUri)
+
+/* 
+ * Get the list of sex categories and their labels.
+ */
+function getSexInfo () 
 {
-    //console.log("getPopulationInfo: " + emergencyUri);
+    jQuery.support.cors = true; // for IE8+
+
+    var jsonObject = new Array();
+
+    $query = queryPrefix;
+    $query += 'SELECT ?sexCategory ?sexLabel \n';
+    $query += 'WHERE \n';
+    $query += '{ \n';
+    $query += '  ?sexCategory a hxl:SexCategory . \n';
+    $query += '  ?sexCategory hxl:title ?sexLabel . \n';
+    $query += '} \n';
     
-    populationInfo = null;
-        
-    if (emergencyUri == null )
+    //console.log($query);
+
+    var personCount = new Array();
+    var temp;
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
     {
-        emergencyUri = emergenciesList.results.bindings[1]['emergencyUri'].value;
+        alert(textStatus + ': ' + errorThrown);
     }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        }
+        else
+        {
+                jsonObject = data;
+        }
+    }
+
+    return jsonObject;
+}
+
+
+/* 
+ * Get the list of age groups and their labels.
+ */
+function getAgeInfo () 
+{
+    jQuery.support.cors = true; // for IE8+
+
+    var jsonObject = new Array();
+
+    $query = queryPrefix;
+    $query += 'SELECT ?ageGroup ?ageLabel \n';
+    $query += 'WHERE \n';
+    $query += '{ \n';
+    $query += '  ?ageGroup a hxl:AgeGroup . \n';
+    $query += '  ?ageGroup hxl:title ?ageLabel . \n';
+    $query += '} \n';
     
+    //console.log($query);
+
+    var personCount = new Array();
+    var temp;
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        }
+        else
+        {
+                jsonObject = data;
+        }
+    }
+
+    return jsonObject;
+}
+
+
+/*
+ * Gets the sources of population counting.
+ * The results is convenient because it represents the real combinations of sources.
+ */
+function getSourcesSets(emergencyUri)
+{
+    //console.log("getSourcesSets: ");
+    
+    var jsonObject = new Array();
+        
     jQuery.support.cors = true; // for IE8+
     
     $query = queryPrefix;
-    $query += 'SELECT DISTINCT ?population ?location ?pcode ?locationDisplay ?personCount ?date ?populationType ?populationTypeDisplay ?sourceDisplay ?countMethod ?reportedByDisplay ?countryDisplay ?countryUri ?nationalityDisplay ?sexDisplay ?ageDisplay ?fromAge ?toAge ?locationAdminUnit1 ?locationAdminUnit2 ?adminUnit1Display ?adminUnit2Display \n';
+    $query += 'SELECT DISTINCT (group_concat(DISTINCT ?sourceDisplay ; separator = ", " ) AS ?sources) \n';
     $query += 'WHERE  \n';
     $query += '{ \n';
     $query += '  GRAPH ?graph  \n';
     $query += '  { \n';
     $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
-    $query += '    ?graph hxl:validOn ?date . \n';
-    $query += '    ?graph hxl:reportedBy ?reportedBy . \n';
-    $query += '    ?population hxl:personCount ?personCount . \n';
-    $query += '    ?population rdf:type ?populationType . \n';
-    $query += '    ?population hxl:atLocation ?location . \n';
     $query += '    ?population hxl:source ?source . \n';
-    $query += '    ?population hxl:method ?countMethod . \n';
-    $query += '    ?population hxl:nationality ?nationality . \n';
     $query += '  } \n';
-    $query += '  ?location hxl:pcode ?pcode . \n';
-    $query += '  ?location hxl:featureName ?locationDisplay . \n';
-    $query += '  ?location hxl:atLocation+ ?countryUri . \n';
-    $query += '  ?countryUri hxl:atLevel ?adminLevel .  \n';
-    $query += '  ?countryUri hxl:featureName ?countryDisplay .  \n';
-    $query += '  ?populationType skos:prefLabel ?populationTypeDisplay . \n';
-    
-    $query += '  ?location hxl:featureName ?locationName . \n';
-    $query += '  ?nationality hxl:featureName ?nationalityDisplay . \n';
-    $query += '  ?nationality hxl:featureRefName ?nationalityRefDisplay . \n';
-    $query += '   \n';
-/*    
-    $query += '  OPTIONAL \n';
-    $query += '  { \n';
-    $query += '    ?location hxl:atLocation ?locationAdminUnit3 . \n';
-    $query += '    ?locationAdminUnit3 hxl:atLocation ?locationAdminUnit2 . \n';
-    $query += '    ?locationAdminUnit2 hxl:atLocation ?locationAdminUnit1 . \n';
-    $query += '    ?locationAdminUnit1 hxl:atLocation ?locationCountry . \n';
-    $query += '     \n';
-    $query += '    ?locationAdminUnit3 hxl:featureName ?adminUnit3Display . \n';
-    $query += '    ?locationAdminUnit2 hxl:featureName ?adminUnit2Display . \n';
-    $query += '    ?locationAdminUnit1 hxl:featureName ?adminUnit1Display . \n';
-    $query += '  } \n';
-*/
-    $query += '  OPTIONAL \n';
-    $query += '  { \n';
-    $query += '    ?location hxl:atLocation ?locationAdminUnit2 . \n';
-    $query += '    ?locationAdminUnit2 hxl:atLocation ?locationAdminUnit1 . \n';
-    $query += '    ?locationAdminUnit1 hxl:atLocation ?locationCountry . \n';
-    $query += '     \n';
-    $query += '    ?locationAdminUnit2 hxl:featureName ?adminUnit2Display . \n';
-    $query += '    ?locationAdminUnit1 hxl:featureName ?adminUnit1Display . \n';
-    $query += '  } \n';
-    $query += '  OPTIONAL \n';
-    $query += '  { \n';
-    $query += '    ?location hxl:atLocation ?locationAdminUnit1 . \n';
-    $query += '    ?locationAdminUnit1 hxl:atLocation ?locationCountry . \n';
-    $query += '     \n';
-    $query += '    ?locationAdminUnit1 hxl:featureName ?adminUnit1Display . \n';
-    $query += '  } \n';
-    $query += '   \n';
-    $query += '  <http://hxl.humanitarianresponse.info/data/emergencies/mali2012test> hxl:commonTitle ?emergencyDisplay . \n';
-    $query += '  ?locationCountry hxl:featureName ?countryDisplay . \n';
-  
-  
-    $query += '  OPTIONAL \n';
-    $query += '  { \n';
-    $query += '    ?population hxl:sexCategory ?sex . \n';
-    $query += '    ?sex hxl:title ?sexDisplay . \n';
-    $query += '  } \n';
-    $query += '  OPTIONAL \n';
-    $query += '  { \n';
-    $query += '    ?population hxl:ageGroup ?age . \n'; //  TODO: change to ageGroup
-    $query += '    ?age hxl:title ?ageDisplay . \n';
-    $query += '    ?age hxl:fromAge ?fromAge . \n';
-    $query += '    OPTIONAL \n';
-    $query += '    { \n';
-    $query += '      ?age hxl:toAge ?toAge . \n';
-    $query += '    } \n';
-    $query += '  } \n';
-    $query += '  OPTIONAL \n';
-    $query += '  { \n';
-    $query += '    ?source hxl:orgDisplayName ?sourceDisplay . \n';
-    $query += '  } \n';
-    $query += '  ?reportedBy foaf:Member_of ?reporter . \n';
-    $query += '  ?reporter hxl:orgDisplayName ?reportedByDisplay . \n';
-    $query += '  FILTER regex(str(?adminLevel), "0$") . \n';
+    $query += '  ?source hxl:orgDisplayName ?sourceDisplay . \n';
     $query += '} \n';
-    $query += 'ORDER BY ASC(?date) \n\n';
-    //$query += 'LIMIT 2000 \n\n';
+    $query += 'GROUP BY ?population \n\n';
+    
     //console.log($query);
 
     $.ajax
@@ -256,34 +318,112 @@ function getPopulationInfo(emergencyUri)
 
     function displayData(data) 
     {
-        populationInfo = '';
         if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
         {
-            populationInfo = jQuery.parseJSON(data);
-            if (populationInfo == null) // Necessary for FF on blackmesh (!?)
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
             {
-                populationInfo = data;
+                jsonObject = data;
             }
         } 
         else 
         {
-            populationInfo = data;
+            jsonObject = data;
         }
         data = '';
     }
+    
+    return jsonObject;
+}
+
+
 /*
-	// This is a separate query for getting the geometry without blocking the interface
-	if (populationInfo.results.bindings[0] != null) {
-// must depend on the selection of the Location ddlist.
-		getlocationGeom(populationInfo.results.bindings[0]['countryUri'].value);
-	}
-        */
-    return populationInfo;
+ * Gets the ordered list of the most frequent sources
+ */
+function getSourcesScore(emergencyUri)
+{
+    //console.log("getSourcesScore: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?sourceDisplay (COUNT(?sourceDisplay) as ?sourceCount) \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:source ?source . \n';
+    $query += '  } \n';
+    $query += '  ?source hxl:orgDisplayName ?sourceDisplay . \n';
+    $query += '} \n';
+    $query += 'GROUP BY ?sourceDisplay \n';
+    $query += 'ORDER BY DESC(?sourceCount) \n\n';
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    if (jsonObject.results.bindings.length == 0 ||
+        jsonObject.results.bindings[0]['sourceDisplay'] == null)
+    {
+        return null; // When emergency is empty
+    }
+    else
+    {
+        return jsonObject;
+    }
+    
+    
 }
 
 var locGeom;
+// TODO use a return instead of global var
+/*
+ * Gets the geometry of a location.
+ */
 function getlocationGeom (geomUri) 
 {
+    //console.log(geomUri);
     locGeom = '';
     var request = $.ajax
     ({
@@ -309,4 +449,660 @@ function getlocationGeom (geomUri)
         }
     );
     request = null;
+}
+
+/*
+ * Gets the most frequent countries appearing for an emergency
+ */
+function getCountryScore(emergencyUri)
+{
+    //console.log("getCountryScore: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?countryUri ?countryName (COUNT(?countryUri)AS ?countryCount) \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:atLocation ?location . \n';
+    $query += '  } \n';
+    $query += '  ?location hxl:atLocation+ ?countryUri . \n';
+    $query += '  ?countryUri hxl:atLevel ?level . \n';
+    $query += '  ?countryUri hxl:featureName ?countryName . \n';
+    $query += '  FILTER regex(str(?level), "0$") \n';
+    $query += '} \n';
+    $query += 'GROUP BY ?countryUri ?countryName \n';
+    $query += 'ORDER BY DESC(?countryCount) \n\n';
+        
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
+}
+
+/*
+ * Gets the list of locations having a population and admin level structure (2 levels) for a given country.
+ */
+function getLevelLocations(emergencyUri, countryUri)
+{
+    //console.log("getLevelLocations: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?location ?locationDisplay ?atLocationL2 ?atLocationL2Display ?atLocationL1 ?atLocationL1Display \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:atLocation ?location . \n';
+    $query += '    ?population hxl:personCount ?personCount . \n';
+    $query += '  } \n';
+    $query += '  ?location hxl:featureName ?locationDisplay . \n';
+    $query += '  ?location hxl:atLocation+ ?atLocationL2 . \n';
+    $query += '  ?atLocationL2 hxl:featureName ?atLocationL2Display . \n';
+    $query += '  ?atLocationL2 hxl:atLevel ?level . \n';
+    $query += '  ?atLocationL2 hxl:atLocation ?atLocationL1 . \n';
+    $query += '  ?atLocationL1 hxl:featureName ?atLocationL1Display . \n';
+    $query += '  ?atLocationL1 hxl:atLocation <' + countryUri + '> . \n';
+    $query += '  FILTER regex(str(?level), "2$") . \n';
+    $query += '} \n';
+    $query += 'ORDER BY DESC(?personCount) \n\n';
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
+}
+
+/*
+ * Gets the list of locations having a population directly located in a country.
+ * It is used to find the locations with no admin level structure (temporary
+ * locations with uncorrect pcode, or pourly descibed countries).
+ */
+function getTheRestOfLocations(emergencyUri, countryUri)
+{
+    //console.log("getTheRestOfLocations: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?location ?locationDisplay \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:atLocation ?location . \n';
+    $query += '    ?population hxl:personCount ?personCount . \n';
+    $query += '  } \n';
+    $query += '  ?location hxl:featureName ?locationDisplay . \n';
+    $query += '  ?location hxl:atLocation <' + countryUri + '> . \n';
+    $query += '} \n';
+    $query += 'ORDER BY DESC(?personCount) \n\n';
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
+}
+
+/*
+ * Gets the list of hxl:sexCategory titles.
+ */
+function getSexCategories(emergencyUri)
+{
+    //console.log("getSexCategories: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?title ?sex \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:sexCategory ?sex . \n';
+    $query += '  } \n';
+    $query += '  ?sex hxl:title ?title . \n';
+    $query += '} \n';
+    $query += 'ORDER BY ASC(?title) \n\n';
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
+}
+
+/*
+ * Gets the list of hxl:ageGroup titles.
+ */
+function getAgeGroups(emergencyUri)
+{
+    //console.log("getSexCategories: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?title ?ageGroup \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:atLocation ?location . \n';
+    $query += '    ?population hxl:ageGroup ?ageGroup . \n';
+    $query += '  } \n';
+    $query += '  ?ageGroup hxl:title ?title . \n';
+    $query += '} \n\n';
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
+}
+
+/*
+ * Gets the list of hxl:placeOfOrigin names.
+ */
+function getOrigins(emergencyUri)
+{
+    //console.log("getOrigins: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?title ?origin \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:placeOfOrigin ?origin . \n';
+    $query += '  } \n';
+    $query += '  ?origin hxl:featureName ?title . \n';
+    $query += '} \n';
+    $query += 'ORDER BY ASC(?title) \n\n';
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
+}
+
+/*
+ * Gets the populations and related info according main slide 2 filters.
+ */
+function getFilteredPopulation(emergencyUri, popType, location, sources, sex, age, origin)
+{
+    //console.log("getOrigins: ");
+    
+    var jsonObject = new Array();
+        
+    jQuery.support.cors = true; // for IE8+
+    
+    // type filter (inside the graph)
+    $queryTypeSingle = '    ?population a <[#popType]> . \n';
+    $queryTypeDisplaced = '    ?population a ?populationType . \n';
+   
+    // location filter
+    $queryLocationAplGraph = '    ?population hxl:atLocation <[#APL]> . \n';
+    $queryLocationAplGraph += '    ?population hxl:atLocation ?location . \n';
+    $queryLocationAtLocationGraph = '    ?population hxl:atLocation ?location . \n';
+    $queryLocationAtLocationOutGraph = '    ?location hxl:atLocation+ <[#atLocation]> . \n';
+    
+    // source filter
+    $querySourceSingleGraph = '    ?population hxl:source ?source . \n';
+    $querySourceSingleOutGraph = '    ?source hxl:orgDisplayName "[#source]" . \n';
+    $querySourceSingleOutGraphGet = '  ?source hxl:orgDisplayName ?sourceDisplay . \n';
+    
+    $querySourceDoubleGraph = '    ?population hxl:source ?source1 . \n';
+    $querySourceDoubleGraph += '    ?population hxl:source ?source2 . \n';
+    $querySourceDoubleOutGraph = '    ?source1 hxl:orgDisplayName "[#source1]" . \n';
+    $querySourceDoubleOutGraph += '    ?source1 hxl:orgDisplayName ?sourceDisplay1 . \n';
+    $querySourceDoubleOutGraph += '    ?source2 hxl:orgDisplayName "[#source2]" . \n';
+    $querySourceDoubleOutGraph += '    ?source2 hxl:orgDisplayName ?sourceDisplay2 . \n';
+    
+    $querySourceTripleGraph = '    ?population hxl:source ?source1 . \n';
+    $querySourceTripleGraph += '    ?population hxl:source ?source2 . \n';
+    $querySourceTripleGraph += '    ?population hxl:source ?source3 . \n';
+    $querySourceTripleOutGraph = '  ?source1 hxl:orgDisplayName "[#source1]" . \n';
+    $querySourceTripleOutGraph += '  ?source1 hxl:orgDisplayName ?sourceDisplay1 . \n';
+    $querySourceTripleOutGraph += '  ?source2 hxl:orgDisplayName "[#source2]" . \n';
+    $querySourceTripleOutGraph += '  ?source2 hxl:orgDisplayName ?sourceDisplay2 . \n';
+    $querySourceTripleOutGraph += '  ?source3 hxl:orgDisplayName "[#source3]" . \n';
+    $querySourceTripleOutGraph += '  ?source3 hxl:orgDisplayName ?sourceDisplay3 . \n';
+    
+    // optional filters
+    // sex filter
+    $querySexGraphOpt = '    OPTIONAL{ ?population hxl:sexCategory ?sex } \n';
+    $querySexGraph = '    ?population hxl:sexCategory <[#sex]> . \n';
+    $querySexGraph += '    ?population hxl:sexCategory ?sex . \n';
+    // age filter
+    $queryAgeGraphOpt = '    OPTIONAL{ ?population hxl:ageGroup ?age } \n';
+    $queryAgeGraph = '    ?population hxl:ageGroup <[#age]> . \n';
+    $queryAgeGraph += '    ?population hxl:ageGroup ?age . \n';
+    // origin filter
+    $queryOriginGraphOpt = '    OPTIONAL{ ?population hxl:placeOfOrigin ?origin } \n';
+    $queryOriginGraph = '    ?population hxl:placeOfOrigin <[#origin]> . \n';
+    $queryOriginGraph += '    ?population hxl:placeOfOrigin ?origin . \n';
+    
+    $query = queryPrefix;
+    $query += 'SELECT DISTINCT ?population ?personCount ?date ?source \n';
+    $query += '?countMethod ?reportedByDisplay ?populationType ?locationDisplay \n'; 
+    $query += '?sex ?age ?nationalityDisplay ?sourceDisplay \n';
+    $query += 'WHERE  \n';
+    $query += '{ \n';
+    $query += '  GRAPH ?graph  \n';
+    $query += '  { \n';
+    $query += '    ?graph hxl:aboutEmergency <' + emergencyUri + '> . \n';
+    $query += '    ?population hxl:personCount ?personCount . \n';
+    $query += '    ?graph hxl:validOn ?date . \n';
+    $query += '    OPTIONAL {?population hxl:method ?countMethod } \n';
+    $query += '    OPTIONAL {?graph hxl:reportedBy ?reportedBy } \n';
+    $query += '    OPTIONAL {?population hxl:nationality ?nationality } \n';
+    $query += '[#QpopTypeG]';
+    $query += '[#QlocationG]';
+    $query += '[#QsourceG]';
+    $query += '[#QsexG]';
+    $query += '[#QageG]';
+    $query += '[#QoriginG]';
+    $query += '  } \n';
+    $query += '  ?nationality hxl:featureName ?nationalityDisplay . \n';
+    $query += '  OPTIONAL {?reportedBy foaf:Member_of ?reporter } \n';
+    $query += '  OPTIONAL {?reporter hxl:orgDisplayName ?reportedByDisplay } \n';
+    $query += '  OPTIONAL {?location hxl:featureName ?locationDisplay } \n';
+    $query += '[#QlocationOG]';
+    $query += '[#QsourceOG]';
+    $query += '} \n';
+    $query += 'ORDER BY ASC(?date) \n\n';
+    
+    // replacing poptype
+    switch (popType)
+    {
+        case "http://hxl.humanitarianresponse.info/ns/#Displaced":
+            $query = $query.replace("[#QpopTypeG]", $queryTypeDisplaced);
+            break;
+        default:
+            $queryTypeSingle = $queryTypeSingle.replace("[#popType]", popType);
+            $query = $query.replace("[#QpopTypeG]", $queryTypeSingle);
+            break;
+    }
+    
+    //console.log(location);
+    // replacing location
+    if (location == undefined || location == null || location == '')
+    {
+        $query = $query.replace("[#QlocationG]", $queryLocationAtLocationGraph);
+        $query = $query.replace("[#QlocationOG]", '');
+    }
+    else
+    {
+        locationSplit = location.split('APL-');
+
+        if (locationSplit.length == 2)//location.indexOf('/apl/') > -1)
+        {
+            $queryLocationAplGraph = $queryLocationAplGraph.replace("[#APL]", locationSplit[1]);
+            $query = $query.replace("[#QlocationG]", $queryLocationAplGraph);
+            $query = $query.replace("[#QlocationOG]", '');
+        }
+        else
+        {
+            $query = $query.replace("[#QlocationG]", $queryLocationAtLocationGraph);
+            $queryLocationAtLocationOutGraph = $queryLocationAtLocationOutGraph.replace("[#atLocation]", location);
+            $query = $query.replace("[#QlocationOG]", $queryLocationAtLocationOutGraph);
+        }
+    }
+    
+    // replacing sources
+    if (sources == null)
+    {
+        $query = $query.replace("[#QsourceG]", $querySourceSingleGraph);
+        $query = $query.replace("[#QsourceOG]", $querySourceSingleOutGraphGet);
+    }
+    else
+    {
+        switch (sources.length)
+        {
+            case 1:
+                $query = $query.replace("[#QsourceG]", $querySourceSingleGraph);
+                $querySourceSingleOutGraph = $querySourceSingleOutGraph.replace("[#source]", sources[0]);
+                $query = $query.replace("[#QsourceOG]", $querySourceSingleOutGraph);
+                break;
+            case 2:
+                $query = $query.replace("[#QsourceG]", $querySourceDoubleGraph);
+                $querySourceDoubleOutGraph = $querySourceDoubleOutGraph.replace("[#source1]", sources[0]);
+                $querySourceDoubleOutGraph = $querySourceDoubleOutGraph.replace("[#source2]", sources[1]);
+                $query = $query.replace("[#QsourceOG]", $querySourceDoubleOutGraph);
+                break;
+            case 3:
+                $query = $query.replace("[#QsourceG]", $querySourceTripleGraph);
+                $querySourceTripleOutGraph = $querySourceTripleOutGraph.replace("[#source1]", sources[0]);
+                $querySourceTripleOutGraph = $querySourceTripleOutGraph.replace("[#source2]", sources[1]);
+                $querySourceTripleOutGraph = $querySourceTripleOutGraph.replace("[#source3]", sources[2]);
+                $query = $query.replace("[#QsourceOG]", $querySourceTripleOutGraph);
+                break;
+        }
+    }
+    
+    // replacing sex
+    if (sex == null || sex == '')
+    {
+        $query = $query.replace("[#QsexG]", $querySexGraphOpt);
+    }
+    else
+    {
+        $querySexGraph = $querySexGraph.replace("[#sex]", sex);
+        $query = $query.replace("[#QsexG]", $querySexGraph);
+    }
+    
+    // replacing age
+    if (age == null || age == '')
+    {
+        $query = $query.replace("[#QageG]", $queryAgeGraphOpt);
+    }
+    else
+    {
+        $queryAgeGraph = $queryAgeGraph.replace("[#age]", age);
+        $query = $query.replace("[#QageG]", $queryAgeGraph);
+    }
+    
+    // replacing origin
+    if (origin == null || origin == '')
+    {
+        $query = $query.replace("[#QoriginG]", $queryOriginGraphOpt);
+    }
+    else
+    {
+        $queryOriginGraph = $queryOriginGraph.replace("[#origin]", origin);
+        $query = $query.replace("[#QoriginG]", $queryOriginGraph);
+    }
+    
+    //console.log($query);
+
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        } 
+        else 
+        {
+            jsonObject = data;
+        }
+        data = '';
+    }
+    
+    return jsonObject;
 }

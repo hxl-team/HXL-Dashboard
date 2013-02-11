@@ -1,18 +1,11 @@
 /*
- *
- */
-function InitLabelsTableView() { 
-    //$("#tableViewTitle").html(populationInfo.results.bindings[0]['emergencyDisplay'].value + ' > Table view');
-}
-
-/*
  * Use the filtered data to display the flat table.
  */
 var tableView;
 var tableView2;
 var oTableTools;
-function LoadTableView() {
-
+function LoadTableView()
+{
     var personCount = new Array();
     var housesholdCount = new Array();
     var dateArray = new Array();
@@ -31,139 +24,142 @@ function LoadTableView() {
     var sourceValue;
     var methodValue;
     var reportedByValue;
-
-    for (var i = 0; i < populationInfo.results.bindings.length; i++) 
+    
+    var popMem = '';
+    var dateMem = '';
+    var sourceMem = '';
+    var sourceMem1 = '';
+    var sourceMem2 = '';
+    var sourceMem3 = '';
+    var simSource = 0;
+                        
+    for (var i = 0; i < graphData.length; i++) 
     {
-        // filters      
-        if ($('#catListSelectedValue').html() == categoriesLabels[0] ||
-            populationInfo.results.bindings[i]['populationTypeDisplay'].value == $('#catListSelectedValue').html())
+        // TODO: log
+        if (graphData[i]['personCount'].value == '') continue; 
+        
+        if (graphData[i]['sourceDisplay'] != undefined)
+        {
+            sourceValue = graphData[i]['sourceDisplay'].value;
+        }
+        else
+        {
+            sourceValue = 'N/A';
+        }
+
+        if (graphData[i + 1] != null &&
+            graphData[i]['population'].value == graphData[i + 1]['population'].value &&
+            graphData[i]['date'].value == graphData[i + 1]['date'].value)
+        {
+            simSource++;
+            continue;
+        }
+        else if (simSource > 0)
         {
 
-            if ($('#locListSelectedValue').html() == lblLoc0 ||
-                $('#locListSelectedValue').html() == '-- Countries' ||
-                $('#locListSelectedValue').html() == '-- Regions' ||
-                $('#locListSelectedValue').html() == '-- Provinces' ||
-                $('#locListSelectedValue').html() == '-- Camps' ||
-                (populationInfo.results.bindings[i]['countryDisplay'] != undefined &&
-                populationInfo.results.bindings[i]['countryDisplay'].value == $('#locListSelectedValue').html()) ||
-                (populationInfo.results.bindings[i]['regionDisplay'] != undefined &&
-                populationInfo.results.bindings[i]['regionDisplay'].value == $('#locListSelectedValue').html()) ||
-                (populationInfo.results.bindings[i]['provinceDisplay'] != undefined &&
-                populationInfo.results.bindings[i]['provinceDisplay'].value == $('#locListSelectedValue').html()) ||
-                (populationInfo.results.bindings[i]['locationDisplay'] != undefined &&
-                populationInfo.results.bindings[i]['locationDisplay'].value == $('#locListSelectedValue').html()))
+                if (simSource > 1)
             {
-                if ($('#sexListSelectedValue').html() == lblSex ||
-                    (populationInfo.results.bindings[i]['sexDisplay'] != undefined &&
-                    populationInfo.results.bindings[i]['sexDisplay'].value == $('#sexListSelectedValue').html()))
-                {
-                    if ($('#ageListSelectedValue').html() == lblAge ||
-                        (populationInfo.results.bindings[i]['ageDisplay'] != undefined &&
-                        populationInfo.results.bindings[i]['ageDisplay'].value == $('#ageListSelectedValue').html()))
-                    {
-                    /*if ($('#originListSelectedValue').html() == lblOri ||
-                        populationInfo.results.bindings[i]['nationalityDisplay'].value == $('#originListSelectedValue').html()){
-                    if ($('#sourceListSelectedValue').html() == lblSou ||
-                        populationInfo.results.bindings[i]['sourceDisplay'].value == $('#sourceListSelectedValue').html()){*/
-
-                        graphIndex++;
-                        personCount[graphIndex] = 0;
-                        housesholdCount[graphIndex] = 0;
-                        newDate = new Date();
-                        newDate.setUTCFullYear(dateArrayFull1[i].getFullYear());
-                        newDate.setUTCMonth(dateArrayFull1[i].getMonth());
-                        newDate.setUTCDate(dateArrayFull1[i].getDate());
-                        dateArray[graphIndex] = newDate;
-
-                        // PersonCounts and householdCounts
-                        if (populationInfo.results.bindings[i]['personCount'] != null)
-                        {
-                            personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
-                        } 
-                        else 
-                        {
-                            personCount[graphIndex] = "N/A";
-                        }
-                        if (populationInfo.results.bindings[i]['housesholdCount'] != null) 
-                        {
-                            housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(populationInfo.results.bindings[i]['housesholdCount'].value);
-                        } 
-                        else 
-                        {
-                            housesholdCount[graphIndex] = "N/A";
-                        }
-
-                        // Storing the result of the filtering for the table view.
-                        locValue = currentGeoZone;
-                        catValue = '';
-                        if (populationInfo.results.bindings[i]['populationTypeDisplay'] != undefined)
-                        {
-                            catValue = populationInfo.results.bindings[i]['populationTypeDisplay'].value;
-                        }
-                        sexValue = '';
-                        if (populationInfo.results.bindings[i]['sexDisplay'] != undefined)
-                        {
-                            sexValue = populationInfo.results.bindings[i]['sexDisplay'].value;
-                        }
-                        ageValue = '';
-                        if (populationInfo.results.bindings[i]['ageDisplay'] != undefined)
-                        {
-                            ageValue = populationInfo.results.bindings[i]['ageDisplay'].value.replace("Ages ", '');
-                        }
-                        originValue = '';
-                        if (populationInfo.results.bindings[i]['nationalityDisplay'] != undefined)
-                        {
-                            originValue = populationInfo.results.bindings[i]['nationalityDisplay'].value;
-                        }
-                        sourceValue = '';
-                        if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
-                        {
-                            sourceValue = populationInfo.results.bindings[i]['sourceDisplay'].value;
-                        }
-                        methodValue = '';
-                        if (populationInfo.results.bindings[i]['methodDisplay'] != undefined)
-                        {
-                            methodValue = populationInfo.results.bindings[i]['methodDisplay'].value;
-                        }
-                        reportedByValue = '';
-                        if (populationInfo.results.bindings[i]['reportedByDisplay'] != undefined)
-                        {
-                            reportedByValue = populationInfo.results.bindings[i]['reportedByDisplay'].value;
-                        }
-
-                        // This date format works on IE8 and FF.
-                        tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
-                    // end filters
-                    //}
-                    //}
-                    }
-                }
+                sourceValue = graphData[i]['sourceDisplay'].value + ', ' + 
+                                graphData[i - 1]['sourceDisplay'].value + ', ' + 
+                                graphData[i - 2]['sourceDisplay'].value;
             }
+            else
+            {
+
+                sourceValue = graphData[i]['sourceDisplay'].value + ', ' + 
+                                graphData[i - 1]['sourceDisplay'].value;
+            }
+            simSource = 0;
         }
+          
+        // If ok, it means the agregation os sources is ok.
+        if (i == graphData.length - 1 ||
+            popMem != graphData[i + 1]['population'].value)
+        {
+            graphIndex++;
+            personCount[graphIndex] = 0;
+            housesholdCount[graphIndex] = 0;
+            newDate = new Date();
+            newDate.setUTCFullYear(dateArrayFull[i].getFullYear());
+            newDate.setUTCMonth(dateArrayFull[i].getMonth());
+            newDate.setUTCDate(dateArrayFull[i].getDate());
+            dateArray[graphIndex] = newDate;
+
+            // PersonCounts and householdCounts
+            if (graphData[i]['personCount'] != null)
+            {
+                personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(graphData[i]['personCount'].value);
+            } 
+            else 
+            {
+                personCount[graphIndex] = "N/A";
+            }
+            if (graphData[i]['housesholdCount'] != null) 
+            {
+                housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(graphData[i]['housesholdCount'].value);
+            } 
+            else 
+            {
+                housesholdCount[graphIndex] = "N/A";
+            }
+
+            // Storing the result of the filtering for the table view.
+            catValue = '';
+            if (graphData[i]['populationType'] != undefined)
+            {
+                catValue = popTypeConverter[graphData[i]['populationType'].value];
+            }
+            else
+            {
+                catValue = $('#catListSelectedValue').html();
+            }
+            locValue = '';
+            if (graphData[i]['locationDisplay'] != undefined)
+            {
+                locValue = graphData[i]['locationDisplay'].value;
+            }
+            sexValue = '';
+            if (graphData[i]['sex'] != undefined)
+            {
+                sexValue = sexConverter[graphData[i]['sex'].value];
+            }
+            ageValue = '';
+            if (graphData[i]['age'] != undefined)
+            {
+                ageValue = ageConverter[graphData[i]['age'].value].replace("Ages ", '');
+            }
+            originValue = '';
+            if (graphData[i]['nationalityDisplay'] != undefined)
+            {
+                originValue = graphData[i]['nationalityDisplay'].value;
+            }
+            methodValue = 'undefined';
+            if (graphData[i]['methodDisplay'] != undefined)
+            {
+                methodValue = graphData[i]['methodDisplay'].value;
+            }
+            reportedByValue = '';
+            if (graphData[i]['reportedByDisplay'] != undefined)
+            {
+                reportedByValue = graphData[i]['reportedByDisplay'].value;
+            }
+
+        // This date format works on IE8 and FF.
+            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
+        }
+       
+    // console.log(tableViewData[graphIndex]);
+    // console.log(graphIndex);
+    
     } // end for
     $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );
 
-    var itemPerPage = 25;
-    /*
-    if (graphIndex > 3 * itemPerPage){
-        itemPerPage = 25;
-    }
-    if (graphIndex > 3 * itemPerPage){
-        itemPerPage = 50;
-    }
-    if (graphIndex > 3 * itemPerPage){
-        itemPerPage = 100;
-    }
-*/
+    var itemPerPage = 20;
 
     tableView = $('#tableDisplay').dataTable( {
         "aaData": tableViewData,
         "iDisplayLength": itemPerPage,
-        "aLengthMenu": [[25, 50, -1], [25, 50, "All"]],
-        /*"sScrollY": "500px",
-        "sScrollX": "100%",
-        "sScrollXInner": "2000px",*/
-        /*"bAutoWidth": false,*/
+        "aLengthMenu": [[20, 50, -1], [20, 50, "All"]],
         "bPaginate": true,
         "aoColumns": [
             { "sTitle": "Date", "sClass": "w90" },
@@ -179,9 +175,9 @@ function LoadTableView() {
             { "sTitle": "Reported by", "sClass": "w60" }
         ],
         "sDom": 'T<"clear">lfrtip',
-        /*"oTableTools": {
-            "sSwfPath": "lib/datatables/tableTools/swf/copy_cvs_xls_pdf.swf"
-        },*/
+        "oTableTools": {
+            "sSwfPath": "lib/DataTables/TableTools/media/swf/copy_csv_xls_pdf.swf"
+        },
         "fnInitComplete": function() {
             this.fnAdjustColumnSizing(true);
         }
@@ -190,7 +186,7 @@ function LoadTableView() {
     // Instanciation of the download bar.
     // Better this way to be able to clean them separately.
     oTableTools = new TableTools( tableView, {
-        "sSwfPath": "lib/datatables/tableTools/swf/copy_csv_xls_pdf.swf" 
+        "sSwfPath": "lib/DataTables/TableTools/media/swf/copy_csv_xls_pdf.swf" 
     } );
     //$("div[class='DTTT btn-group']").clone().appendTo('#tableViewBefore2');
     //$("div[class='DTTT btn-group']").hide();

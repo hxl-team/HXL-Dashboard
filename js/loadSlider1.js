@@ -1,77 +1,56 @@
 
 
-var emergenciesLabels;
-var emergenciesList = getEmergenciesInfo();
-
-var categoriesLabels;
-var categoriesInfo = getCategoriesInfo();
-//var populationInfo;
-
+// Arrays containing the date corresponding to different group of data.
+// It is convenient if they are accessible for the second slide where we need to
+// select the correct one as a base for the population matrix.
+var dateArrayFull1 = new Array();
+var dateArrayFull2 = new Array();
+var dateArrayFull3 = new Array();
+var dateArrayFull4 = new Array();
 
 /* Refresh the content when the emergency choice triggers. */
 function refreshSlide1(eventId) 
 {
-    //console.log("refreshSlide1: " + emergenciesList.results.bindings[eventId]['emergencyUri'].value);
-    
+//console.log(eventId);
     if (setEmergencyChoice(eventId))
     {
-        populationInfo = getPopulationInfo(emergenciesList.results.bindings[eventId]['emergencyUri'].value);
-        initInfoCategory(categoriesInfo);  
-        initSparkline1();  
-        initSparkline2(); 
-        initSparkline3();  
-        initSparkline4();  
-        testHideSparklines(populationInfo);
+        var emergencyUri = emergenciesList.results.bindings[eventId]['emergencyUri'].value;
+        $('#dataBlock').show(); 
+        $('#noDataBlock').hide(); 
+            
+        initSparkline1(emergencyUri);  
+        initSparkline2(emergencyUri); 
+        initSparkline3(emergencyUri);  
+        initSparkline4(emergencyUri);  
+        //testHideSparklines();
+        
+        try
+        {
+            $("#sourcesScore").html("Sources (from the most frequent to the less): ");
+            sourcesScore = getSourcesScore(emergencyUri);
+            console.log(sourcesScore.results.bindings.length);
+            for (var i = 0; i < sourcesScore.results.bindings.length; i++)
+            {
+                $("#sourcesScore").html($("#sourcesScore").html() + sourcesScore.results.bindings[i]['sourceDisplay'].value + " ");
+            }
+        }
+        catch (e)
+        {
+            $('#dataBlock').hide(); 
+            $('#noDataBlock').show(); 
+            $('#noDataBlock').html("<br /><br />Emergency information not available<br /><br />"); 
+            return false;
+        }
     }
 }
-
-/* Hides the sparkline blocks. */
-function testHideSparklines()
-{      
-    if (populationInfo == null ||
-        populationInfo == undefined || 
-        populationInfo.results.bindings.length == 0 || 
-        populationInfo.results.bindings[0] == null) {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No population data available<br /><br />"); 
-        return false;
-    }   
-    else if (emergenciesList == null || emergenciesList == undefined)
-    {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No emergency available<br /><br />"); 
-        return false;
-    }
-    else if (categoriesInfo == null || categoriesInfo == undefined)
-    {
-        $('#dataBlock').hide(); 
-        $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />No categories available<br /><br />"); 
-        return false;
-    }
-    $('#noDataBlock').html(""); 
-    $('#noDataBlock').hide(); 
-    $('#dataBlock').show(); 
-    return true;
-}
-
-/*
- * Tool for adding a comma for thousands on the row figures.
- */
-function numberWithCommas(x) 
-{
-    if (x == undefined) return null;
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
 
 /*
  * Displays the title and the emergency selection.
  */
 function setEmergencyChoice(eventId) 
 {
+//console.log(eventId);
+//console.log(emergenciesList.results.bindings.length);
     if (emergenciesList == null ||
         emergenciesList == undefined || 
         emergenciesList.results == null || 
@@ -80,10 +59,22 @@ function setEmergencyChoice(eventId)
     {
         $('#dataBlock').hide(); 
         $('#noDataBlock').show(); 
-        $('#noDataBlock').html("<br /><br />Emergency information temporary unavailable<br /><br />"); 
+        $('#noDataBlock').html("<br /><br />Emergency information not available<br /><br />"); 
         return false;
     }
     
+    // saving emergency values
+    if (eventId == null)
+    {
+        $('#memEmergencyUri').html(emergenciesList.results.bindings[0]['emergencyUri'].value);
+        $('#memEmergencyLabel').html(emergenciesList.results.bindings[0]['emergencyDisplay'].value);
+    }
+    else
+    {
+        $('#memEmergencyUri').html(emergenciesList.results.bindings[eventId]['emergencyUri'].value);
+        $('#memEmergencyLabel').html(emergenciesList.results.bindings[eventId]['emergencyDisplay'].value);
+    }
+        
     // Filling the list
     $('#emeListItems').empty();
     var tempList = '';
@@ -106,12 +97,14 @@ function setEmergencyChoice(eventId)
     }
     $('#emeListSelectedValue').html(tempValue);
     $('#emeListSelectedId').html(tempId);
+    
+    return true;
 }
 
 /*
  * Displays the general or metadata information related to the sparklines.
  */
-function initInfoCategory(categoriesData)
+function initCategoryLabels()
 {
     //  Buttons over
     $("#infoPopover1").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100}}); 
@@ -126,14 +119,9 @@ function initInfoCategory(categoriesData)
     $("#infoPopover4").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100}}); 
     $("#catPopover4").popover({placement:'left', trigger: 'hover', delay: {show: 300, hide: 100}}); 
 
-    // Display
-    // Category and its popover
-    categoriesLabels = new Array();
-    categoriesLabels.push(categoriesData.results.bindings[0]['classLabel'].value);
-    categoriesLabels.push(categoriesData.results.bindings[0]['subClassLabel'].value);
-    categoriesLabels.push(categoriesData.results.bindings[2]['subClassLabel'].value);
-    categoriesLabels.push(categoriesData.results.bindings[1]['subClassLabel'].value);
 
+    // Display
+    // Category popovers
     $("#catPopover1").html(categoriesLabels[0]);
     $("#catPopover2").html(categoriesLabels[1]);
     $("#catPopover3").html(categoriesLabels[2]);
@@ -144,11 +132,11 @@ function initInfoCategory(categoriesData)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[0]['classDefinition'].value
+            attrs.item(i).value = categoriesInfo[0]['classDefinition'].value
         }
         if (attrs.item(i).nodeName == 'data-original-title') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[0]['classLabel'].value
+            attrs.item(i).value = categoriesInfo[0]['classLabel'].value
         }
     }
 
@@ -157,11 +145,11 @@ function initInfoCategory(categoriesData)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[0]['subClassDefinition'].value
+            attrs.item(i).value = categoriesInfo[0]['subClassDefinition'].value
         }
         if (attrs.item(i).nodeName == 'data-original-title') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[0]['subClassLabel'].value
+            attrs.item(i).value = categoriesInfo[0]['subClassLabel'].value
         }
     }
 
@@ -170,11 +158,11 @@ function initInfoCategory(categoriesData)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[2]['subClassDefinition'].value
+            attrs.item(i).value = categoriesInfo[2]['subClassDefinition'].value
         }
         if (attrs.item(i).nodeName == 'data-original-title') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[2]['subClassLabel'].value
+            attrs.item(i).value = categoriesInfo[2]['subClassLabel'].value
         }
     }
 
@@ -183,141 +171,201 @@ function initInfoCategory(categoriesData)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[1]['subClassDefinition'].value
+            attrs.item(i).value = categoriesInfo[1]['subClassDefinition'].value
         }
         if (attrs.item(i).nodeName == 'data-original-title') 
         {
-            attrs.item(i).value = categoriesData.results.bindings[1]['subClassLabel'].value
+            attrs.item(i).value = categoriesInfo[1]['subClassLabel'].value
         }
     }
 }
 
 /*
+ * Create assiocative arrays following the pattern [uri] = label.
+ * Used for completing query results which 
+ */
+function initDataHelpers ()
+{
+    // Categories or population types
+    categoriesInfo = getCategoriesInfo().results.bindings;
+            
+    categoriesLabels.push(categoriesInfo[0]['classLabel'].value);
+    categoriesLabels.push(categoriesInfo[0]['subClassLabel'].value);
+    categoriesLabels.push(categoriesInfo[2]['subClassLabel'].value);
+    categoriesLabels.push(categoriesInfo[1]['subClassLabel'].value);
+
+    categoriesUris = new Array();
+    categoriesUris.push(categoriesInfo[0]['class'].value);
+    categoriesUris.push(categoriesInfo[0]['subClass'].value);
+    categoriesUris.push(categoriesInfo[2]['subClass'].value);
+    categoriesUris.push(categoriesInfo[1]['subClass'].value);
+    
+    for (var i=0; i < categoriesUris.length; i++) 
+    {
+        popTypeConverter[categoriesUris[i]] = categoriesLabels[i];
+    }
+    
+    // SexCategories
+    sexInfo = getSexInfo().results.bindings;
+    for (var i=0; i < sexInfo.length; i++) 
+    {
+        sexConverter[sexInfo[i]['sexCategory'].value] = sexInfo[i]['sexLabel'].value;
+    }
+    
+    // AgeGroups
+    ageInfo = getAgeInfo().results.bindings;
+    for (var i=0; i < ageInfo.length; i++) 
+    {
+        ageConverter[ageInfo[i]['ageGroup'].value] = ageInfo[i]['ageLabel'].value;
+    }
+}
+
+var popDisplacedCounts;
+var popRefugeeCounts;
+var popIdpCounts;
+var popOtherCounts;
+
+/*
  * It initializes the first displaced population sparkline and the few information 
  * linked to it.
  */
-function initSparkline1()
+function initSparkline1(emergencyUri)
 {
-    if (populationInfo == null ||
-        populationInfo.results.bindings.length == 0)
+    popDisplacedCounts = getFilteredPopulation(emergencyUri,
+                                            categoriesUris[0],
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null);
+    
+    if (popDisplacedCounts == null ||
+        popDisplacedCounts.results == null ||
+        popDisplacedCounts.results.bindings == null ||
+        popDisplacedCounts.results.bindings.length == 0)
     {
-        return;
+        $('#errorPop1').show(); 
+        $('#popContent1').hide(); 
+
+        return false;
     } 
+    else
+    {
+        $('#errorPop1').hide(); 
+        $('#popContent1').show(); 
+    }
+    
+    popDisplacedCounts = popDisplacedCounts.results.bindings;
 
-    var source1 = new Array();
-    var method1 = new Array();
-    var reportedBy1 = new Array();
-    var date1 = '';
+    var source = new Array();
+    var method = new Array();
+    var reportedBy = new Array();
+    var date = '';
 
-    count1 = new Array();
-    dateArray1 = new Array();
-    dateArrayFull1 = new Array();
+    var count = new Array();
+    var dateArray = new Array();
     
     var currentDate = '';
     var graphIndex = -1;
     
     // Getting the personCounts and the rest of the data
-    for (var i = 0; i < populationInfo.results.bindings.length; i++)
+    for (var i = 0; i < popDisplacedCounts.length; i++)
     {
         // parsing by date
-        if (currentDate != populationInfo.results.bindings[i]['date'].value)
+        if (currentDate != popDisplacedCounts[i]['date'].value)
         {
-            currentDate = populationInfo.results.bindings[i]['date'].value;
+            currentDate = popDisplacedCounts[i]['date'].value;
             graphIndex++;
-            count1[graphIndex] = 0;
+            count[graphIndex] = 0;
         }
 
         // Getting the main graph count and date, the main source, method and 
         // reported by
-        count1[graphIndex] = parseInt(count1[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+        count[graphIndex] = parseInt(count[graphIndex]) + parseInt(popDisplacedCounts[i]['personCount'].value);
         
-        dateArray1[graphIndex] = new Date(populationInfo.results.bindings[i]['date'].value);
+        dateArray[graphIndex] = new Date(popDisplacedCounts[i]['date'].value);
         // For the chart, the date format can be interpreted only like 
         // "yyyy, m, d" but not "yyyy-m-d".
         if (navigator.appName == 'Microsoft Internet Explorer')
         {
-            dateArrayFull1[i] = new Date(populationInfo.results.bindings[i]['date'].value.replace('-', ', '));
+            dateArrayFull1[i] = new Date(popDisplacedCounts[i]['date'].value.replace('-', ', '));
         } 
         else
         {
-            dateArrayFull1[i] = new Date(populationInfo.results.bindings[i]['date'].value);
+            dateArrayFull1[i] = new Date(popDisplacedCounts[i]['date'].value);
         }
         
-        date1 = populationInfo.results.bindings[i]['date'].value;  
-        
-        if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
+        if (popDisplacedCounts[i]['sourceDisplay'] != undefined)
         {
-            if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, source1) < 0)
+            if ($.inArray(popDisplacedCounts[i]['sourceDisplay'].value, source) < 0)
             {
-                source1.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
+                source.push(popDisplacedCounts[i]['sourceDisplay'].value);
             }
         }
         
-        if ($.inArray(populationInfo.results.bindings[i]['countMethod'].value, method1) < 0)
+        if ($.inArray(popDisplacedCounts[i]['countMethod'].value, method) < 0)
         {
-            method1.push(populationInfo.results.bindings[i]['countMethod'].value);
+            method.push(popDisplacedCounts[i]['countMethod'].value);
         }
         
-        if ($.inArray(populationInfo.results.bindings[i]['reportedByDisplay'].value, reportedBy1) < 0)
+        if ($.inArray(popDisplacedCounts[i]['reportedByDisplay'].value, reportedBy) < 0)
         {
-            reportedBy1.push(populationInfo.results.bindings[i]['reportedByDisplay'].value);
+            reportedBy.push(popDisplacedCounts[i]['reportedByDisplay'].value);
         }
     }
+    // As of date
+    date = new XDate(popDisplacedCounts[popDisplacedCounts.length - 1]['date'].value);
+    $("#date1").html(date.toString("dd MMM yyyy"));
     
     // The few next steps aim at rendering the data properly.
     // creates the main working matrix
-    var dateArray1 = matrixCreation(populationInfo, null);
+    dateArray = matrixCreation(popDisplacedCounts);
     // Placing the data in the corresponding place in the matrix according date and population.
-    var nbrOfPops = dataDroping(dateArray1, populationInfo);
-    // Completing the dateArray matrix with missing counts to make the correct sums.
-    fillingTheGaps(dateArray1, nbrOfPops);
+    var nbrOfPops = dataDroping(dateArray, popDisplacedCounts);
+    // Completing the dateArray matrix with missing counts to be able to make
+    // the correct sums on each day.
+    fillingTheGaps(dateArray, nbrOfPops);
     // Suming columns
-    var dateArraySum1 = getSumPerDay(dateArray1);
+    var dateArraySum = getSumPerDay(dateArray);
     // Making the timeline to be regular
-    var regularSum1 = linearizeTimeline(dateArray1, dateArraySum1);
+    var regularSum = linearizeTimeline(dateArray, dateArraySum);
     
     // Displays the big count
-    var prettyCount1 = numberWithCommas(dateArraySum1[dateArraySum1.length - 1]);
-    $("#lastCount1").html(prettyCount1);
-    $("#lastCount1").attr("title", prettyCount1 + " people"); 
-
-    // Date
-    dsplit1 = date1.split(" ");
-    dsplit1 = dsplit1[0].split("-");
-    dateOk1 = new XDate(dsplit1[0], dsplit1[1] , dsplit1[2]);
-    $("#date1").html(dateOk1.toString("dd MMM yyyy"));
+    var prettycount = numberWithCommas(dateArraySum[dateArraySum.length - 1]);
+    $("#lastCount1").html(prettycount);
+    $("#lastCount1").attr("title", prettycount + " people"); 
 
     // Popups Info
-    var infoPop1 = document.getElementById("infoPopover1");
-    var pop1Full = '';
-    pop1Full = 'Source:';
-    for (var j = 0; j < source1.length; j++) 
+    var infoPop = document.getElementById("infoPopover1");
+    var popFull = '';
+    popFull = '<b>Source:</b>';
+    for (var j = 0; j < source.length; j++) 
     {
-        pop1Full += ' ' + source1[j];
+        popFull += ' ' + source[j];
     }
-    pop1Full += '.<br />Method:';
-    for (var j = 0; j < method1.length; j++) 
+    popFull += '.<br /><b>Method:</b>';
+    for (var j = 0; j < method.length; j++) 
     {
-        pop1Full += ' ' + method1[j];
+        popFull += ' ' + method[j];
     }
-    pop1Full += '.<br />Reported by:';
-    for (var j = 0; j < reportedBy1.length; j++) 
+    popFull += '.<br /><b>Reported by:</b>';
+    for (var j = 0; j < reportedBy.length; j++) 
     {
-        pop1Full += ' ' + reportedBy1[j];
+        popFull += ' ' + reportedBy[j];
     }
-    pop1Full += '.<br />(Click for all details)';
-    for (var i=0, attrs=infoPop1.attributes, l=attrs.length; i<l; i++)
+    popFull += '.<br />(Click for all details)';
+    for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = pop1Full;
+            attrs.item(i).value = popFull;
         }
     }
 
     // Instanciation
     $("#sparkline1").sparkline
     (
-        regularSum1, 
+        regularSum, 
         {
             type: 'line',
             width: '80',
@@ -334,134 +382,152 @@ function initSparkline1()
             chartRangeMin: 0
         }
     );
+    return true;
 }
 
+//var popRefugeeCounts = getPopRefugees();
 /*
  * It initializes the refugees sparkline and the few information 
  * linked to it.
  */
-function initSparkline2()
+function initSparkline2(emergencyUri)
 {
-    if (populationInfo == null ||
-        populationInfo.results.bindings.length == 0)
+    //console.log("initSparkline2");
+    
+    popRefugeeCounts = getFilteredPopulation(emergencyUri,
+                                            categoriesUris[1],
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null);
+    //var popRefugeeCounts = getPopRefugees();
+    
+    if (popRefugeeCounts == null ||
+        popRefugeeCounts.results == null ||
+        popRefugeeCounts.results.bindings == null ||
+        popRefugeeCounts.results.bindings.length == 0)
     {
-        return;
+        $('#errorPop2').show(); 
+        $('#popContent2').hide(); 
+
+        return false;
     } 
+    else
+    {
+        $('#errorPop2').hide(); 
+        $('#popContent2').show(); 
+    }
+    popRefugeeCounts = popRefugeeCounts.results.bindings;
 
-    var source2 = new Array();
-    var method2 = new Array();
-    var reportedBy2 = new Array();
-    var date2 = '';
+    var source = new Array();
+    var method = new Array();
+    var reportedBy = new Array();
+    var date = '';
 
-    count2 = new Array();
-    dateArray2 = new Array();
-    dateArrayFull2 = new Array();
+    var count = new Array();
+    var dateArray = new Array();
     
     var currentDate = '';
     var graphIndex = -1;
     // Getting the personCounts and the rest of the data
-    for (var i = 0; i < populationInfo.results.bindings.length; i++)
+    for (var i = 0; i < popRefugeeCounts.length; i++)
     {
         // parsing by date
-        if (currentDate != populationInfo.results.bindings[i]['date'].value)
+        if (currentDate != popRefugeeCounts[i]['date'].value)
         {
-            currentDate = populationInfo.results.bindings[i]['date'].value;
+            currentDate = popRefugeeCounts[i]['date'].value;
             graphIndex++;
-            count2[graphIndex] = 0;
+            count[graphIndex] = 0;
         }
 
         // Getting the main graph count and date, the main source, method and reported by
-        count2[graphIndex] = parseInt(count2[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+        count[graphIndex] = parseInt(count[graphIndex]) + parseInt(popRefugeeCounts[i]['personCount'].value);
         
-        dateArray2[graphIndex] = new Date(populationInfo.results.bindings[i]['date'].value);
+        dateArray[graphIndex] = new Date(popRefugeeCounts[i]['date'].value);
         // For the chart, the date format can be interpreted only like yyyy, m, d but not yyyy-m-d.
         if (navigator.appName == 'Microsoft Internet Explorer')
         {
-            dateArrayFull2[i] = new Date(populationInfo.results.bindings[i]['date'].value.replace('-', ', '));
+            dateArrayFull2[i] = new Date(popRefugeeCounts[i]['date'].value.replace('-', ', '));
         } 
         else
         {
-            dateArrayFull2[i] = new Date(populationInfo.results.bindings[i]['date'].value);
+            dateArrayFull2[i] = new Date(popRefugeeCounts[i]['date'].value);
         }
         
-        if (populationInfo.results.bindings[i]['populationType'].value == "http://hxl.humanitarianresponse.info/ns/#RefugeesAsylumSeekers") 
+//console.log("testttt2t: " + dateArrayFull2[i]);
+
+        if (popRefugeeCounts[i]['sourceDisplay'] != undefined)
         {
-            date2 = populationInfo.results.bindings[i]['date'].value;
-        }
-        
-        if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
-        {
-            if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, source2) < 0)
+            if ($.inArray(popRefugeeCounts[i]['sourceDisplay'].value, source) < 0)
             {
-                source2.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
+                source.push(popRefugeeCounts[i]['sourceDisplay'].value);
             }
         }
         
-        if ($.inArray(populationInfo.results.bindings[i]['countMethod'].value, method2) < 0)
+        if ($.inArray(popRefugeeCounts[i]['countMethod'].value, method) < 0)
         {
-            method2.push(populationInfo.results.bindings[i]['countMethod'].value);
+            method.push(popRefugeeCounts[i]['countMethod'].value);
         }
         
-        if ($.inArray(populationInfo.results.bindings[i]['reportedByDisplay'].value, reportedBy2) < 0)
+        if ($.inArray(popRefugeeCounts[i]['reportedByDisplay'].value, reportedBy) < 0)
         {
-            reportedBy2.push(populationInfo.results.bindings[i]['reportedByDisplay'].value);
+            reportedBy.push(popRefugeeCounts[i]['reportedByDisplay'].value);
         }
+        
     }
-    
+    // As of date
+    date = new XDate(popRefugeeCounts[popRefugeeCounts.length - 1]['date'].value);
+    $("#date2").html(date.toString("dd MMM yyyy"));
+
     // The few next steps aim at rendering the data properly.
     // creates the main working matrix
-    var dateArray2 = matrixCreation(populationInfo, "http://hxl.humanitarianresponse.info/ns/#RefugeesAsylumSeekers");
+    dateArray = matrixCreation(popRefugeeCounts);
     // Placing the data in the corresponding place in the matrix according date and population.
-    var nbrOfPops = dataDroping(dateArray2, populationInfo);
+    var nbrOfPops = dataDroping(dateArray, popRefugeeCounts);
     // Completing the dateArray matrix with missing counts to make the correct sums.
-    fillingTheGaps(dateArray2, nbrOfPops);
+    fillingTheGaps(dateArray, nbrOfPops);
     // Suming columns
-    var dateArraySum2 = getSumPerDay(dateArray2);
+    var dateArraySum = getSumPerDay(dateArray);
     // Making the timeline to be regular
-    var regularSum2 = linearizeTimeline(dateArray2, dateArraySum2);
+    var regularSum = linearizeTimeline(dateArray, dateArraySum);
     
     // Displays the big count
-    var prettyCount2 = numberWithCommas(dateArraySum2[dateArraySum2.length - 1]);
-    $("#lastCount2").html(prettyCount2);
-    $("#lastCount2").attr("title", prettyCount2 + " people"); 
-
-    // Date
-    dsplit2 = date2.split(" ");
-    dsplit2 = dsplit2[0].split("-");
-    dateOk2 = new XDate(dsplit2[0], dsplit2[1] , dsplit2[2]);
-    $("#date2").html(dateOk2.toString("dd MMM yyyy"));
+    var prettycount = numberWithCommas(dateArraySum[dateArraySum.length - 1]);
+    $("#lastCount2").html(prettycount);
+    $("#lastCount2").attr("title", prettycount + " people"); 
 
     // Popups Info
-    var infoPop2 = document.getElementById("infoPopover2");
-    var pop2Full = '';
-    pop2Full = 'Source:';
-    for (var j = 0; j < source2.length; j++) 
+    var infoPop = document.getElementById("infoPopover2");
+    var popFull = '';
+    popFull = 'Source:';
+    for (var j = 0; j < source.length; j++) 
     {
-        pop2Full += ' ' + source2[j];
+        popFull += ' ' + source[j];
     }
-    pop2Full += '.<br />Method:';
-    for (var j = 0; j < method2.length; j++) 
+    popFull += '.<br />Method:';
+    for (var j = 0; j < method.length; j++) 
     {
-        pop2Full += ' ' + method2[j];
+        popFull += ' ' + method[j];
     }
-    pop2Full += '.<br />Reported by:';
-    for (var j = 0; j < reportedBy2.length; j++) 
+    popFull += '.<br />Reported by:';
+    for (var j = 0; j < reportedBy.length; j++) 
     {
-        pop2Full += ' ' + reportedBy2[j];
+        popFull += ' ' + reportedBy[j];
     }
-    pop2Full += '.<br />(Click for all details)';
-    for (var i=0, attrs=infoPop2.attributes, l=attrs.length; i<l; i++)
+    popFull += '.<br />(Click for all details)';
+    for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = pop2Full;
+            attrs.item(i).value = popFull;
         }
     }
 
     // Instanciation
     $("#sparkline2").sparkline
     (
-        regularSum2, 
+        regularSum, 
         {
             type: 'line',
             width: '80',
@@ -478,134 +544,151 @@ function initSparkline2()
             chartRangeMin: 0
         }
     );
+    return true;
 }
 
+//var popIdpCounts = getPopIdps();
 /*
  * It initializes the IDPs sparkline and the few information 
  * linked to it.
  */
-function initSparkline3()
+function initSparkline3(emergencyUri)
 {
-    if (populationInfo == null ||
-        populationInfo.results.bindings.length == 0)
+    //console.log("initSparkline3");
+    
+    popIdpCounts = getFilteredPopulation(emergencyUri,
+                                            categoriesUris[2],
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null);
+    
+    if (popIdpCounts == null ||
+        popIdpCounts.results == null ||
+        popIdpCounts.results.bindings == null ||
+        popIdpCounts.results.bindings.length == 0)
     {
-        return;
+        $('#errorPop3').show(); 
+        $('#popContent3').hide(); 
+
+        return false;
     } 
+    else
+    {
+        $('#errorPop3').hide(); 
+        $('#popContent3').show(); 
+    }
 
-    var source3 = new Array();
-    var method3 = new Array();
-    var reportedBy3 = new Array();
-    var date3 = '';
+    popIdpCounts = popIdpCounts.results.bindings;
+    
+    var source = new Array();
+    var method = new Array();
+    var reportedBy = new Array();
+    var date = '';
 
-    count3 = new Array();
-    dateArray3 = new Array();
-    dateArrayFull3 = new Array();
+    var count = new Array();
+    var dateArray = new Array();
     
     var currentDate = '';
     var graphIndex = -1;
     // Getting the personCounts and the rest of the data
-    for (var i = 0; i < populationInfo.results.bindings.length; i++)
+    for (var i = 0; i < popIdpCounts.length; i++)
     {
         // parsing by date
-        if (currentDate != populationInfo.results.bindings[i]['date'].value)
+        if (currentDate != popIdpCounts[i]['date'].value)
         {
-            currentDate = populationInfo.results.bindings[i]['date'].value;
+            currentDate = popIdpCounts[i]['date'].value;
             graphIndex++;
-            count3[graphIndex] = 0;
+            count[graphIndex] = 0;
         }
 
         // Getting the main graph count and date, the main source, method and reported by
-        count3[graphIndex] = parseInt(count3[graphIndex]) + parseInt(populationInfo.results.bindings[i]['personCount'].value);
+        count[graphIndex] = parseInt(count[graphIndex]) + parseInt(popIdpCounts[i]['personCount'].value);
         
-        dateArray3[graphIndex] = new Date(populationInfo.results.bindings[i]['date'].value);
+        dateArray[graphIndex] = new Date(popIdpCounts[i]['date'].value);
         // For the chart, the date format can be interpreted only like yyyy, m, d but not yyyy-m-d.
         if (navigator.appName == 'Microsoft Internet Explorer')
         {
-            dateArrayFull3[i] = new Date(populationInfo.results.bindings[i]['date'].value.replace('-', ', '));
+            dateArrayFull3[i] = new Date(popIdpCounts[i]['date'].value.replace('-', ', '));
         } 
         else
         {
-            dateArrayFull3[i] = new Date(populationInfo.results.bindings[i]['date'].value);
+            dateArrayFull3[i] = new Date(popIdpCounts[i]['date'].value);
         }
         
-        if (populationInfo.results.bindings[i]['populationType'].value == "http://hxl.humanitarianresponse.info/ns/#IDP") 
-        {
-            date3 = populationInfo.results.bindings[i]['date'].value;
-        }
+//console.log("testtttt: " + dateArrayFull3[i]);
         
-        if (populationInfo.results.bindings[i]['sourceDisplay'] != undefined)
+        if (popIdpCounts[i]['sourceDisplay'] != undefined)
         {
-            if ($.inArray(populationInfo.results.bindings[i]['sourceDisplay'].value, source3) < 0)
+            if ($.inArray(popIdpCounts[i]['sourceDisplay'].value, source) < 0)
             {
-                source3.push(populationInfo.results.bindings[i]['sourceDisplay'].value);
+                source.push(popIdpCounts[i]['sourceDisplay'].value);
             }
         }
         
-        if ($.inArray(populationInfo.results.bindings[i]['countMethod'].value, method3) < 0)
+        if ($.inArray(popIdpCounts[i]['countMethod'].value, method) < 0)
         {
-            method3.push(populationInfo.results.bindings[i]['countMethod'].value);
+            method.push(popIdpCounts[i]['countMethod'].value);
         }
         
-        if ($.inArray(populationInfo.results.bindings[i]['reportedByDisplay'].value, reportedBy3) < 0)
+        if ($.inArray(popIdpCounts[i]['reportedByDisplay'].value, reportedBy) < 0)
         {
-            reportedBy3.push(populationInfo.results.bindings[i]['reportedByDisplay'].value);
+            reportedBy.push(popIdpCounts[i]['reportedByDisplay'].value);
         }
     }
+    // As of date
+    date = new XDate(popIdpCounts[popIdpCounts.length - 1]['date'].value);
+    $("#date3").html(date.toString("dd MMM yyyy"));
     
     // The few next steps aim at rendering the data properly.
     // creates the main working matrix
-    var dateArray3 = matrixCreation(populationInfo, "http://hxl.humanitarianresponse.info/ns/#IDP");
+    dateArray = matrixCreation(popIdpCounts);
     // Placing the data in the corresponding place in the matrix according date and population.
-    var nbrOfPops = dataDroping(dateArray3, populationInfo);
+    var nbrOfPops = dataDroping(dateArray, popIdpCounts);
     // Completing the dateArray matrix with missing counts to make the correct sums.
-    fillingTheGaps(dateArray3, nbrOfPops);
+    fillingTheGaps(dateArray, nbrOfPops);
     // Suming columns
-    var dateArraySum3 = getSumPerDay(dateArray3);
+    var dateArraySum = getSumPerDay(dateArray);
     // Making the timeline to be regular
-    var regularSum3 = linearizeTimeline(dateArray3, dateArraySum3);
+    var regularSum = linearizeTimeline(dateArray, dateArraySum);
         
     // Displays the big count
-    var prettyCount3 = numberWithCommas(dateArraySum3[dateArraySum3.length - 1]);
-    $("#lastCount3").html(prettyCount3);
-    $("#lastCount3").attr("title", prettyCount3 + " people"); 
-
-    // Date
-    dsplit3 = date3.split(" ");
-    dsplit3 = dsplit3[0].split("-");
-    dateOk3 = new XDate(dsplit3[0], dsplit3[1] , dsplit3[2]);
-    $("#date3").html(dateOk3.toString("dd MMM yyyy"));
+    var prettycount = numberWithCommas(dateArraySum[dateArraySum.length - 1]);
+    $("#lastCount3").html(prettycount);
+    $("#lastCount3").attr("title", prettycount + " people"); 
 
     // Popups Info
-    var infoPop3 = document.getElementById("infoPopover3");
-    var pop3Full = '';
-    pop3Full = 'Source:';
-    for (var j = 0; j < source3.length; j++) 
+    var infoPop = document.getElementById("infoPopover3");
+    var popFull = '';
+    popFull = 'Source:';
+    for (var j = 0; j < source.length; j++) 
     {
-        pop3Full += ' ' + source3[j];
+        popFull += ' ' + source[j];
     }
-    pop3Full += '.<br />Method:';
-    for (var j = 0; j < method3.length; j++) 
+    popFull += '.<br />Method:';
+    for (var j = 0; j < method.length; j++) 
     {
-        pop3Full += ' ' + method3[j];
+        popFull += ' ' + method[j];
     }
-    pop3Full += '.<br />Reported by:';
-    for (var j = 0; j < reportedBy3.length; j++) 
+    popFull += '.<br />Reported by:';
+    for (var j = 0; j < reportedBy.length; j++) 
     {
-        pop3Full += ' ' + reportedBy3[j];
+        popFull += ' ' + reportedBy[j];
     }
-    pop3Full += '.<br />(Click for all details)';
-    for (var i=0, attrs=infoPop3.attributes, l=attrs.length; i<l; i++)
+    popFull += '.<br />(Click for all details)';
+    for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 
         {
-            attrs.item(i).value = pop3Full;
+            attrs.item(i).value = popFull;
         }
     }
 
     // Instanciation
     $("#sparkline3").sparkline
     (
-        regularSum3, 
+        regularSum, 
         {
             type: 'line',
             width: '80',
@@ -622,33 +705,148 @@ function initSparkline3()
             chartRangeMin: 0
         }
     );
+    return true;
 }
 
+//var popOtherCounts = getPopOthers();
 /*
- * It initializes the Others sparkline and the few information 
+ * It initializes the others of concern sparkline and the few information 
  * linked to it.
  */
-function initSparkline4()
+function initSparkline4(emergencyUri)
 {
-    // Displays the big count
-    $("#lastCount4").html(0);
-    $("#lastCount4").attr("title", "0 people"); 
+    //console.log("initSparkline4");
+    
+    popOtherCounts = getFilteredPopulation(emergencyUri,
+                                            categoriesUris[3],
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null);
+    if (popOtherCounts == null ||
+        popOtherCounts.results == null ||
+        popOtherCounts.results.bindings == null ||
+        popOtherCounts.results.bindings.length == 0)
+    {
+        $('#errorPop4').show(); 
+        $('#popContent4').hide(); 
 
-    // Date
-    $("#date4").html(" - ");
+        return false;
+    } 
+    else
+    {
+        $('#errorPop4').hide(); 
+        $('#popContent4').show(); 
+    }
+
+    popOtherCounts = popOtherCounts.results.bindings;
+        
+    var source = new Array();
+    var method = new Array();
+    var reportedBy = new Array();
+    var date = '';
+
+    var count = new Array();
+    var dateArray = new Array();
+    
+    var currentDate = '';
+    var graphIndex = -1;
+    // Getting the personCounts and the rest of the data
+    for (var i = 0; i < popOtherCounts.length; i++)
+    {
+        // parsing by date
+        if (currentDate != popOtherCounts[i]['date'].value)
+        {
+            currentDate = popOtherCounts[i]['date'].value;
+            graphIndex++;
+            count[graphIndex] = 0;
+        }
+    
+        // Getting the main graph count and date, the main source, method and reported by
+        count[graphIndex] = parseInt(count[graphIndex]) + parseInt(popOtherCounts[i]['personCount'].value);
+        
+        dateArray[graphIndex] = new Date(popOtherCounts[i]['date'].value);
+        // For the chart, the date format can be interpreted only like yyyy, m, d but not yyyy-m-d.
+        if (navigator.appName == 'Microsoft Internet Explorer')
+        {
+            dateArrayFull4[i] = new Date(popOtherCounts[i]['date'].value.replace('-', ', '));
+        } 
+        else
+        {
+            dateArrayFull4[i] = new Date(popOtherCounts[i]['date'].value);
+        }
+        
+        if (popOtherCounts[i]['sourceDisplay'] != undefined)
+        {
+            if ($.inArray(popOtherCounts[i]['sourceDisplay'].value, source) < 0)
+            {
+                source.push(popOtherCounts[i]['sourceDisplay'].value);
+            }
+        }
+        
+        if ($.inArray(popOtherCounts[i]['countMethod'].value, method) < 0)
+        {
+            method.push(popOtherCounts[i]['countMethod'].value);
+        }
+        
+        if ($.inArray(popOtherCounts[i]['reportedByDisplay'].value, reportedBy) < 0)
+        {
+            reportedBy.push(popOtherCounts[i]['reportedByDisplay'].value);
+        }
+    }
+    // As of date
+    date = new XDate(popOtherCounts[popOtherCounts.length - 1]['date'].value);
+    $("#date4").html(date.toString("dd MMM yyyy"));
+    
+    // The few next steps aim at rendering the data properly.
+    // creates the main working matrix
+    dateArray = matrixCreation(popOtherCounts);
+    // Placing the data in the corresponding place in the matrix according date and population.
+    var nbrOfPops = dataDroping(dateArray, popOtherCounts);
+    // Completing the dateArray matrix with missing counts to make the correct sums.
+    fillingTheGaps(dateArray, nbrOfPops);
+    // Suming columns
+    var dateArraySum = getSumPerDay(dateArray);
+    // Making the timeline to be regular
+    var regularSum = linearizeTimeline(dateArray, dateArraySum);
+        
+    // Displays the big count
+    var prettycount = numberWithCommas(dateArraySum[dateArraySum.length - 1]);
+    $("#lastCount4").html(prettycount);
+    $("#lastCount4").attr("title", prettycount + " people"); 
 
     // Popups Info
-    var infoPop3 = document.getElementById("infoPopover3");
-    var pop3Full = '';
-    pop3Full = 'Source: undefined';
-    pop3Full += '.<br />Method: undefined';
-    pop3Full += '.<br />Reported by: undefined';
-    pop3Full += '.<br />(Click for all details)';
-    
+    var infoPop = document.getElementById("infoPopover3");
+    var popFull = '';
+    popFull = 'Source:';
+    for (var j = 0; j < source.length; j++) 
+    {
+        popFull += ' ' + source[j];
+    }
+    popFull += '.<br />Method:';
+    for (var j = 0; j < method.length; j++) 
+    {
+        popFull += ' ' + method[j];
+    }
+    popFull += '.<br />Reported by:';
+    for (var j = 0; j < reportedBy.length; j++) 
+    {
+        popFull += ' ' + reportedBy[j];
+    }
+    popFull += '.<br />(Click for all details)';
+    for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
+    {
+        if (attrs.item(i).nodeName == 'data-content') 
+        {
+            attrs.item(i).value = popFull;
+        }
+    }
+
     // Instanciation
     $("#sparkline4").sparkline
     (
-        [0], 
+        regularSum, 
         {
             type: 'line',
             width: '80',
@@ -665,4 +863,5 @@ function initSparkline4()
             chartRangeMin: 0
         }
     );
+    return true;
 }
