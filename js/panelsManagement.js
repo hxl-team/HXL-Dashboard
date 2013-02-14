@@ -30,6 +30,8 @@ var ageInfo;
 var popTypeConverter = [];
 var sexConverter = [];
 var ageConverter = [];
+var sourceConverter = [];
+var sourceInvConverter = [];
 
 /* Slide 1 Initialization */
 $(document).ready
@@ -46,7 +48,7 @@ $(document).ready
             initCategoryLabels();
 
 // temp
-            $("#sourcesScore").html("Sources (from the most frequent to the less): ");
+            $("#sourcesScore").html("Sources (from the most frequent to the least): ");
             sourcesScore = getSourcesScore(emergencyUri);
             for (var i = 0; i < sourcesScore.results.bindings.length; i++)
             {

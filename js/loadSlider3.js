@@ -12,8 +12,6 @@ function LoadTableView()
     var tableViewData = new Array();
     // Data preparation
     var newDate;
-    var tempArray = new Array();
-    var currentDate = '';
     var graphIndex = -1;
 
     var locValue;
@@ -25,132 +23,118 @@ function LoadTableView()
     var methodValue;
     var reportedByValue;
     
-    var popMem = '';
-    var dateMem = '';
-    var sourceMem = '';
-    var sourceMem1 = '';
-    var sourceMem2 = '';
-    var sourceMem3 = '';
-    var simSource = 0;
+    var similarSource = 0;
                         
     for (var i = 0; i < graphData.length; i++) 
     {
         // TODO: log
         if (graphData[i]['personCount'].value == '') continue; 
-        
-        if (graphData[i]['sourceDisplay'] != undefined)
+                
+        // default source value
+        if (graphData[i]['source'] != undefined)
         {
-            sourceValue = graphData[i]['sourceDisplay'].value;
+            sourceValue = sourceConverter[graphData[i]['source'].value];
         }
         else
         {
-            sourceValue = 'N/A';
+            sourceValue = '-';
         }
 
+        // more cpx source value
         if (graphData[i + 1] != null &&
             graphData[i]['population'].value == graphData[i + 1]['population'].value &&
             graphData[i]['date'].value == graphData[i + 1]['date'].value)
         {
-            simSource++;
+            similarSource++;
             continue;
         }
-        else if (simSource > 0)
-        {
-
-                if (simSource > 1)
+        else if (similarSource > 0)
+        {       
+            if (similarSource > 2)
             {
-                sourceValue = graphData[i]['sourceDisplay'].value + ', ' + 
-                                graphData[i - 1]['sourceDisplay'].value + ', ' + 
-                                graphData[i - 2]['sourceDisplay'].value;
+                sourceValue = sourceConverter[graphData[i]['source'].value] + ', ' + 
+                                sourceConverter[graphData[i - 1]['source'].value] + ', ' + 
+                                sourceConverter[graphData[i - 2]['source'].value];
             }
             else
             {
-
-                sourceValue = graphData[i]['sourceDisplay'].value + ', ' + 
-                                graphData[i - 1]['sourceDisplay'].value;
+                sourceValue = sourceConverter[graphData[i]['source'].value] + ', ' + 
+                                sourceConverter[graphData[i - 1]['source'].value];
             }
-            simSource = 0;
+            similarSource = 0;
         }
-          
-        // If ok, it means the agregation os sources is ok.
-        if (i == graphData.length - 1 ||
-            popMem != graphData[i + 1]['population'].value)
+        
+        graphIndex++;
+        personCount[graphIndex] = 0;
+        housesholdCount[graphIndex] = 0;
+        newDate = new Date();
+        newDate.setUTCFullYear(dateArrayFull[i].getFullYear());
+        newDate.setUTCMonth(dateArrayFull[i].getMonth());
+        newDate.setUTCDate(dateArrayFull[i].getDate());
+        dateArray[graphIndex] = newDate;
+
+        // PersonCounts and householdCounts
+        if (graphData[i]['personCount'] != null)
         {
-            graphIndex++;
-            personCount[graphIndex] = 0;
-            housesholdCount[graphIndex] = 0;
-            newDate = new Date();
-            newDate.setUTCFullYear(dateArrayFull[i].getFullYear());
-            newDate.setUTCMonth(dateArrayFull[i].getMonth());
-            newDate.setUTCDate(dateArrayFull[i].getDate());
-            dateArray[graphIndex] = newDate;
+            personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(graphData[i]['personCount'].value);
+        } 
+        else 
+        {
+            personCount[graphIndex] = "-";
+        }
+        if (graphData[i]['housesholdCount'] != null) 
+        {
+            housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(graphData[i]['housesholdCount'].value);
+        } 
+        else 
+        {
+            housesholdCount[graphIndex] = "-";
+        }
 
-            // PersonCounts and householdCounts
-            if (graphData[i]['personCount'] != null)
-            {
-                personCount[graphIndex] = parseInt(personCount[graphIndex]) + parseInt(graphData[i]['personCount'].value);
-            } 
-            else 
-            {
-                personCount[graphIndex] = "N/A";
-            }
-            if (graphData[i]['housesholdCount'] != null) 
-            {
-                housesholdCount[graphIndex] = parseInt(housesholdCount[graphIndex]) + parseInt(graphData[i]['housesholdCount'].value);
-            } 
-            else 
-            {
-                housesholdCount[graphIndex] = "N/A";
-            }
-
-            // Storing the result of the filtering for the table view.
-            catValue = '';
-            if (graphData[i]['populationType'] != undefined)
-            {
-                catValue = popTypeConverter[graphData[i]['populationType'].value];
-            }
-            else
-            {
-                catValue = $('#catListSelectedValue').html();
-            }
-            locValue = '';
-            if (graphData[i]['locationDisplay'] != undefined)
-            {
-                locValue = graphData[i]['locationDisplay'].value;
-            }
-            sexValue = '';
-            if (graphData[i]['sex'] != undefined)
-            {
-                sexValue = sexConverter[graphData[i]['sex'].value];
-            }
-            ageValue = '';
-            if (graphData[i]['age'] != undefined)
-            {
-                ageValue = ageConverter[graphData[i]['age'].value].replace("Ages ", '');
-            }
-            originValue = '';
-            if (graphData[i]['nationalityDisplay'] != undefined)
-            {
-                originValue = graphData[i]['nationalityDisplay'].value;
-            }
-            methodValue = 'undefined';
-            if (graphData[i]['methodDisplay'] != undefined)
-            {
-                methodValue = graphData[i]['methodDisplay'].value;
-            }
-            reportedByValue = '';
-            if (graphData[i]['reportedByDisplay'] != undefined)
-            {
-                reportedByValue = graphData[i]['reportedByDisplay'].value;
-            }
+        // Storing the result of the filtering for the table view.
+        catValue = '-';
+        if (graphData[i]['populationType'] != undefined)
+        {
+            catValue = popTypeConverter[graphData[i]['populationType'].value];
+        }
+        else
+        {
+            catValue = $('#catListSelectedValue').html();
+        }
+        locValue = '-';
+        if (graphData[i]['locationDisplay'] != undefined)
+        {
+            locValue = graphData[i]['locationDisplay'].value;
+        }
+        sexValue = '-';
+        if (graphData[i]['sex'] != undefined)
+        {
+            sexValue = sexConverter[graphData[i]['sex'].value];
+        }
+        ageValue = '-';
+        if (graphData[i]['age'] != undefined)
+        {
+            ageValue = ageConverter[graphData[i]['age'].value].replace("Ages ", '');
+        }
+        originValue = '';
+        if (graphData[i]['nationalityDisplay'] != undefined)
+        {
+            originValue = graphData[i]['nationalityDisplay'].value;
+        }
+        methodValue = '-';
+        if (graphData[i]['methodDisplay'] != undefined)
+        {
+            methodValue = graphData[i]['methodDisplay'].value;
+        }
+        reportedByValue = '-';
+        if (graphData[i]['reportedByDisplay'] != undefined)
+        {
+            reportedByValue = graphData[i]['reportedByDisplay'].value;
+        }
 
         // This date format works on IE8 and FF.
-            tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
-        }
-       
-    // console.log(tableViewData[graphIndex]);
-    // console.log(graphIndex);
-    
+        tableViewData[graphIndex] = new Array(new XDate(Date.parse(dateArray[graphIndex])).toString("dd MMM yyyy"), catValue, personCount[graphIndex] * 1, housesholdCount[graphIndex] * 1, locValue, sexValue, ageValue, originValue, sourceValue, methodValue, reportedByValue);
+           
     } // end for
     $('#tableView').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="tableDisplay"></table>' );
 

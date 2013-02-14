@@ -21,14 +21,11 @@ function refreshSlide1(eventId)
         initSparkline1(emergencyUri);  
         initSparkline2(emergencyUri); 
         initSparkline3(emergencyUri);  
-        initSparkline4(emergencyUri);  
-        //testHideSparklines();
-        
+        initSparkline4(emergencyUri);          
         try
         {
-            $("#sourcesScore").html("Sources (from the most frequent to the less): ");
+            $("#sourcesScore").html("Sources (from the most frequent to the least): ");
             sourcesScore = getSourcesScore(emergencyUri);
-            console.log(sourcesScore.results.bindings.length);
             for (var i = 0; i < sourcesScore.results.bindings.length; i++)
             {
                 $("#sourcesScore").html($("#sourcesScore").html() + sourcesScore.results.bindings[i]['sourceDisplay'].value + " ");
@@ -200,6 +197,8 @@ function initDataHelpers ()
     categoriesUris.push(categoriesInfo[2]['subClass'].value);
     categoriesUris.push(categoriesInfo[1]['subClass'].value);
     
+    // Converters
+    // Population types
     for (var i=0; i < categoriesUris.length; i++) 
     {
         popTypeConverter[categoriesUris[i]] = categoriesLabels[i];
@@ -217,6 +216,17 @@ function initDataHelpers ()
     for (var i=0; i < ageInfo.length; i++) 
     {
         ageConverter[ageInfo[i]['ageGroup'].value] = ageInfo[i]['ageLabel'].value;
+    }
+    
+    // Sources
+    sourceInfo = getSourceInfo().results.bindings;
+    for (var i=0; i < sourceInfo.length; i++) 
+    {
+        sourceConverter[sourceInfo[i]['source'].value] = sourceInfo[i]['label'].value;
+    }
+    for (var i=0; i < sourceInfo.length; i++) 
+    {
+        sourceInvConverter[sourceInfo[i]['label'].value] = sourceInfo[i]['source'].value;
     }
 }
 
@@ -338,22 +348,25 @@ function initSparkline1(emergencyUri)
     // Popups Info
     var infoPop = document.getElementById("infoPopover1");
     var popFull = '';
-    popFull = '<b>Source:</b>';
+    popFull = '<b>Sources:</b>';
     for (var j = 0; j < source.length; j++) 
     {
         popFull += ' ' + source[j];
+        if (j != source.length - 1) popFull += ' |';
     }
-    popFull += '.<br /><b>Method:</b>';
+    popFull += '.<br /><b>Methods:</b>';
     for (var j = 0; j < method.length; j++) 
     {
         popFull += ' ' + method[j];
+        if (j != method.length - 1) popFull += ' |';
     }
     popFull += '.<br /><b>Reported by:</b>';
     for (var j = 0; j < reportedBy.length; j++) 
     {
         popFull += ' ' + reportedBy[j];
+        if (j != reportedBy.length - 1) popFull += ' |';
     }
-    popFull += '.<br />(Click for all details)';
+    popFull += '.<br />(Click Info link for details)';
     for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 
@@ -500,22 +513,25 @@ function initSparkline2(emergencyUri)
     // Popups Info
     var infoPop = document.getElementById("infoPopover2");
     var popFull = '';
-    popFull = 'Source:';
+    popFull = '<b>Sources:</b>';
     for (var j = 0; j < source.length; j++) 
     {
         popFull += ' ' + source[j];
+        if (j != source.length - 1) popFull += ' |';
     }
-    popFull += '.<br />Method:';
+    popFull += '.<br /><b>Methods:</b>';
     for (var j = 0; j < method.length; j++) 
     {
         popFull += ' ' + method[j];
+        if (j != method.length - 1) popFull += ' |';
     }
-    popFull += '.<br />Reported by:';
+    popFull += '.<br /><b>Reported by:</b>';
     for (var j = 0; j < reportedBy.length; j++) 
     {
         popFull += ' ' + reportedBy[j];
+        if (j != reportedBy.length - 1) popFull += ' |';
     }
-    popFull += '.<br />(Click for all details)';
+    popFull += '.<br />(Click Info link for details)';
     for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 
@@ -547,7 +563,6 @@ function initSparkline2(emergencyUri)
     return true;
 }
 
-//var popIdpCounts = getPopIdps();
 /*
  * It initializes the IDPs sparkline and the few information 
  * linked to it.
@@ -617,7 +632,6 @@ function initSparkline3(emergencyUri)
             dateArrayFull3[i] = new Date(popIdpCounts[i]['date'].value);
         }
         
-//console.log("testtttt: " + dateArrayFull3[i]);
         
         if (popIdpCounts[i]['sourceDisplay'] != undefined)
         {
@@ -661,22 +675,25 @@ function initSparkline3(emergencyUri)
     // Popups Info
     var infoPop = document.getElementById("infoPopover3");
     var popFull = '';
-    popFull = 'Source:';
+    popFull = '<b>Sources:</b>';
     for (var j = 0; j < source.length; j++) 
     {
         popFull += ' ' + source[j];
+        if (j != source.length - 1) popFull += ' |';
     }
-    popFull += '.<br />Method:';
+    popFull += '.<br /><b>Methods:</b>';
     for (var j = 0; j < method.length; j++) 
     {
         popFull += ' ' + method[j];
+        if (j != method.length - 1) popFull += ' |';
     }
-    popFull += '.<br />Reported by:';
+    popFull += '.<br /><b>Reported by:</b>';
     for (var j = 0; j < reportedBy.length; j++) 
     {
         popFull += ' ' + reportedBy[j];
+        if (j != reportedBy.length - 1) popFull += ' |';
     }
-    popFull += '.<br />(Click for all details)';
+    popFull += '.<br />(Click Info link for details)';
     for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 
@@ -819,22 +836,25 @@ function initSparkline4(emergencyUri)
     // Popups Info
     var infoPop = document.getElementById("infoPopover3");
     var popFull = '';
-    popFull = 'Source:';
+    popFull = '<b>Sources:</b>';
     for (var j = 0; j < source.length; j++) 
     {
         popFull += ' ' + source[j];
+        if (j != source.length - 1) popFull += ' |';
     }
-    popFull += '.<br />Method:';
+    popFull += '.<br /><b>Methods:</b>';
     for (var j = 0; j < method.length; j++) 
     {
         popFull += ' ' + method[j];
+        if (j != method.length - 1) popFull += ' |';
     }
-    popFull += '.<br />Reported by:';
+    popFull += '.<br /><b>Reported by:</b>';
     for (var j = 0; j < reportedBy.length; j++) 
     {
         popFull += ' ' + reportedBy[j];
+        if (j != reportedBy.length - 1) popFull += ' |';
     }
-    popFull += '.<br />(Click for all details)';
+    popFull += '.<br />(Click Info link for details)';
     for (var i=0, attrs=infoPop.attributes, l=attrs.length; i<l; i++)
     {
         if (attrs.item(i).nodeName == 'data-content') 

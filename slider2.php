@@ -114,8 +114,8 @@
                         </div>
                     </td>  
                     <td>
+                        <div id="mapMessage" style="text-align: center;display:none"><span class="text-warning" >No coordinates for this location</span></div>
                         <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 1px solid black;"></div>
-                        <div id="mapMessage" style="text-align: center;display:none"><span class="text-warning" >Unspecified location</span></div>
                     </td>
                 </tr>
             </table>

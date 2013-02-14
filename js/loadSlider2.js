@@ -135,7 +135,7 @@ function drawMap (event)
     switch (fromSlideNbr)
     {
         case 1:
-        uri = currentGeoZoneUri;
+        uri = '';// currentGeoZoneUri;
             break;
         case 2:
             if (event.id == 'myModal') 
@@ -152,7 +152,7 @@ function drawMap (event)
     }
     else if (uri.length == 0)
     {
-        uri = 'http://hxl.humanitarianresponse.info/data/locations/admin/mli/MLI';
+        uri = '';// 'http://hxl.humanitarianresponse.info/data/locations/admin/mli/MLI';
         getlocationGeom(uri);
     }
     else 
@@ -703,6 +703,7 @@ function drawChart (event)
     chartData = new google.visualization.DataTable();
 
     var dateArray = new Array();
+    var sourceId = new Array();
 
     chartData.addColumn('date', 'Date');
     chartData.addColumn('number', $('#catListSelectedValue').html() + ':');
@@ -711,20 +712,24 @@ function drawChart (event)
 
     if (fromSlideNbr == 2)
     {   
-        if (event.name == "source")
-        {
-            sourceSplit = event.id.split(", ");
-        }
-        
         var sources = null;
         if ($("#sourceListSelectedValue").html() != lblSou) 
         {
             sources = $("#sourceListSelectedValue").html().split(', ');
+            
+            for (var i=0; i < sources.length; i++) 
+            {
+                sourceId[i] =  sourceInvConverter[sources[i]];
+            }
+        }
+        else 
+        {
+            sourceId = null;
         }
         var filteredPop = getFilteredPopulation($('#memEmergencyUri').html(),
                                                 $('#catListSelectedId').html(),
                                                 $("#locListSelectedId").html(),
-                                                sources,
+                                                sourceId,
                                                 $("#sexListSelectedId").html(),
                                                 $("#ageListSelectedId").html(),
                                                 $("#originListSelectedId").html());

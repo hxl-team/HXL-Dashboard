@@ -93,6 +93,7 @@
 <body>
     <span id="memEmergencyUri" style="display:none" ></span>
     <span id="memEmergencyLabel" style="display:none" ></span>
+    <!--<span id="memSourceQueryLabels" style="display:none" ></span>-->
     <div class="navbar container" style="width: 940px;" >
         <div class="container" style="width: 940px;" >
             <span class="brand"><img src="img/logo.png" /></span>

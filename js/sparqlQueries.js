@@ -94,9 +94,6 @@ function getCategoriesInfo ()
     
     //console.log($query);
 
-    var personCount = new Array();
-    var temp;
-
     $.ajax
     ({
         url: 'http://hxl.humanitarianresponse.info/sparql',
@@ -157,9 +154,6 @@ function getSexInfo ()
     $query += '} \n';
     
     //console.log($query);
-
-    var personCount = new Array();
-    var temp;
 
     $.ajax
     ({
@@ -222,8 +216,67 @@ function getAgeInfo ()
     
     //console.log($query);
 
-    var personCount = new Array();
-    var temp;
+    $.ajax
+    ({
+        url: 'http://hxl.humanitarianresponse.info/sparql',
+        headers: 
+        {
+            Accept: 'application/sparql-results+json'
+        },
+        data: 
+        { 
+            query: $query 
+        },
+        datatype: "json",
+        success: displayData, 
+        error: displayError,
+        async: false
+    });
+
+    function displayError(xhr, textStatus, errorThrown) 
+    {
+        alert(textStatus + ': ' + errorThrown);
+    }
+
+    function displayData(data) 
+    {
+        if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent))
+        {
+            jsonObject = jQuery.parseJSON(data);
+            if (jsonObject == null) // Necessary for FF on blackmesh (!?)
+            {
+                jsonObject = data;
+            }
+        }
+        else
+        {
+                jsonObject = data;
+        }
+    }
+
+    return jsonObject;
+}
+
+
+
+/* 
+ * Get the list of sources and their labels.
+ */
+function getSourceInfo () 
+{
+    jQuery.support.cors = true; // for IE8+
+
+    var jsonObject = new Array();
+
+    $query = queryPrefix;
+    $query += 'SELECT ?source ?label \n';
+    $query += 'WHERE \n';
+    $query += '{ \n';
+    $query += '  ?source a hxl:Organisation . \n';
+    $query += '  ?source hxl:orgDisplayName ?label . \n';
+    $query += '} \n';
+    
+    //console.log($query);
 
     $.ajax
     ({
@@ -897,26 +950,18 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     $queryLocationAtLocationOutGraph = '    ?location hxl:atLocation+ <[#atLocation]> . \n';
     
     // source filter
-    $querySourceSingleGraph = '    ?population hxl:source ?source . \n';
-    $querySourceSingleOutGraph = '    ?source hxl:orgDisplayName "[#source]" . \n';
-    $querySourceSingleOutGraphGet = '  ?source hxl:orgDisplayName ?sourceDisplay . \n';
+    $querySourceDefaultGraph = '    ?population hxl:source ?source . \n';
+    $querySourceSingleGraph = '    ?population hxl:source <[#source1]> . \n';
+    $querySourceSingleGraph += '    ?population hxl:source ?source . \n';
     
-    $querySourceDoubleGraph = '    ?population hxl:source ?source1 . \n';
-    $querySourceDoubleGraph += '    ?population hxl:source ?source2 . \n';
-    $querySourceDoubleOutGraph = '    ?source1 hxl:orgDisplayName "[#source1]" . \n';
-    $querySourceDoubleOutGraph += '    ?source1 hxl:orgDisplayName ?sourceDisplay1 . \n';
-    $querySourceDoubleOutGraph += '    ?source2 hxl:orgDisplayName "[#source2]" . \n';
-    $querySourceDoubleOutGraph += '    ?source2 hxl:orgDisplayName ?sourceDisplay2 . \n';
+    $querySourceDoubleGraph = '    ?population hxl:source <[#source1]> . \n';
+    $querySourceDoubleGraph += '    ?population hxl:source <[#source2]> . \n';
+    $querySourceDoubleGraph += '    ?population hxl:source ?source . \n';
     
-    $querySourceTripleGraph = '    ?population hxl:source ?source1 . \n';
-    $querySourceTripleGraph += '    ?population hxl:source ?source2 . \n';
-    $querySourceTripleGraph += '    ?population hxl:source ?source3 . \n';
-    $querySourceTripleOutGraph = '  ?source1 hxl:orgDisplayName "[#source1]" . \n';
-    $querySourceTripleOutGraph += '  ?source1 hxl:orgDisplayName ?sourceDisplay1 . \n';
-    $querySourceTripleOutGraph += '  ?source2 hxl:orgDisplayName "[#source2]" . \n';
-    $querySourceTripleOutGraph += '  ?source2 hxl:orgDisplayName ?sourceDisplay2 . \n';
-    $querySourceTripleOutGraph += '  ?source3 hxl:orgDisplayName "[#source3]" . \n';
-    $querySourceTripleOutGraph += '  ?source3 hxl:orgDisplayName ?sourceDisplay3 . \n';
+    $querySourceTripleGraph = '    ?population hxl:source <[#source1]> . \n';
+    $querySourceTripleGraph += '    ?population hxl:source <[#source2]> . \n';
+    $querySourceTripleGraph += '    ?population hxl:source <[#source3]> . \n';
+    $querySourceTripleGraph += '    ?population hxl:source ?source . \n';
     
     // optional filters
     // sex filter
@@ -935,7 +980,7 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     $query = queryPrefix;
     $query += 'SELECT DISTINCT ?population ?personCount ?date ?source \n';
     $query += '?countMethod ?reportedByDisplay ?populationType ?locationDisplay \n'; 
-    $query += '?sex ?age ?nationalityDisplay ?sourceDisplay \n';
+    $query += '?sex ?age ?nationalityDisplay \n';
     $query += 'WHERE  \n';
     $query += '{ \n';
     $query += '  GRAPH ?graph  \n';
@@ -958,7 +1003,6 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     $query += '  OPTIONAL {?reporter hxl:orgDisplayName ?reportedByDisplay } \n';
     $query += '  OPTIONAL {?location hxl:featureName ?locationDisplay } \n';
     $query += '[#QlocationOG]';
-    $query += '[#QsourceOG]';
     $query += '} \n';
     $query += 'ORDER BY ASC(?date) \n\n';
     
@@ -975,6 +1019,7 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     }
     
     //console.log(location);
+    
     // replacing location
     if (location == undefined || location == null || location == '')
     {
@@ -1002,30 +1047,27 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     // replacing sources
     if (sources == null)
     {
-        $query = $query.replace("[#QsourceG]", $querySourceSingleGraph);
-        $query = $query.replace("[#QsourceOG]", $querySourceSingleOutGraphGet);
+        $query = $query.replace("[#QsourceG]", $querySourceDefaultGraph);
     }
     else
     {
+        console.log(sources.length);
         switch (sources.length)
         {
             case 1:
+                $querySourceSingleGraph = $querySourceSingleGraph.replace("[#source1]", sources[0]);
                 $query = $query.replace("[#QsourceG]", $querySourceSingleGraph);
-                $querySourceSingleOutGraph = $querySourceSingleOutGraph.replace("[#source]", sources[0]);
-                $query = $query.replace("[#QsourceOG]", $querySourceSingleOutGraph);
                 break;
             case 2:
+                $querySourceDoubleGraph = $querySourceDoubleGraph.replace("[#source1]", sources[0]);
+                $querySourceDoubleGraph = $querySourceDoubleGraph.replace("[#source2]", sources[1]);
                 $query = $query.replace("[#QsourceG]", $querySourceDoubleGraph);
-                $querySourceDoubleOutGraph = $querySourceDoubleOutGraph.replace("[#source1]", sources[0]);
-                $querySourceDoubleOutGraph = $querySourceDoubleOutGraph.replace("[#source2]", sources[1]);
-                $query = $query.replace("[#QsourceOG]", $querySourceDoubleOutGraph);
                 break;
             case 3:
+                $querySourceTripleGraph = $querySourceTripleGraph.replace("[#source1]", sources[0]);
+                $querySourceTripleGraph = $querySourceTripleGraph.replace("[#source2]", sources[1]);
+                $querySourceTripleGraph = $querySourceTripleGraph.replace("[#source3]", sources[2]);
                 $query = $query.replace("[#QsourceG]", $querySourceTripleGraph);
-                $querySourceTripleOutGraph = $querySourceTripleOutGraph.replace("[#source1]", sources[0]);
-                $querySourceTripleOutGraph = $querySourceTripleOutGraph.replace("[#source2]", sources[1]);
-                $querySourceTripleOutGraph = $querySourceTripleOutGraph.replace("[#source3]", sources[2]);
-                $query = $query.replace("[#QsourceOG]", $querySourceTripleOutGraph);
                 break;
         }
     }
