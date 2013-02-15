@@ -305,11 +305,11 @@ function initSparkline1(emergencyUri)
             dateArrayFull1[i] = new Date(popDisplacedCounts[i]['date'].value);
         }
         
-        if (popDisplacedCounts[i]['sourceDisplay'] != undefined)
+        if (popDisplacedCounts[i]['source'] != undefined)
         {
-            if ($.inArray(popDisplacedCounts[i]['sourceDisplay'].value, source) < 0)
+            if ($.inArray(sourceConverter[popDisplacedCounts[i]['source'].value], source) < 0)
             {
-                source.push(popDisplacedCounts[i]['sourceDisplay'].value);
+                source.push(sourceConverter[popDisplacedCounts[i]['source'].value]);
             }
         }
         
@@ -470,11 +470,11 @@ function initSparkline2(emergencyUri)
         
 //console.log("testttt2t: " + dateArrayFull2[i]);
 
-        if (popRefugeeCounts[i]['sourceDisplay'] != undefined)
+        if (popRefugeeCounts[i]['source'] != undefined)
         {
-            if ($.inArray(popRefugeeCounts[i]['sourceDisplay'].value, source) < 0)
+            if ($.inArray(sourceConverter[popRefugeeCounts[i]['source'].value], source) < 0)
             {
-                source.push(popRefugeeCounts[i]['sourceDisplay'].value);
+                source.push(sourceConverter[popRefugeeCounts[i]['source'].value]);
             }
         }
         
@@ -633,11 +633,11 @@ function initSparkline3(emergencyUri)
         }
         
         
-        if (popIdpCounts[i]['sourceDisplay'] != undefined)
+        if (popIdpCounts[i]['source'] != undefined)
         {
-            if ($.inArray(popIdpCounts[i]['sourceDisplay'].value, source) < 0)
+            if ($.inArray(sourceConverter[popIdpCounts[i]['source'].value], source) < 0)
             {
-                source.push(popIdpCounts[i]['sourceDisplay'].value);
+                source.push(sourceConverter[popIdpCounts[i]['source'].value]);
             }
         }
         
@@ -794,11 +794,11 @@ function initSparkline4(emergencyUri)
             dateArrayFull4[i] = new Date(popOtherCounts[i]['date'].value);
         }
         
-        if (popOtherCounts[i]['sourceDisplay'] != undefined)
+        if (popOtherCounts[i]['source'] != undefined)
         {
-            if ($.inArray(popOtherCounts[i]['sourceDisplay'].value, source) < 0)
+            if ($.inArray(sourceConverter[popOtherCounts[i]['source'].value], source) < 0)
             {
-                source.push(popOtherCounts[i]['sourceDisplay'].value);
+                source.push(sourceConverter[popOtherCounts[i]['source'].value]);
             }
         }
         

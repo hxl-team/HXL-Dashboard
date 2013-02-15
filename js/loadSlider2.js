@@ -501,10 +501,6 @@ function setLocationFilter(event)
     }
     
     var countryScore = getCountryScore($('#memEmergencyUri').html());
-    var liPre1 = '<li><input onclick="saveLocationSelection(this)" type="checkbox" id="';
-    var liPre2 = '" value="';
-    var liPre3 = '" ><label>';
-    var liPost = '</label>';
 
     unit_tree = [];
     unit = {uri: null, name: null, sapl: false, parent_uri: null, sub: []};
@@ -616,61 +612,70 @@ function setLocationFilter(event)
     }
     */
 
+    var liPre1 = '<li><input onclick="saveLocationSelection(this)" type="checkbox" id="';
+    var liPre2 = '" value="';
+    var liPre3 = '" ><label>';
+    var liPost = '</label>';
+    var aplIcon = '<img src="img/apl.png" alt="Affected People Location" style="margin-left: 5px;" />';
     modalContent = '<table><tr>';
     // display
     // The 'APL-' helps to know which query should be used
     for (var i = 0; i < unit_tree.length; i++)
     {
-        modalContent += '<td style="vertical-align: top;">';
-        modalContent += '<ul id="tree' + i + '" style="padding:5px 5px 0px 20px" >';
+        modalContent += '<td style="vertical-align: top; width:275px;">';
+        modalContent += '<ul id="tree' + i + '" style="padding:5px 5px 0px 10px" >';
         //console.log(unit_tree[i].uri);
         modalContent += liPre1;
-        if (unit_tree[i].sapl) modalContent += 'APL-'
+        if (unit_tree[i].sapl) modalContent += 'APL-';
         modalContent += unit_tree[i].uri;
         modalContent += liPre2;
         modalContent += unit_tree[i].name;
         modalContent += liPre3;
         modalContent += '<b>' + unit_tree[i].name + '</b>';
         modalContent += liPost;
+        if (unit_tree[i].sapl) modalContent += aplIcon;
         modalContent += '<ul>';
         
         for (var j = 0; j < unit_tree[i].sub.length; j++) 
         {
            // console.log("  " + unit_tree[i].sub[j].uri);
             modalContent += liPre1;
-            if (unit_tree[i].sub[j].sapl) modalContent += 'APL-'
+            if (unit_tree[i].sub[j].sapl) modalContent += 'APL-';
             modalContent += unit_tree[i].sub[j].uri;
             modalContent += liPre2;
             modalContent += unit_tree[i].sub[j].name;
             modalContent += liPre3;
             modalContent += unit_tree[i].sub[j].name;
             modalContent += liPost;
+            if (unit_tree[i].sub[j].sapl) modalContent += aplIcon;
             if (unit_tree[i].sub[j].sub.length > 0) modalContent += '<ul>';
             
             for (var k = 0; k < unit_tree[i].sub[j].sub.length; k++)
             {
                 //console.log("  " + "  " + unit_tree[i].sub[j].sub[k].uri);
                 modalContent += liPre1;
-                if (unit_tree[i].sub[j].sub[k].sapl) modalContent += 'APL-'
+                if (unit_tree[i].sub[j].sub[k].sapl) modalContent += 'APL-';
                 modalContent += unit_tree[i].sub[j].sub[k].uri;
                 modalContent += liPre2;
                 modalContent += unit_tree[i].sub[j].sub[k].name;
                 modalContent += liPre3;
                 modalContent += unit_tree[i].sub[j].sub[k].name;
                 modalContent += liPost;
+                if (unit_tree[i].sub[j].sub[k].sapl) modalContent += aplIcon;
                 modalContent += '<ul>';
                 
                 for (var l = 0; l < unit_tree[i].sub[j].sub[k].sub.length; l++)
                 {
                     //console.log("  " + "  " + "  " + unit_tree[i].sub[j].sub[k].sub[l].uri);
                     modalContent += liPre1;
-                    if (unit_tree[i].sub[j].sub[k].sub[l].sapl) modalContent += 'APL-'
+                    if (unit_tree[i].sub[j].sub[k].sub[l].sapl) modalContent += 'APL-';
                     modalContent += unit_tree[i].sub[j].sub[k].sub[l].uri;
                     modalContent += liPre2;
                     modalContent += unit_tree[i].sub[j].sub[k].sub[l].name;
                     modalContent += liPre3;
                     modalContent += unit_tree[i].sub[j].sub[k].sub[l].name;
                     modalContent += liPost;
+                    if (unit_tree[i].sub[j].sub[k].sub[l].sapl) modalContent += aplIcon;
                 }
                 modalContent += '</ul>';
             }

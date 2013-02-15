@@ -57,11 +57,15 @@
             margin: 0px 5px 0 0;
         }
         ul {
-            margin-left: 20px;
+            margin-left: 10px;
         }
         .modal {
             width: 900px;
             margin-left: -450px;
+        }
+        #modalContent {
+            width: 1100px;
+            max-width: 900px;
         }
         
     </style>
