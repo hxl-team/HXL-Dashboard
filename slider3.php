@@ -30,8 +30,8 @@
                     </td>
                 </tr>
             </table>            
-            <div id="tableViewBlock" style="overflow-x: scroll; overflow-y: hidden; width: 850px; margin: 0px auto; border-right: 1px dotted grey;" ><!--overflow-x: scroll; height: 600px;  -->
-                <div id="tableView" style="width: 1800px;  white-space: nowrap; border: 1px solid black;" ></div><!-- -->
+            <div id="tableViewBlock" style="overflow-x: scroll; overflow-y: hidden; width: 850px; margin: 0px auto; border-right: 1px dotted grey;" >
+                <div id="tableView" style="width: 1800px;  white-space: nowrap; border: 1px solid black;" ></div>
             </div>
             <div id="tableViewAfter" ></div>
         </div>

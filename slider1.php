@@ -31,7 +31,6 @@
         <div id="noDataBlock" ></div>
         <div id="dataBlock" >
             
-            
             <!-- SPARKLINE BLOC 1 -->
             <div class="well" style="width:500px; margin:0 auto; border-width: 4px" >
                 <div id="errorPop1" class="center" style="display:none;" >No data available for the displaced population</div>
@@ -58,15 +57,14 @@
                             <td colspan="2">
                                 <div style="text-align: right;" >
                                     as of <span id="date1" ></span> |
-                                    <a id="infoPopover1" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
-                                    <button id="NextButton1" name="http://hxl.humanitarianresponse.info/ns/#Displaced" class="btn" >More >></button>
+                                    <a id="infoPopover1" name="" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
+                                    <button id="NextButton1" name="" class="btn" >More >></button>
                                 </div> 
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
-
             <br />
 
             <!-- SPARKLINE BLOC 2 -->
@@ -95,15 +93,14 @@
                             <td colspan="2">
                                 <div style="text-align: right;" >
                                     as of <span id="date2" ></span> |
-                                    <a id="infoPopover2" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
-                                    <button id="NextButton2" name="http://hxl.humanitarianresponse.info/ns/#RefugeesAsylumSeekers" class="btn" >More >></button>
+                                    <a id="infoPopover2" name="" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
+                                    <button id="NextButton2" name="" class="btn" >More >></button>
                                 </div> 
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
-
             <br />
 
             <!-- SPARKLINE BLOC 3 -->
@@ -132,15 +129,14 @@
                             <td colspan="2">
                                 <div style="text-align: right;" >
                                     as of <span id="date3" ></span> |
-                                    <a id="infoPopover3" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
-                                    <button id="NextButton3" name="http://hxl.humanitarianresponse.info/ns/#IDP" class="btn" >More >></button>
+                                    <a id="infoPopover3" name="" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
+                                    <button id="NextButton3" name="" class="btn" >More >></button>
                                 </div> 
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
-
             <br />
 
             <!-- SPARKLINE BLOC 4 -->
@@ -169,18 +165,16 @@
                             <td colspan="2">
                                 <div style="text-align: right;" >
                                     as of <span id="date4" ></span> |
-                                    <a id="infoPopover4" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
-                                    <button id="NextButton4" name="http://hxl.humanitarianresponse.info/ns/#Others" class="btn" >More >></button>
+                                    <a id="infoPopover4" name="" data-content="" rel="popover" href="#" onClick="quickTable(this)" data-original-title="Info" >Info</a> | 
+                                    <button id="NextButton4" name="" class="btn" >More >></button>
                                 </div> 
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
-            
             <br />
             <br />
-            
             <span id="sourcesScore" ></span>
         </div>
         <br />

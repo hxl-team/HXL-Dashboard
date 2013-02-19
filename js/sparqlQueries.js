@@ -469,41 +469,6 @@ function getSourcesScore(emergencyUri)
     
 }
 
-var locGeom;
-// TODO use a return instead of global var
-/*
- * Gets the geometry of a location.
- */
-function getlocationGeom (geomUri) 
-{
-    //console.log(geomUri);
-    locGeom = '';
-    var request = $.ajax
-    ({
-        url: "sparqlQueries.php",
-        type: "POST",
-        data: {uri : geomUri},
-        dataType: "html"
-    });
-
-    request.done
-    (
-        function(msg) 
-        {
-            locGeom = msg;
-        }
-    );
-
-    request.fail
-    (
-        function(jqXHR, textStatus) 
-        {
-            console.log( "Request failed: " + textStatus );
-        }
-    );
-    request = null;
-}
-
 /*
  * Gets the most frequent countries appearing for an emergency
  */
@@ -999,8 +964,8 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     $query += '[#QoriginG]';
     $query += '  } \n';
     $query += '  ?nationality hxl:featureName ?nationalityDisplay . \n';
-    $query += '  OPTIONAL {?reportedBy foaf:Member_of ?reporter } \n';
-    $query += '  OPTIONAL {?reporter hxl:orgDisplayName ?reportedByDisplay } \n';
+    $query += '  ?reportedBy foaf:Member_of ?reporter . \n';
+    $query += '  ?reporter hxl:orgDisplayName ?reportedByDisplay \n';
     $query += '  OPTIONAL {?location hxl:featureName ?locationDisplay } \n';
     $query += '[#QlocationOG]';
     $query += '} \n';
@@ -1051,7 +1016,6 @@ function getFilteredPopulation(emergencyUri, popType, location, sources, sex, ag
     }
     else
     {
-        console.log(sources.length);
         switch (sources.length)
         {
             case 1:

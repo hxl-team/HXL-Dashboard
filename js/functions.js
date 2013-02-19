@@ -80,15 +80,15 @@ function dataDroping(dateArray, rawData)
 
 /*
  * Parsing the array by location for each date and filling gaps with
- * previous counts to get a continuous array of data. 
+ * previous counts to get a continuous array of data.
+ * It is about keeping the population counts through time eventhough there is no
+ * report everyday about it. A population count is then updated when there is
+ * new data about it.
  */
 function fillingTheGaps(dateArray, nbrOfPops)
 {
-    var limit = 40;
-    var count = 0;
     for (var popIndex = 0; popIndex < nbrOfPops; popIndex++) 
     {
-        count++;
         var currentCount = 0;
         for (var dateKey in dateArray)
         {
@@ -107,16 +107,16 @@ function fillingTheGaps(dateArray, nbrOfPops)
 /*
  * Gives back an array containing the sums of columns.
  */ 
-function getSumPerDay(timeReference)
+function getSumPerDay(daylyMatrix)
 {
     var result = new Array();
     var tempIndex = 0;
-    for (var key in timeReference)
+    for (var key in daylyMatrix)
     {
         var tempSum = 0;
-        for (var key2 in timeReference[key])
+        for (var key2 in daylyMatrix[key])
         {
-            tempSum = parseInt(tempSum) + parseInt(timeReference[key][key2]);
+            tempSum = parseInt(tempSum) + parseInt(daylyMatrix[key][key2]);
         }
         result[tempIndex] = tempSum;
         tempIndex++;

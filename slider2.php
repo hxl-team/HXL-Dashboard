@@ -114,18 +114,20 @@
                         </div>
                     </td>  
                     <td>
-                        <div id="mapMessage" style="text-align: center;display:none"><span class="text-warning" >No coordinates for this location</span></div>
-                        <div id="map" style="width: 560px; height: 300px; margin: 20px; border: 1px solid black;"></div>
+                        <br />
+                        <!-- MAP -->
+                        <div id="mapMessage" style="text-align: center;display:none"><span class="text-warning" >Too many locations or no coordinate to display</span></div>
+                        <div id="map" style="width: 560px; height: 300px; margin: 10px 20px 20px 20px; border: 1px solid black;"></div>
                     </td>
                 </tr>
             </table>
             
-
+                <!-- Location popup -->
             <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 id="myModalLabel">Affected people locations</h3>
-                    <span class="label label-warning" style="margin-left: 20px;">Note:</span><span class="text-warning" > Please select only one location and press Ok. No selection select all locations.</span>
+                    <span class="label label-warning" style="margin-left: 20px;">Note:</span><span class="text-warning" > Please select only one location and press Ok. No selection means everything is selected.</span>
                 </div>
                 <div class="modal-body">              
                     <div id="modalContent">

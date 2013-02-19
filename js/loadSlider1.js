@@ -1,5 +1,4 @@
 
-
 // Arrays containing the date corresponding to different group of data.
 // It is convenient if they are accessible for the second slide where we need to
 // select the correct one as a base for the population matrix.
@@ -8,7 +7,9 @@ var dateArrayFull2 = new Array();
 var dateArrayFull3 = new Array();
 var dateArrayFull4 = new Array();
 
-/* Refresh the content when the emergency choice triggers. */
+/*
+ * Refresh the content when the emergency choice triggers. 
+ */
 function refreshSlide1(eventId) 
 {
 //console.log(eventId);
@@ -18,10 +19,11 @@ function refreshSlide1(eventId)
         $('#dataBlock').show(); 
         $('#noDataBlock').hide(); 
             
-        initSparkline1(emergencyUri);  
-        initSparkline2(emergencyUri); 
-        initSparkline3(emergencyUri);  
-        initSparkline4(emergencyUri);          
+        initSparkline1(emergencyUri, categoriesUris[0]);  
+        initSparkline2(emergencyUri, categoriesUris[1]); 
+        initSparkline3(emergencyUri, categoriesUris[2]);  
+        initSparkline4(emergencyUri, categoriesUris[3]);  
+            
         try
         {
             $("#sourcesScore").html("Sources (from the most frequent to the least): ");
@@ -83,7 +85,6 @@ function setEmergencyChoice(eventId)
     tempList = null;
     
     // List choice
-// Warning: Temporary setting using element 1 corresponding to the first set of test data
     var tempValue = emergenciesList.results.bindings[0]['emergencyDisplay'].value;
     var tempId = emergenciesList.results.bindings[0]['emergencyUri'].value;
     
@@ -115,7 +116,6 @@ function initCategoryLabels()
     
     $("#infoPopover4").popover({placement:'bottom', trigger: 'hover', delay: {show: 300, hide: 100}}); 
     $("#catPopover4").popover({placement:'left', trigger: 'hover', delay: {show: 300, hide: 100}}); 
-
 
     // Display
     // Category popovers
@@ -186,6 +186,7 @@ function initDataHelpers ()
     // Categories or population types
     categoriesInfo = getCategoriesInfo().results.bindings;
             
+    categoriesLabels = new Array();
     categoriesLabels.push(categoriesInfo[0]['classLabel'].value);
     categoriesLabels.push(categoriesInfo[0]['subClassLabel'].value);
     categoriesLabels.push(categoriesInfo[2]['subClassLabel'].value);
@@ -239,10 +240,10 @@ var popOtherCounts;
  * It initializes the first displaced population sparkline and the few information 
  * linked to it.
  */
-function initSparkline1(emergencyUri)
+function initSparkline1(emergencyUri, populationType)
 {
     popDisplacedCounts = getFilteredPopulation(emergencyUri,
-                                            categoriesUris[0],
+                                            populationType,
                                             null,
                                             null,
                                             null,
@@ -395,26 +396,27 @@ function initSparkline1(emergencyUri)
             chartRangeMin: 0
         }
     );
+        
+    // Buttons
+    $("#NextButton1").attr('name', populationType);
+    $("#infoPopover1").attr('name', populationType);
+        
     return true;
 }
 
-//var popRefugeeCounts = getPopRefugees();
 /*
  * It initializes the refugees sparkline and the few information 
  * linked to it.
  */
-function initSparkline2(emergencyUri)
-{
-    //console.log("initSparkline2");
-    
+function initSparkline2(emergencyUri, populationType)
+{    
     popRefugeeCounts = getFilteredPopulation(emergencyUri,
-                                            categoriesUris[1],
+                                            populationType,
                                                 null,
                                                 null,
                                                 null,
                                                 null,
                                                 null);
-    //var popRefugeeCounts = getPopRefugees();
     
     if (popRefugeeCounts == null ||
         popRefugeeCounts.results == null ||
@@ -468,8 +470,6 @@ function initSparkline2(emergencyUri)
             dateArrayFull2[i] = new Date(popRefugeeCounts[i]['date'].value);
         }
         
-//console.log("testttt2t: " + dateArrayFull2[i]);
-
         if (popRefugeeCounts[i]['source'] != undefined)
         {
             if ($.inArray(sourceConverter[popRefugeeCounts[i]['source'].value], source) < 0)
@@ -560,6 +560,11 @@ function initSparkline2(emergencyUri)
             chartRangeMin: 0
         }
     );
+        
+    // Buttons
+    $("#NextButton2").attr('name', populationType);
+    $("#infoPopover2").attr('name', populationType);
+        
     return true;
 }
 
@@ -567,12 +572,10 @@ function initSparkline2(emergencyUri)
  * It initializes the IDPs sparkline and the few information 
  * linked to it.
  */
-function initSparkline3(emergencyUri)
-{
-    //console.log("initSparkline3");
-    
+function initSparkline3(emergencyUri, populationType)
+{    
     popIdpCounts = getFilteredPopulation(emergencyUri,
-                                            categoriesUris[2],
+                                            populationType,
                                                 null,
                                                 null,
                                                 null,
@@ -722,20 +725,22 @@ function initSparkline3(emergencyUri)
             chartRangeMin: 0
         }
     );
+        
+    // Buttons
+    $("#NextButton3").attr('name', populationType);
+    $("#infoPopover3").attr('name', populationType);
+        
     return true;
 }
 
-//var popOtherCounts = getPopOthers();
 /*
  * It initializes the others of concern sparkline and the few information 
  * linked to it.
  */
-function initSparkline4(emergencyUri)
+function initSparkline4(emergencyUri, populationType)
 {
-    //console.log("initSparkline4");
-    
     popOtherCounts = getFilteredPopulation(emergencyUri,
-                                            categoriesUris[3],
+                                            populationType,
                                                 null,
                                                 null,
                                                 null,
@@ -883,5 +888,10 @@ function initSparkline4(emergencyUri)
             chartRangeMin: 0
         }
     );
+        
+    // Buttons
+    $("#NextButton4").attr('name', populationType);
+    $("#infoPopover4").attr('name', populationType);
+        
     return true;
 }

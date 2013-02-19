@@ -1,4 +1,7 @@
 <?php
+/*
+ * This file allows to answer AJAX calls from
+ */
 include_once('lib/geoPHP/geoPHP.inc');
 include_once('lib/sparqllib.php');
 

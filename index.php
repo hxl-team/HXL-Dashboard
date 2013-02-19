@@ -36,7 +36,7 @@
     <!-- Bootstrap -->
     <script src="lib/bootstrap/js/bootstrap.js" type='text/javascript'></script>
 
-    <!-- Sliding panels -->
+    <!-- Panels -->
     <script src='js/panelsManagement.js' type='text/javascript'></script>
 
     <!-- Browser detection -->
@@ -44,10 +44,9 @@
     
     <script src="js/functions.js"></script>  
 
-    <!-- Style personalization -->
+    <!-- Style personalisation -->
     <link href="css/dashboard.css" rel="stylesheet" />
 
-    
     <!-- additional styles for correcting some bootstrap css and others -->
     <style type="text/css">
         label {
@@ -70,13 +69,13 @@
         
     </style>
     
-    <!-- start checkboxTree configuration -->
+    <!-- start checkboxTree -->
     <script src="lib/checkboxTree/jquery-ui-1.8.12.custom/js/jquery-ui-1.8.12.custom.min.js" type="text/javascript"></script>
     <link href="lib/checkboxTree/jquery-ui-1.8.12.custom/css/smoothness/jquery-ui-1.8.12.custom.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript" src="lib/checkboxTree/jquery.checkboxtree.min.js"></script>
     <link rel="stylesheet" type="text/css" href="lib/checkboxTree/jquery.checkboxtree.min.css"/>
-    <!-- end checkboxTree configuration -->
+    <!-- end checkboxTree -->
 
     <script type="text/javascript" src="lib/checkboxTree/jquery.cookie.js"></script>
     <script type="text/javascript">
@@ -97,7 +96,6 @@
 <body>
     <span id="memEmergencyUri" style="display:none" ></span>
     <span id="memEmergencyLabel" style="display:none" ></span>
-    <!--<span id="memSourceQueryLabels" style="display:none" ></span>-->
     <div class="navbar container" style="width: 940px;" >
         <div class="container" style="width: 940px;" >
             <span class="brand"><img src="img/logo.png" /></span>
@@ -145,7 +143,7 @@
                     <a href="http://hxl.humanitarianresponse.info/">HXL Standard</a>
                 </div>
                 <div class="span3"><strong>Legal</strong><br />
-                    &copy; 2012 UNOCHA
+                    &copy; 2013 UNOCHA
                 </div>
             </div>
         </div>

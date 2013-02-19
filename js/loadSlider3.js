@@ -24,7 +24,7 @@ function LoadTableView()
     var reportedByValue;
     
     var similarSource = 0;
-                        
+                    
     for (var i = 0; i < graphData.length; i++) 
     {
         // TODO: log
@@ -122,9 +122,9 @@ function LoadTableView()
             originValue = graphData[i]['nationalityDisplay'].value;
         }
         methodValue = '-';
-        if (graphData[i]['methodDisplay'] != undefined)
+        if (graphData[i]['countMethod'] != undefined)
         {
-            methodValue = graphData[i]['methodDisplay'].value;
+            methodValue = graphData[i]['countMethod'].value;
         }
         reportedByValue = '-';
         if (graphData[i]['reportedByDisplay'] != undefined)

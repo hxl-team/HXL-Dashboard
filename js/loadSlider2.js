@@ -1,6 +1,6 @@
 
-var graphData = [];
-
+var graphData = []; // data for drawing graph
+var locGeom; // contains the geometry to draw on the map
 
 /* 
  * Refresh the content when a new filter is triggered
@@ -11,38 +11,29 @@ function refreshSlide2(event)
     console.log("refreshSlide2" + event);
     console.log("refreshSlide2" + event.id);
     console.log("refreshSlide2" + event.name);
-*/
+    */
 
-    if (event.id.indexOf("NextButton") != -1) 
-    {
-        fromSlideNbr = 1;
-    }
-    else if (event.id.indexOf("PreviousButton2") != -1) 
-    {
-        fromSlideNbr = 3;
-    }
-    else
-    {
-        fromSlideNbr = 2;
-    }
-    
     if (fromSlideNbr == 1)
     {
         switch (event.id)
         {
             case "NextButton1":
+            case "infoPopover1":
                 graphData = popDisplacedCounts;
                 dateArrayFull = dateArrayFull1;
                 break;
             case "NextButton2":
+            case "infoPopover2":
                 graphData = popRefugeeCounts;
                 dateArrayFull = dateArrayFull2;
                 break;
             case "NextButton3":
+            case "infoPopover3":
                 graphData = popIdpCounts;
                 dateArrayFull = dateArrayFull3;
                 break;
             case "NextButton4":
+            case "infoPopover4":
                 graphData = popOtherCounts;
                 dateArrayFull = dateArrayFull4;
                 break;
@@ -51,73 +42,69 @@ function refreshSlide2(event)
         
     $('#graphData').html(graphData);
     
-    //updateFiltersSelection(event);
     setFilters(event);
     drawMap(event);
     drawChart(event);
 }
 
-    
+/////////////////////////////// LOCATION POPUP /////////////////////////////////
+/*
+ * Sets default data on memory when opening the location popup.
+ */ 
 $('#myModal').on('show', function () {
     $('#locListSelectedValue').html(lblLoc);
     $('#locListSelectedId').html('');
+    fromSlideNbr = 2;
 })
  
+ /*
+  * Refreshes the page when they close the location popup.
+  */
 $('#myModal').on('hidden', function () {
-   /*
-   console.log($("#locListSelectedValue").html());
-   console.log($("#locListSelectedId").html());
-   */
     refreshSlide2(this);
 })
 
+/*
+ * Saves the data chosen in the location popup
+ */
 function saveLocationSelection(event)
 {
-    /*
-    console.log("event.id: " + event);
-    console.log("event.id: " + event.html);
-    console.log("event.id: " + event.id);
-    console.log("event.value: " + event.value);
-*/
    $("#locListSelectedValue").html(event.value);
    $("#locListSelectedId").html(event.id);
-   
 }
 
-
-function geometryReady() 
+/////////////////////////// MAP and GEOMETRY //////////////////////////////////
+/*
+ * Gets the geometry of a location from the php service
+ */
+function getlocationGeom (geomUri) 
 {
-//console.log("geometryReady: " + locGeom);
-    if (locGeom != undefined &&
-        locGeom != '' &&
-        locGeom != 'no result') 
-    {
-        return true;
-    } 
-    else 
-    {
-        return false;
-    }
-}
+    //console.log(geomUri);
+    locGeom = '';
+    var request = $.ajax
+    ({
+        url: "sparqlQueries.php",
+        type: "POST",
+        data: {uri : geomUri},
+        dataType: "html"
+    });
 
-function waiting(timeout_step) 
-{
-    if (geometryReady()) 
-    {
-        if (locGeom.indexOf('no result') > -1)
+    request.done
+    (
+        function(msg) 
         {
-            $("#mapMessage").show();
+            locGeom = msg;
         }
-        else
+    );
+
+    request.fail
+    (
+        function(jqXHR, textStatus) 
         {
-            $("#mapMessage").hide();
-            processGeometry();
+            console.log( "Request failed: " + textStatus );
         }
-    } 
-    else 
-    {
-        setTimeout(waiting, timeout_step);
-    }
+    );
+    request = null;
 }
 
 /*
@@ -127,40 +114,28 @@ var map;
 var googleLayer;
 var locationBoundariesLayer;
 function drawMap (event) 
-{/*
-    console.log(event);
-    console.log(fromSlideNbr);
-    console.log($("#locListSelectedId").html());
+{
+    /*
+    console.log(event.id);
     */
-    switch (fromSlideNbr)
+    var uri = '';
+    
+    // if the location popup was used, we deal with the information coming from it
+    if (fromSlideNbr == 2)
     {
-        case 1:
-        uri = '';// currentGeoZoneUri;
-            break;
-        case 2:
-            if (event.id == 'myModal') 
+        if (event.id == 'myModal') 
+        {
+            uri = $("#locListSelectedId").html();
+            locationSplit = uri.split('APL-');
+
+            if (locationSplit.length == 2)
             {
-                uri = $("#locListSelectedId").html();
+                uri = locationSplit[1];
             }
-            break;
+        }
     }
-    locationSplit = uri.split('APL-');
-
-    if (locationSplit.length == 2)
-    {
-        getlocationGeom(locationSplit[1]);
-    }
-    else if (uri.length == 0)
-    {
-        uri = '';// 'http://hxl.humanitarianresponse.info/data/locations/admin/mli/MLI';
-        getlocationGeom(uri);
-    }
-    else 
-    {
-        getlocationGeom(uri);
-    }
-       
-
+    getlocationGeom(uri);
+           
     if (map == null) 
     {
         map = L.map('map');
@@ -181,12 +156,14 @@ function drawMap (event)
     waiting(100);
 }
 
-
 var geomSplit;
 var tempArray;
 var coordinatesArray;
 var finalGeom;
 var geojsonFeature;
+/*
+ * Recognize the type of geometry and perpares it accordingly.
+ */
 function processGeometry() 
 {
     //console.log('processgeom');
@@ -221,7 +198,6 @@ function processGeometry()
     } 
     else 
     {
-        //console.log("geomSplit.length else");
         finalGeom =  [tempArray];
         geojsonFeature = 
         {
@@ -248,9 +224,49 @@ function processGeometry()
     coordinatesArray = null;
     finalGeom = null;
     geojsonFeature = null;
-    //map = null;
 }
 
+/*
+ * Tests the variable containing the geometry.
+ */
+function geometryReady() 
+{
+    if (locGeom != undefined &&
+        locGeom != '' &&
+        locGeom != 'no result') 
+    {
+        return true;
+    } 
+    else 
+    {
+        return false;
+    }
+}
+
+/*
+ * When the answer comes back, it showes a warning message or prepares the data.
+ */
+function waiting(timeout_step) 
+{
+    if (geometryReady()) 
+    {
+        if (locGeom.indexOf('no result') > -1)
+        {
+            $("#mapMessage").show();
+        }
+        else
+        {
+            $("#mapMessage").hide();
+            processGeometry();
+        }
+    } 
+    else 
+    {
+        setTimeout(waiting, timeout_step);
+    }
+}
+
+/////////////////////////////////// FILTERS ///////////////////////////////////
 var catChoice;
 var locChoice;
 var sexChoice;
@@ -261,7 +277,6 @@ var currentGeoZone;
 var biggestGeoZone;
 var currentGeoZoneUri;
 var biggestGeoZoneUri;
-
 
 /*
  * This function manages with the drop down list aimed at filtering the data
@@ -282,12 +297,13 @@ function setFilters(event)
  * This function fills the population type filter
  */
 function setPopTypeFilter(event)
-{ /*
+{ 
+    /*
     console.log(event.name); 
     console.log(event.id);
     console.log(event.innerHTML);
-*/
-    
+    */
+
     // Population categorie drop down list
     $('#catListItems').empty();
     var tempList = '';
@@ -404,7 +420,10 @@ function setOriginFilter(event)
 }
 
 /*
- * This function fill the source list filter 
+ * This function fill the source list filter .
+ * It manages with combinations of sources coming from a query and the rest of 
+ * individual sources (for letting people to make the query that may be related 
+ * to thir NGOs) from another query.
  */
 function setSourceFilter(event) 
 { 
@@ -576,8 +595,6 @@ function setLocationFilter(event)
             }
         }
 
-
-
         // APL left over
         checkArray = [];
         for (var j = 0; j < locationLeftOver.results.bindings.length; j++)
@@ -623,7 +640,7 @@ function setLocationFilter(event)
     for (var i = 0; i < unit_tree.length; i++)
     {
         modalContent += '<td style="vertical-align: top; width:275px;">';
-        modalContent += '<ul id="tree' + i + '" style="padding:5px 5px 0px 10px" >';
+        modalContent += '<ul id="tree' + i + '" style="padding:5px 5px 0px 15px" >';
         //console.log(unit_tree[i].uri);
         modalContent += liPre1;
         if (unit_tree[i].sapl) modalContent += 'APL-';
@@ -696,15 +713,21 @@ function setLocationFilter(event)
     $('#tree3').checkboxTree();
 }
 
-/*******************
-* Detailed graph 
-******************/
+///////////////////////////////// GRAPH ////////////////////////////////////////
+/*
+ * Detailed graph.
+ * Finds the correct data according filters and processes it to
+ */
 google.load('visualization', '1', {'packages':['annotatedtimeline']});
 var chartData;
 var chart;
 var dateArrayFull = new Array();
 function drawChart (event) 
 {
+    /*
+    console.log($('#catListSelectedId').html());
+    console.log(fromSlideNbr);
+    */
     chartData = new google.visualization.DataTable();
 
     var dateArray = new Array();
@@ -826,20 +849,13 @@ function drawChart (event)
         }
     } // end for
 
+    // Important step for preparing the matrix in order to sum each day-column.
     fillingTheGaps(popCountMatrix, dailyPopList.length);
 
-    var count = new Array(dateArray.length);
-    var dateId = 0;
-    for (var tempDate in popCountMatrix)
-    {
-        count[dateId] = 0;
-        for (var i = 0; i < popCountMatrix[tempDate].length; i++)
-        {
-            count[dateId] += popCountMatrix[tempDate][i];
-        }
-        dateId++;
-    }
+    // Suming columns
+    var count = getSumPerDay(popCountMatrix);
     
+    // Building the final array for the graph.
     for (var i = 0; i < count.length; i++) 
     {
         tempArray.push(new Array(dateArray[i], count[i], undefined, undefined));
@@ -850,6 +866,7 @@ function drawChart (event)
     dateArray = null;
     count = null;
 
+    // Graph instanciation
     var options = {
         title : 'Evolution of the number of displaced people',
         vAxis: {title: "Count"},
